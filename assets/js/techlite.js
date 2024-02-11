@@ -295,3 +295,6 @@ function closeLoginForm() {
 document.querySelector('.close-popup').addEventListener('click', closeLoginForm);
 
 //form submission logic
+
+
+  

@@ -433,7 +433,7 @@ section {
 .header-area .main-nav .nav li:last-child:hover a,
 .header-area .main-nav .nav li:last-child a.active {
   color: #fff !important;
-  background-color: #db3636 !important;
+  background-color: rgb(20, 45, 92) !important;
 }
 
 .background-header .main-nav .nav li:hover a,
@@ -761,6 +761,21 @@ section {
   margin-left: 270px;
 }
 
+.video-background {
+  position: absolute;
+  top: 1100px;
+  right: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.video-background video {
+  width: 100%;
+  height: 460px;
+  object-fit: cover;
+}
+
 /* Services */
 
 .services {
@@ -885,6 +900,97 @@ section {
 .workstations .main-button {
   text-align: center;
   margin-bottom: -53px;
+}
+
+/* About */
+.about {
+  background-image: url(../images/about.jpg);
+  background-position: center center;
+  background-size: cover;
+  min-height: 500px;
+  padding-top: 80px;
+  background-attachment: scroll;
+  background-repeat: no-repeat;
+  margin-top: 80px;
+}
+
+.about ul {
+  margin-left: 30px;
+}
+
+.about li {
+  font-size: 30px;
+  color: #fff;
+  font-weight: 400;
+  margin-bottom: 25px;
+}
+
+.about h4 {
+  font-size: 55px;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+}
+
+.about h4 em {
+  font-style: normal;
+  color: #db3636;
+}
+
+.about .header-text {
+  margin-left: 270px;
+}
+
+/* Contact */
+.contact {
+  background-color:#000000;
+  min-height: 500px;
+  padding-top: 80px;
+  padding-bottom: 60px;
+  color: #fff;
+}
+
+.contact .logo img {
+  margin-top: 8%;
+  width: 191px;
+}
+
+.contact .links h3 {
+  text-align: left;
+  font-size: 20px;
+}
+
+.contact h3 {
+  margin-bottom: 10px;
+}
+
+.contact li {
+  margin: 15px 0px;
+}
+
+.contact .payment-methods, .contact .social-media {
+  list-style: none;
+  padding: 0;
+  display: flex;
+}
+
+.contact .payment-methods li, .contact .social-media li{
+  margin-right: 20px;
+}
+
+.contact .payment-methodst li:last-child, .contact .social-media li:last-child{
+  margin-right: 0;
+}
+
+.contact .payment-methods ul li a img, .contact .social-media img {
+  width: 32px;
+  height: auto;
+}
+
+.contact .divider-line {
+  height: 2px; 
+  background-color: rgb(89, 89, 89); 
+  width: 100%; 
+  margin: 40px 0px;
 }
 
 /* Footer */
