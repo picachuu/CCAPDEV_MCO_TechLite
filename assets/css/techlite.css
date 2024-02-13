@@ -289,6 +289,7 @@ section {
 /* Header */
 
 .background-header {
+  background-color: #fff !important;
   height: 70px!important;
   position: fixed!important;
   top: 0!important;
@@ -330,9 +331,9 @@ section {
 }
 
 .header-area .main-nav .logo {
+  margin-top: 20px;
   flex-basis: 25%;
-  margin-right: 47%;
-  margin-top: 0.8%;
+  margin-right: 5%;
   -webkit-transition: all 0.3s ease 0s;
   -moz-transition: all 0.3s ease 0s;
   -o-transition: all 0.3s ease 0s;
@@ -344,7 +345,7 @@ section {
 }
 
 .background-header .main-nav .logo {
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .background-header .main-nav .logo img {
@@ -359,6 +360,7 @@ section {
   text-align: right;
   margin-top: 0px;
   margin-right: 0px;
+  margin-left: 40%;
   padding: 5px;
   background-color: #1f2122;
   border-radius: 25px;
@@ -381,7 +383,7 @@ section {
   font-weight: 400;
   font-size: 14px;
   text-transform: capitalize;
-  color: #dbdbdb;
+  color: #666;
   -webkit-transition: all 0.3s ease 0s;
   -moz-transition: all 0.3s ease 0s;
   -o-transition: all 0.3s ease 0s;
@@ -392,24 +394,16 @@ section {
   letter-spacing: .3px;
 }
 
-.header-area .main-nav .nav .login-button a {
-  margin-top: 5px;
-  padding: 10px 20px;
-  background-color: rgb(37, 81, 163);
-  border-radius: 25px;
-  transition: background-color 0.3s ease;
+.header-area .main-nav .nav li:last-child a {
+  background-color: #343636;
+  padding: 8px 10px 8px 20px;
+  border-radius: 23px;
 }
 
-.login-popup {
-  position: fixed;
-  width: 300px;
-  padding: 20px;
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
+.header-area .main-nav .nav li:last-child a img {
+  max-width: 30px;
+  border-radius: 50%;
+  margin-left: 5px;
 }
 
 .header-area .main-nav .nav li.has-sub ul.sub-menu li:last-child a:hover,
@@ -422,9 +416,10 @@ section {
   color: #db3636 !important;
 }
 
-.header-area .main-nav .nav .login-button:hover a{
+.header-area .main-nav .nav li:last-child:hover a,
+.header-area .main-nav .nav li:last-child a.active {
   color: #fff !important;
-  background-color: rgb(20, 45, 92) !important;
+  background-color: #db3636 !important;
 }
 
 .background-header .main-nav .nav li:hover a,
@@ -608,7 +603,7 @@ section {
     width: 100%;
   }
   .header-area {
-    background-color: #9c2222;
+    background-color: #f7f7f7;
     padding: 0px 15px;
     height: 80px;
     box-shadow: none;
@@ -703,71 +698,6 @@ section {
   .header-area .main-nav .nav li.submenu:hover ul, .header-area .main-nav .nav li.submenu:focus ul {
     height: 0px;
   }
-}
-
-.login-popup {
-  position: fixed;
-  width: 500px;
-  padding: 50px;
-  background: linear-gradient(to bottom right, #270309, #db3636);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  border-radius: 10px;
-  color:#000000;
-  font-weight: bold;
-}
-
-.login-popup h4{
-  font-weight: bold;
-  color: #fff;
-}
-
-.login-popup .close {
-  color: #fff;
-  transform: scale(2.2)
-}
-
-.form-control {
-  margin: 1em 0;
-}
-.form-control:hover, .form-control:focus {
-  box-shadow: none;  
-  border-color: #fff;
-}
-.username, .password {
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  border-bottom: 2px solid #eee;
-  padding-left: 0;
-  font-weight: normal;
-  background: transparent;  
-}
-.form-control::-webkit-input-placeholder {
-  color: #eee;  
-}
-.form-control:focus::-webkit-input-placeholder {
-  font-weight: bold;
-  color: #fff;
-}
-
-.login {
-  padding: 6px 20px;
-  border-radius: 20px;
-  background: none;
-  border: 2px solid #5791fc;
-  color: #5791fc;
-  font-weight: bold;
-  transition: all .5s;
-  margin-top: 1em;
-}
-
-.login:hover {
-  background: #4477d6;
-  color: #fff;
 }
 
 /* Banner */
