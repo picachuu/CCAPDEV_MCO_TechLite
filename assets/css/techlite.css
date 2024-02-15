@@ -889,39 +889,35 @@ section {
   color: white;
   border-radius: 14px;
   background-color: #1f2122;
-
+  padding: 30px;
 }
 
 
 .tier-selection {
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+
   display: flex;
-  margin-bottom: 20px;
+  color:  white;
 }
 
 .tier-selection > label {
-  width: 20%;
   color: white;
   text-align: left;
+  justify-content: center;
+  margin-top: 10px;
+  width: 30%;
 }
 
 .tier-select {
 
-  appearance: none;
-  background-color: #db3636;
-  border: none;
-  padding: 0 1px 0 0;
-  margin: 0;
   width: 100%;
-  font-family: inherit;
-  font-size: inherit;
-  cursor: inherit;
-  line-height: inherit;
-  color: #fff;
+  padding: 8px;
+  margin-bottom: 20px; 
   border-radius: 14px;
-  text-align: center;
+  background-color: #db3636;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  border: none;
 }
 
 
