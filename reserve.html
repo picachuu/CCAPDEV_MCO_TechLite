@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserve Your Seat</title>
+    <link rel="stylesheet" href="assets/css/techlite.css"> 
+    <script src="assets/js/reserve.js" defer></script> 
+</head>
+<body>
+
+<div class="reservation-container">
+    <div class="tier-selection">
+        <label for="tierSelect">Choose a Tier:</label>
+        <select id="tierSelect" class = "tier-select" onchange="showSeats(this.value)">
+            <option value="">Select a Tier</option>
+            <option value="tier1">Tier 1</option>
+            <option value="tier2">Tier 2</option>
+            <option value="tier3">Tier 3</option>
+        </select>
+    </div>
+
+    <div id="seatsContainer" class="seats-container">
+        <!-- JavaScript will populate this area with seat buttons based on the selected tier -->
+    </div>
+
+    <div id="reservationForm" class="reservation-form" style="display:none;">
+        <form>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="timeFrom">Time From:</label>
+            <input type="time" id="timeFrom" name="timeFrom" required>
+            
+            <label for="timeTo">Time To:</label>
+            <input type="time" id="timeTo" name="timeTo" required>
+            
+            <button type="button" onclick="submitReservation()">Reserve</button>
+        </form>
+    </div>
+
+    
+</div>
+
+<div id="confirmationPopup" class="confirmation-popup" style="display:none;">
+    <p>Your reservation is confirmed!</p>
+    <button onclick="closePopup()">Close</button>
+</div>
+
+</body>
+</html>
