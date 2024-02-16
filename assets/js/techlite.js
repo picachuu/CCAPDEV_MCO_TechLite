@@ -429,15 +429,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById("printFile").addEventListener("click", function() {
         serviceContent.innerHTML = `
+            <div class="print-file">
             <h2>Print a File</h2>
             <p>Select your file to print:</p>
             <input type="file">
             <button onclick="alert('File submitted for printing')">Submit</button>
+            </div>
         `;
     });
 
     document.getElementById("orderFood").addEventListener("click", function() {
         serviceContent.innerHTML = `
+            <div class = "food-order">
             <h2>Order Food</h2>
             <p>Select items to order:</p>
             <div class="food-menu">
@@ -463,12 +466,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
             </div>
             <button type="button" onclick="submitOrder()">Order</button>
+            </div>
         `;
     });
     
 
     document.getElementById("litecoinShop").addEventListener("click", function() {
         serviceContent.innerHTML = `
+            <div class="litecoin-shop">
             <h2>Litecoin Shop</h2>
             <p>Use your litecoins to purchase rewards:</p>
             <form id="litecoinShopForm">
@@ -477,6 +482,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <label><input type="radio" name="reward" value="500 Litecoins for $70 Credit"> 500 Litecoins for $70 Credit</label><br>
                 <button type="button" onclick="purchaseReward()">Purchase</button>
             </form>
+            </div>
         `;
     });
 });
