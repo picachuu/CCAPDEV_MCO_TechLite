@@ -907,6 +907,16 @@ section {
   padding: 30px;
 }
 
+.reserve-main-banner {
+  background-image: url(../images/reserve-bg.jpg);
+  background-position: center center;
+  background-size: cover;
+  min-height: 800px;
+  padding: 80px 60px;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
 
 .tier-selection {
   display: flex;
