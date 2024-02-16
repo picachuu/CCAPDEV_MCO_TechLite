@@ -424,19 +424,27 @@ function showForm() {
 }
 
 /* Service */
+
+
 document.addEventListener("DOMContentLoaded", function() {
     const serviceContent = document.getElementById("serviceContent");
 
     document.getElementById("printFile").addEventListener("click", function() {
         serviceContent.innerHTML = `
-            <div class="print-file">
+        <div class="print-file" id="printFile">
             <h2>Print a File</h2>
             <p>Select your file to print:</p>
-            <input type="file">
-            <button onclick="alert('File submitted for printing')">Submit</button>
+            <div class="file-drop-area">
+                <span class="fake-btn">Choose files</span>
+                <span class="file-msg">or drag and drop files here</span>
+                <input class="file-input" type="file" multiple></input>
             </div>
+            <button class = "submit-btn" onclick="alert('File submitted for printing')">Submit</button>
+        </div>
         `;
     });
+
+
 
     document.getElementById("orderFood").addEventListener("click", function() {
         serviceContent.innerHTML = `
@@ -445,27 +453,27 @@ document.addEventListener("DOMContentLoaded", function() {
             <p>Select items to order:</p>
             <div class="food-menu">
                 <div class="food-item">
-                    <img src="path/to/pancit-canton-image.jpg" alt="Pancit Canton">
+                    <img src="assets/images/Pancit_canton.png" alt="Pancit Canton">
                     <label><input type="checkbox" name="food" value="Pancit Canton - P50"> Pancit Canton - P50</label>
                 </div>
                 <div class="food-item">
-                    <img src="path/to/shin-ramyun-image.jpg" alt="Shin Ramyun">
+                    <img src="assets/images/shin-cup.png" alt="Shin Ramyun">
                     <label><input type="checkbox" name="food" value="Shin Ramyun - P100"> Shin Ramyun - P100</label>
                 </div>
                 <div class="food-item">
-                    <img src="path/to/pepperoni-pizza-image.jpg" alt="Pepperoni Pizza">
+                    <img src="assets/images/pizza.png" alt="Pepperoni Pizza">
                     <label><input type="checkbox" name="food" value="Pepperoni Pizza - P120"> Pepperoni Pizza - P120</label>
                 </div>
                 <div class="food-item">
-                    <img src="path/to/coke-image.jpg" alt="Coke">
+                    <img src="assets/images/coke.webp" alt="Coke">
                     <label><input type="checkbox" name="food" value="Coke - P70"> Coke - P70</label>
                 </div>
                 <div class="food-item">
-                    <img src="path/to/water-image.jpg" alt="Water">
+                    <img src="assets/images/water.webp" alt="Water">
                     <label><input type="checkbox" name="food" value="Water - P50"> Water - P50</label>
                 </div>
             </div>
-            <button type="button" onclick="submitOrder()">Order</button>
+            <button type="button" class="food-submit-btn">Order</button>
             </div>
         `;
     });
@@ -473,19 +481,61 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById("litecoinShop").addEventListener("click", function() {
         serviceContent.innerHTML = `
-            <div class="litecoin-shop">
+        <div class="litecoin-shop" id="litecoinShop">
             <h2>Litecoin Shop</h2>
             <p>Use your litecoins to purchase rewards:</p>
-            <form id="litecoinShopForm">
-                <label><input type="radio" name="reward" value="100 Litecoins for $10 Credit"> 100 Litecoins for $10 Credit</label><br>
-                <label><input type="radio" name="reward" value="200 Litecoins for $25 Credit"> 200 Litecoins for $25 Credit</label><br>
-                <label><input type="radio" name="reward" value="500 Litecoins for $70 Credit"> 500 Litecoins for $70 Credit</label><br>
-                <button type="button" onclick="purchaseReward()">Purchase</button>
+            <form id="litecoinShopForm" class="litecoin-shop-form">
+                <label class="litecoin-option">
+                    <input type="radio" name="reward" value="100 Litecoins for $10 Credit">
+                    <span>100 Litecoins for P1000 Credit</span>
+                </label>
+                <label class="litecoin-option">
+                    <input type="radio" name="reward" value="200 Litecoins for $25 Credit">
+                    <span>200 Litecoins for P2000 Credit</span>
+                </label>
+                <label class="litecoin-option">
+                    <input type="radio" name="reward" value="500 Litecoins for $70 Credit">
+                    <span>500 Litecoins for P5000 Credit</span>
+                </label>
+            <button type="button" class="litecoin-submit-btn">Purchase</button>
             </form>
-            </div>
+        </div>
         `;
     });
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    var fileInput = document.querySelector(".file-input");
+    var dropArea = document.querySelector(".file-drop-area");
+    var fileMsg = document.querySelector(".file-msg");
+
+    dropArea.addEventListener("dragover", function(e) {
+        e.preventDefault();
+        dropArea.classList.add("active");
+        fileMsg.textContent = "Release to upload files";
+    });
+
+    dropArea.addEventListener("dragleave", function(e) {
+        dropArea.classList.remove("active");
+        fileMsg.textContent = "or drag and drop files here";
+    });
+
+    dropArea.addEventListener("drop", function(e) {
+        e.preventDefault();
+        dropArea.classList.remove("active");
+        fileInput.files = e.dataTransfer.files;
+        // Assuming you want to list the file names
+        var filesList = Array.from(e.dataTransfer.files).map(file => file.name).join(", ");
+        fileMsg.textContent = filesList || "or drag and drop files here";
+    });
+
+    fileInput.addEventListener("change", function() {
+        // Assuming you want to list the file names
+        var filesList = Array.from(fileInput.files).map(file => file.name).join(", ");
+        fileMsg.textContent = filesList || "or drag and drop files here";
+    });
+});
+
 
 function submitOrder() {
     const selectedItems = document.querySelectorAll('#foodOrderForm input[name="food"]:checked');
