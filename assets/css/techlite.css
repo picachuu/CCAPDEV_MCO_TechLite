@@ -959,9 +959,17 @@ section {
 
 .seats-container {
   display: flex;
-  justify-content: space-between;
+  margin-top: 40px;
+  justify-content: center;
+  gap: 100px;
+  margin-bottom: 40px;
+}
 
-  margin-top: 10px;
+.seat-column {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .seats-container button:hover {
