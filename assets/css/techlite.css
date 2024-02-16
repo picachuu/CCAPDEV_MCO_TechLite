@@ -1398,6 +1398,16 @@ section {
 
 /* Manage */
 
+.manage-page{
+  background-image: url(../images/manage-bg.jpg);
+  background-position: center center;
+  background-size: cover;
+  min-height: 800px;
+  padding: 80px 60px;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
 .reservation-management {
   max-width: 600px;
   margin: 40px auto;
