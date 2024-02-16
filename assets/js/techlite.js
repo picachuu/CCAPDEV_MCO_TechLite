@@ -367,13 +367,13 @@ function showForm() {
 
 function submitMemberSearch() {
     // Implement the logic to search for a member by name or ID.
-    // This is a placeholder function. You might need to connect to a server or perform some action to search for members.
+    // This is a placeholder function. 
     alert('Searching for member...');
 }
 
 function submitSeatSearch() {
     // Implement the logic to search for available seats by time slot.
-    // This is a placeholder function. You might need to connect to a server or perform some action to search for seats.
+    // This is a placeholder function.
     alert('Searching for available seats...');
 }
 function filterSeatsByTime() {

@@ -987,7 +987,7 @@ section {
 }
 
 .seat.unavailable {
-  background-color: ac2525;
+  background-color: #ac2525;
 }
 
 .seat.selected {
