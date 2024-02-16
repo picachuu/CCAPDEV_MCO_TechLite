@@ -1396,6 +1396,64 @@ section {
   background-color: #c32f2f;
 }
 
+/* Manage */
+
+.reservation-management {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #27292a;
+  border-radius: 10px;
+  color: #FFF;
+  margin-top: 10%;
+  margin-bottom: 10%;
+}
+
+.reservation-management h2 {
+  color: #db3636;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.reservation-management .form-group {
+  margin-bottom: 15px;
+}
+
+.reservation-management label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.reservation-management input[type="text"],
+.reservation-management input[type="time"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #db3636;
+  background-color: #35393a;
+  color: white;
+}
+
+.reservation-management input[type="text"]:disabled {
+  background-color: #555;
+  color: #ddd;
+}
+
+.reservation-management .submit-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #db3636;
+  color: #FFF;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reservation-management .submit-btn:hover {
+  background-color: #c32f2f;
+}
 
 /* About */
 .about {
