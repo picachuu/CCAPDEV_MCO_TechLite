@@ -951,7 +951,7 @@ section {
 }
 
 .seats-container button:hover {
-  background-color: #c32f2f;
+  background-color: #a12929;
   color: white;
 }
 
@@ -975,17 +975,18 @@ section {
 }
 
 .seat.unavailable {
-  background-color: red;
+  background-color: ac2525;
 }
 
 .seat.selected {
   background-color: white;
   color: #333; /* Change text color for better contrast */
-  border: 2px solid #db3636;
+  border: 2px solid #a12929;
 }
 
 .reservation-form {
   margin-top: 20px;
+  color:white;
 }
 
 .reservation-form input {
@@ -994,7 +995,7 @@ section {
   margin: 10px 0;
   border-radius: 14px;
   border: none;
-  background-color: #db3636;
+  background-color: #a12929;
   color: white;
   outline: none;
 }
@@ -1002,11 +1003,11 @@ section {
 .reservation-form button {
   width: 100%;
   padding: 10px;
-  margin: 10px 0;
+  margin: 10px 0px;
   margin-top: 20px;
   border-radius: 14px;
   border: none;
-  background-color: #db3636;
+  background-color: #a12929;
   color: white;
   outline: none;
 }
@@ -1025,13 +1026,24 @@ section {
 /* Search */
 
 .search-page{
-  background-color: #1f2122;
-  border-radius: 23px;
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 5%;
-  padding: 30px;
+  background-color: #27292a;
+  padding: 40px;
+  border-radius: 23px;
+  position: relative;
+  z-index: 10; 
+}
 
+.search-main-banner {
+  background-image: url(../images/search-bg.jpg);
+  background-position: center center;
+  background-size: cover;
+  min-height: 800px;
+  padding: 80px 60px;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 .search-container {
@@ -1053,7 +1065,7 @@ section {
   padding: 8px;
   margin-bottom: 10px;
   border-radius: 14px;
-  background-color: #db3636;
+  background-color: #a12929;
   color: white;
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
@@ -1088,7 +1100,7 @@ section {
 /* Style for form buttons */
 .search-form button {
   padding: 10px 15px;
-  background-color: #db3636; 
+  background-color: #a12929; 
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -1097,7 +1109,7 @@ section {
 }
 
 .search-form button:hover {
-  background-color: #c32f2f; 
+  background-color: #862929; 
 }
 
 /* Container holding the sidebar and the service content */
