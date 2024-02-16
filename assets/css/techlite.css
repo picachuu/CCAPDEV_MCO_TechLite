@@ -1130,6 +1130,52 @@ section {
   margin-top: 0;
 }
 
+/* food under services */
+
+.food-menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px; /* Adjusts the space between items */
+}
+
+.food-item {
+  position: relative;
+  width: 150px; /* Adjust size as needed */
+  text-align: center;
+}
+
+.food-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px; /* Optional: adds rounded corners to the images */
+}
+
+.food-item label {
+  position: absolute;
+  bottom: 10px; /* Adjust positioning as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  color: white; /* Adjust text color as needed */
+  font-weight: bold; /* Makes the label text bold */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  border-radius: 10px;
+  padding: 5px 0;
+}
+
+.food-item input[type="checkbox"] {
+  display: none; /* Hides the actual checkbox, but it can still be clicked */
+}
+
+.food-item input[type="checkbox"] + label {
+  cursor: pointer; /* Changes the cursor to indicate the label is clickable */
+}
+
+.food-item input[type="checkbox"]:checked + label {
+  background-color: rgba(0, 128, 0, 0.7); /* Changes background color when selected */
+}
+
 
 /* About */
 .about {
