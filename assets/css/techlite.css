@@ -861,6 +861,7 @@ section {
 
 .workstations .item ul li img {
   margin-top: -30px;
+  border-radius: 10px;
 }
 
 .workstations .item ul li {
