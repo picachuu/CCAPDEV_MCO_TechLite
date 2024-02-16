@@ -875,6 +875,261 @@ section {
   text-align: center;
   margin-bottom: -53px;
 }
+/* reserve */
+
+.reservation-container {
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 5%;
+  display: flexbox;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  color: white;
+  border-radius: 14px;
+  background-color: #1f2122;
+  padding: 30px;
+}
+
+
+.tier-selection {
+  display: flex;
+  color:  white;
+}
+
+.tier-selection > label {
+  color: white;
+  text-align: left;
+  justify-content: center;
+  margin-top: 10px;
+  width: 30%;
+}
+
+.tier-select {
+
+  width: 100%;
+  padding: 8px;
+  border-radius: 14px;
+  background-color: #db3636;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  border: none;
+}
+
+
+.tier-select::-ms-expand {
+  display: none;
+}
+
+.tier-select {
+  outline: none;
+
+}
+
+.seats-container {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 10px;
+}
+
+.seats-container button:hover {
+  background-color: #c32f2f;
+  color: white;
+}
+
+.seat-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.seat {
+  margin: 5px;
+  width: 75px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: gray;
+  border: none;
+  cursor: pointer;
+  display: inline;
+  text-align: center;
+
+}
+
+.seat.unavailable {
+  background-color: red;
+}
+
+.seat.selected {
+  background-color: white;
+  color: #333; /* Change text color for better contrast */
+  border: 2px solid #db3636;
+}
+
+.reservation-form {
+  margin-top: 20px;
+}
+
+.reservation-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 14px;
+  border: none;
+  background-color: #db3636;
+  color: white;
+  outline: none;
+}
+
+.reservation-form button {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  margin-top: 20px;
+  border-radius: 14px;
+  border: none;
+  background-color: #db3636;
+  color: white;
+  outline: none;
+}
+
+.confirmation-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  z-index: 100;
+}
+
+/* Search */
+
+.search-page{
+  background-color: #1f2122;
+  border-radius: 23px;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 5%;
+  padding: 30px;
+
+}
+
+.search-container {
+  display: flex;
+  color:  white;
+}
+
+.search-container > label {
+  color: white;
+  margin-bottom: 10px;
+  text-align: left;
+  justify-content: center;
+  margin-top: 10px;
+  width: 30%;
+}
+
+#searchOptions {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  background-color: #db3636;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  border: none;
+}
+
+
+.search-form {
+  display: none; 
+  width: 100%;
+  border-radius: 8px;
+}
+
+
+.search-form label {
+  display: block; 
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Style for form inputs */
+.search-form input[type="text"],
+.search-form input[type="time"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 20px; 
+  border-radius: 4px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Style for form buttons */
+.search-form button {
+  padding: 10px 15px;
+  background-color: #db3636; 
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+}
+
+.search-form button:hover {
+  background-color: #c32f2f; 
+}
+
+/* Container holding the sidebar and the service content */
+.services-container {
+  display: flex;
+  flex-direction: row;
+
+  height: 100vh
+}
+
+/* Sidebar styles */
+.services-sidebar {
+  background-color: #333; /* Sidebar background color */
+  color: #fff; /* Sidebar text color */
+  padding: 40px; /* Sidebar padding */
+  width: 20%;
+  height: 100%;
+}
+
+.services-sidebar button {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 14px;
+  background-color: #db3636; /* Button background color */
+  color: #fff; /* Button text color */
+  border: none;
+  cursor: pointer;
+}
+
+.services-sidebar button:hover {
+  background-color: #777; /* Button hover background color */
+}
+
+/* Service content styles */
+.service-content {
+  margin-left: 10%;
+  flex: 1; /* Take up the remaining width */
+  padding: 20px; /* Content padding */
+  background-color: #1f2122; /* Content background color */
+}
+
+/* Adjustments for heading within service-content for clarity */
+.service-content h2 {
+  margin-top: 0;
+}
+
 
 /* About */
 .about {
