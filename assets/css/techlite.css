@@ -861,6 +861,8 @@ section {
 
 .workstations .item ul li img {
   margin-top: -30px;
+  border-radius: 10px;
+  border: 1px solid white;
 }
 
 .workstations .item ul li {
@@ -870,6 +872,7 @@ section {
 
 .workstations .item ul li:first-child {
   width: 110px;
+  margin-right: 7px;
 }
 
 .workstations .item ul li:last-child {
@@ -1648,6 +1651,8 @@ footer p a:hover {
 
 .profile-reservations .item ul li img {
   margin-top: -30px;
+  border-radius: 10px;
+  border: 1px solid white;
 }
 
 .profile-reservations .item ul li {
@@ -1657,6 +1662,7 @@ footer p a:hover {
 
 .profile-reservations .item ul li:first-child {
   width: 110px;
+  margin-right: 7px;
 }
 
 .profile-reservations .item ul li:last-child {
