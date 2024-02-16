@@ -818,7 +818,7 @@ section {
 }
 
 .services-header-area {
-  background-color: black;
+  background-color: #272829;
   position: absolute;
   height: 120px;
   left: 0;
@@ -828,6 +828,7 @@ section {
   -moz-transition: all .5s ease 0s;
   -o-transition: all .5s ease 0s;
   transition: all .5s ease 0s;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); 
 }
 
 /* Workstations */
@@ -1127,7 +1128,7 @@ section {
   display: flex;
   flex-direction: row;
   padding-top: 120px;
-  height: 100vh
+  height: 100vh;
 }
 
 /* Sidebar styles */
@@ -1156,10 +1157,13 @@ section {
 
 /* Service content styles */
 .service-content {
-  margin-left: 10%;
+  padding-left: 10%;
   flex: 1; /* Take up the remaining width */
   padding: 20px; /* Content padding */
-  background-color: #1f2122; /* Content background color */
+  background-image: url(../images/services-bg.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Adjustments for heading within service-content for clarity */
