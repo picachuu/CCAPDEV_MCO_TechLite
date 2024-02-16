@@ -1170,51 +1170,219 @@ section {
 .service-content h2 {
   margin-top: 0;
 }
+/* Print */
+
+/* Container for the print file feature */
+.print-file {
+  max-width: 600px; /* Adjust based on your layout needs */
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #27292a; /* Dark background for contrast */
+  border-radius: 10px;
+  color: #FFF;
+}
+
+/* Heading and paragraph styling */
+.print-file h2 {
+  color: #db3636;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.print-file p {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Styling for the file drop area */
+.file-drop-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Full width of the container */
+  padding: 20px;
+  border: 2px dashed #db3636; /* Highlight color */
+  border-radius: 10px;
+  background: #35393a; /* Slightly lighter than the container for visual depth */
+  color: white;
+  cursor: pointer;
+  transition: border .3s ease-in-out;
+}
+
+.file-drop-area:hover {
+  border-color: #c32f2f; /* Darker shade for hover state */
+}
+
+/* Styling for the fake button inside the drop area */
+.fake-btn {
+  background-color: #db3636;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 10px; /* Space between the fake button and the message */
+}
+
+/* Message styling */
+.file-msg {
+  font-size: 14px;
+  color: white;
+}
+
+/* Invisible file input styling */
+.file-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0; /* Invisible but still functional */
+  cursor: pointer;
+}
+
+/* Submit button styling */
+.submit-btn {
+  background-color: #db3636;
+  color: #fff;
+  padding: 12px 30px; /* Slightly larger padding for a prominent appearance */
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  display: block; /* Ensure it takes its own line */
+  width: auto; /* Auto width based on content, adjust as needed */
+  margin: 20px auto 0; /* Centered and spaced from the file drop area */
+  transition: background-color .3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #c32f2f; /* Slightly darker on hover for interactive feedback */
+}
+
+
 
 /* food under services */
 
-.food-menu {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px; /* Adjusts the space between items */
+.food-order {
+  color: #FFF;
+  background-color: #27292a;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px; /* Adjust based on layout needs */
+  margin: auto;
 }
 
-.food-item {
-  position: relative;
-  width: 150px; /* Adjust size as needed */
+.food-order h2 {
+  color: #db3636;
+  margin-bottom: 15px;
   text-align: center;
 }
 
-.food-item img {
-  width: 100%;
-  height: auto;
-  border-radius: 10px; /* Optional: adds rounded corners to the images */
+.food-order p {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.food-item label {
-  position: absolute;
-  bottom: 10px; /* Adjust positioning as needed */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  color: white; /* Adjust text color as needed */
-  font-weight: bold; /* Makes the label text bold */
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  border-radius: 10px;
-  padding: 5px 0;
+.food-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.food-item {
+  background-color: #1e1e1e;
+  border-radius: 5px;
+  padding: 10px;
+  transition: transform 0.3s ease;
+}
+
+.food-item:hover {
+  transform: translateY(-5px);
 }
 
 .food-item input[type="checkbox"] {
-  display: none; /* Hides the actual checkbox, but it can still be clicked */
+  margin-right: 10px;
 }
 
-.food-item input[type="checkbox"] + label {
-  cursor: pointer; /* Changes the cursor to indicate the label is clickable */
+.food-submit-btn {
+  display: block;
+  width: 100%;
+  background-color: #db3636;
+  color: #FFF;
+  border: none;
+  padding: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
-.food-item input[type="checkbox"]:checked + label {
-  background-color: rgba(0, 128, 0, 0.7); /* Changes background color when selected */
+.food-submit-btn:hover {
+  background-color: #c32f2f;
+}
+
+
+/* LiteCoin Shop*/
+.litecoin-shop {
+  color: #FFF;
+  background-color: #27292a;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px; /* Adjust based on your layout */
+  margin: auto;
+}
+
+.litecoin-shop h2 {
+  color: #db3636;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.litecoin-shop p {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.litecoin-option {
+  display: block;
+  background-color: #1e1e1e;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.litecoin-option:hover {
+  background-color: #333;
+}
+
+.litecoin-option input[type="radio"] {
+  display: none;
+}
+
+.litecoin-option span {
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.litecoin-submit-btn {
+  display: block;
+  width: 100%;
+  background-color: #db3636;
+  color: #FFF;
+  border: none;
+  padding: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.litecoin-submit-btn:hover {
+  background-color: #c32f2f;
 }
 
 
