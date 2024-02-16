@@ -1002,7 +1002,7 @@ section {
 
 .seat.selected {
   background-color: white;
-  color: #333; /* Change text color for better contrast */
+  color: #333; 
   border: 2px solid #a12929;
 }
 
