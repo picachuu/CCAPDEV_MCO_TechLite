@@ -279,4 +279,227 @@
 
 })(window.jQuery);
 
+
+/* Reserve */
+function showSeats(tier) {
+    const seatsContainer = document.getElementById('seatsContainer');
+    seatsContainer.innerHTML = ''; // Clear previous seats
+    let selectedSeat = null; // Keep track of the selected seat
+
+    // Create a container for each column to hold the seats
+    const columns = [];
+    for (let i = 0; i < 3; i++) {
+        const column = document.createElement('div');
+        column.classList.add('seat-column');
+        seatsContainer.appendChild(column);
+        columns.push(column);
+    }
+
+    // Populate each column with 5 seats
+    for (let i = 1; i <= 15; i++) {
+        const seat = document.createElement('button');
+        seat.classList.add('seat');
+        
+        // Determine the column index (0, 1, or 2) based on the seat number
+        const columnIndex = Math.floor((i - 1) / 5);
+
+        if (Math.random() < 0.3) { // 30% chance a seat is unavailable
+            seat.classList.add('unavailable');
+        } else {
+            // Add click event to available seats
+            seat.addEventListener('click', function() {
+                // Highlight the selected seat and unhighlight the previous one
+                if (selectedSeat) {
+                    selectedSeat.classList.remove('selected');
+                }
+                this.classList.add('selected');
+                selectedSeat = this;
+
+                // Display the reservation form
+                document.getElementById('reservationForm').style.display = 'block';
+                document.getElementById('name').value = ''; // Reset form values
+                document.getElementById('timeFrom').value = '';
+                document.getElementById('timeTo').value = '';
+            });
+        }
+
+        seat.textContent = `Seat ${i}`;
+        columns[columnIndex].appendChild(seat);
+    }
+}
+
+
+
+function submitReservation() {
+    // Example validation: check if name is entered
+    const name = document.getElementById('name').value;
+    if (name.trim() === '') {
+        alert('Please enter your name.');
+        return;
+    }
+
+    // Simulate a successful reservation
+    document.getElementById('confirmationPopup').style.display = 'block';
+}
+
+function closePopup() {
+    document.getElementById('confirmationPopup').style.display = 'none';
+}
+
+
+/* Search */
+function showSearchForm(option) {
+    document.getElementById('searchMemberForm').style.display = 'none';
+    document.getElementById('searchSeatsForm').style.display = 'none';
+    document.getElementById('availableSeats').style.display = 'none'; // Add this line
+
+    if (option === 'member') {
+        document.getElementById('searchMemberForm').style.display = 'block';
+    } else if (option === 'seats') {
+        document.getElementById('searchSeatsForm').style.display = 'block';
+        document.getElementById('availableSeats').style.display = 'block'; // Display available seats for this option
+    }
+}
+
+function showForm() {
+    document.getElementById('reservationForm').style.display = 'block';
+}
+
+function submitMemberSearch() {
+    // Implement the logic to search for a member by name or ID.
+    // This is a placeholder function. You might need to connect to a server or perform some action to search for members.
+    alert('Searching for member...');
+}
+
+function submitSeatSearch() {
+    // Implement the logic to search for available seats by time slot.
+    // This is a placeholder function. You might need to connect to a server or perform some action to search for seats.
+    alert('Searching for available seats...');
+}
+function filterSeatsByTime() {
+    const time = document.getElementById('timeInput').value;
+    if (!time) {
+        alert("Please select a time to search for available seats.");
+        return;
+    }
+
+    // Placeholder: Logic to fetch available seats based on time
+    // This could involve fetching data from a server
+    // For demonstration, we'll simulate with static data
+
+    // Simulate fetching available seats for all tiers
+    showAvailableSeats();
+}
+
+function showAvailableSeats() {
+    const seatsContainer = document.getElementById('availableSeats');
+    seatsContainer.innerHTML = ''; // Clear previous results
+
+    // Simulate displaying seats for Tier 1 to Tier 3
+    ['tier1', 'tier2', 'tier3'].forEach(tier => {
+        const tierDiv = document.createElement('div');
+        tierDiv.classList.add('tier');
+        const title = document.createElement('h3');
+        title.textContent = `Available Seats (${tier.toUpperCase()})`;
+        tierDiv.appendChild(title);
+
+        // Populate tier with example seats (modify as needed)
+        for (let i = 1; i <= 5; i++) { // Example: 5 seats per tier
+            const seat = document.createElement('button');
+            seat.textContent = `Seat ${i}`;
+            seat.classList.add('seat', 'available');
+            seat.onclick = function() {
+                showForm(); // Function to show the reservation form
+            };
+            tierDiv.appendChild(seat);
+        }
+
+        seatsContainer.appendChild(tierDiv);
+    });
+}
+
+function showForm() {
+    // Show the reservation form similar to the reserve.html functionality
+    document.getElementById('reservationForm').style.display = 'block';
+}
+
+/* Service */
+document.addEventListener("DOMContentLoaded", function() {
+    const serviceContent = document.getElementById("serviceContent");
+
+    document.getElementById("printFile").addEventListener("click", function() {
+        serviceContent.innerHTML = `
+            <h2>Print a File</h2>
+            <p>Select your file to print:</p>
+            <input type="file">
+            <button onclick="alert('File submitted for printing')">Submit</button>
+        `;
+    });
+
+    document.getElementById("orderFood").addEventListener("click", function() {
+        serviceContent.innerHTML = `
+            <h2>Order Food</h2>
+            <p>Select items to order:</p>
+            <div class="food-menu">
+                <div class="food-item">
+                    <img src="path/to/pancit-canton-image.jpg" alt="Pancit Canton">
+                    <label><input type="checkbox" name="food" value="Pancit Canton - P50"> Pancit Canton - P50</label>
+                </div>
+                <div class="food-item">
+                    <img src="path/to/shin-ramyun-image.jpg" alt="Shin Ramyun">
+                    <label><input type="checkbox" name="food" value="Shin Ramyun - P100"> Shin Ramyun - P100</label>
+                </div>
+                <div class="food-item">
+                    <img src="path/to/pepperoni-pizza-image.jpg" alt="Pepperoni Pizza">
+                    <label><input type="checkbox" name="food" value="Pepperoni Pizza - P120"> Pepperoni Pizza - P120</label>
+                </div>
+                <div class="food-item">
+                    <img src="path/to/coke-image.jpg" alt="Coke">
+                    <label><input type="checkbox" name="food" value="Coke - P70"> Coke - P70</label>
+                </div>
+                <div class="food-item">
+                    <img src="path/to/water-image.jpg" alt="Water">
+                    <label><input type="checkbox" name="food" value="Water - P50"> Water - P50</label>
+                </div>
+            </div>
+            <button type="button" onclick="submitOrder()">Order</button>
+        `;
+    });
+    
+
+    document.getElementById("litecoinShop").addEventListener("click", function() {
+        serviceContent.innerHTML = `
+            <h2>Litecoin Shop</h2>
+            <p>Use your litecoins to purchase rewards:</p>
+            <form id="litecoinShopForm">
+                <label><input type="radio" name="reward" value="100 Litecoins for $10 Credit"> 100 Litecoins for $10 Credit</label><br>
+                <label><input type="radio" name="reward" value="200 Litecoins for $25 Credit"> 200 Litecoins for $25 Credit</label><br>
+                <label><input type="radio" name="reward" value="500 Litecoins for $70 Credit"> 500 Litecoins for $70 Credit</label><br>
+                <button type="button" onclick="purchaseReward()">Purchase</button>
+            </form>
+        `;
+    });
+});
+
+function submitOrder() {
+    const selectedItems = document.querySelectorAll('#foodOrderForm input[name="food"]:checked');
+    const selectedValues = Array.from(selectedItems).map(item => item.value);
+    if (selectedValues.length > 0) {
+        alert('Order successfully placed for: ' + selectedValues.join(', '));
+    } else {
+        alert('No items selected. Please select at least one item to order.');
+    }
+}
+
+function purchaseReward() {
+    const selectedReward = document.querySelector('#litecoinShopForm input[name="reward"]:checked');
+    if (selectedReward) {
+        alert(`Reward successfully purchased: ${selectedReward.value}`);
+    } else {
+        alert('No reward selected. Please select a reward to purchase.');
+    }
+}
+
+
+
   
