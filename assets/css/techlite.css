@@ -894,7 +894,6 @@ section {
 
 
 .tier-selection {
-
   display: flex;
   color:  white;
 }
@@ -911,7 +910,6 @@ section {
 
   width: 100%;
   padding: 8px;
-
   border-radius: 14px;
   background-color: #db3636;
   color: white;
@@ -933,7 +931,7 @@ section {
 .seats-container {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+
   margin-top: 10px;
 }
 
@@ -1017,11 +1015,11 @@ section {
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 5%;
+  padding: 30px;
 
 }
 
 .search-container {
-  margin-top: 10%;
   display: flex;
   color:  white;
 }
@@ -1038,7 +1036,7 @@ section {
 #searchOptions {
   width: 100%;
   padding: 8px;
-  margin-bottom: 20px; 
+  margin-bottom: 10px;
   border-radius: 14px;
   background-color: #db3636;
   color: white;
@@ -1087,26 +1085,29 @@ section {
   background-color: #c32f2f; 
 }
 
-
 /* Container holding the sidebar and the service content */
 .services-container {
   display: flex;
-  min-height: 100vh; /* Full height of the viewport */
+  flex-direction: row;
+
+  height: 100vh
 }
 
 /* Sidebar styles */
 .services-sidebar {
-  flex: 0 0 200px; /* Sidebar width */
   background-color: #333; /* Sidebar background color */
   color: #fff; /* Sidebar text color */
-  padding: 20px; /* Sidebar padding */
+  padding: 40px; /* Sidebar padding */
+  width: 20%;
+  height: 100%;
 }
 
 .services-sidebar button {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
-  background-color: #555; /* Button background color */
+  border-radius: 14px;
+  background-color: #db3636; /* Button background color */
   color: #fff; /* Button text color */
   border: none;
   cursor: pointer;
@@ -1118,17 +1119,16 @@ section {
 
 /* Service content styles */
 .service-content {
+  margin-left: 10%;
   flex: 1; /* Take up the remaining width */
   padding: 20px; /* Content padding */
-  background-color: #f0f0f0; /* Content background color */
+  background-color: #1f2122; /* Content background color */
 }
 
 /* Adjustments for heading within service-content for clarity */
 .service-content h2 {
   margin-top: 0;
 }
-
-
 
 
 /* About */
