@@ -331,7 +331,7 @@ section {
 }
 
 .header-area .main-nav .logo {
-  margin-top: 20px;
+  margin-top: 12px;
   flex-basis: 25%;
   margin-right: 5%;
   -webkit-transition: all 0.3s ease 0s;
@@ -817,6 +817,19 @@ section {
   margin-bottom: -53px;
 }
 
+.services-header-area {
+  background-color: black;
+  position: absolute;
+  height: 120px;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  -webkit-transition: all .5s ease 0s;
+  -moz-transition: all .5s ease 0s;
+  -o-transition: all .5s ease 0s;
+  transition: all .5s ease 0s;
+}
+
 /* Workstations */
 
 .workstations {
@@ -1091,7 +1104,7 @@ section {
 .services-container {
   display: flex;
   flex-direction: row;
-
+  padding-top: 120px;
   height: 100vh
 }
 
