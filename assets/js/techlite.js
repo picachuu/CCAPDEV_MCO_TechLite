@@ -279,22 +279,4 @@
 
 })(window.jQuery);
 
-// Function to show the login/signup popup
-function showLoginForm() {
-    var popup = document.getElementById('loginPopup');
-    popup.style.display = 'block';
-}
-
-// Function to hide the login/signup popup
-function closeLoginForm() {
-    var popup = document.getElementById('loginPopup');
-    popup.style.display = 'none';
-}
-
-// Example of adding an event listener for closing the popup
-document.querySelector('.close-popup').addEventListener('click', closeLoginForm);
-
-//form submission logic
-
-
   

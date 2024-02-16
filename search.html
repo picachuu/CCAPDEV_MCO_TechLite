@@ -1,13 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Page</title>
-    <link rel="stylesheet" href="assets/css/techlite.css"> <!-- Ensure the path matches your project structure -->
-    <script src="assets/js/search.js" defer></script> <!-- Adjust the filename if necessary -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <title>TechLite - Search</title>
+    
+    <!-- Styles -->
+    <link href="packages/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/fontawesome.css">
+    <link rel="stylesheet" href="assets/css/techlite.css">
+    <link rel="stylesheet" href="assets/css/owl.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet"href="https://unpkg.com/swiper@7/swiper-bundle.min.css"/>
+
+    <!-- Scripts -->
+    <script src="packages/jquery/jquery.min.js"></script>
+    <script src="packages/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/isotope.min.js"></script>
+    <script src="assets/js/owl-carousel.js"></script>
+    <script src="assets/js/tabs.js"></script>
+    <script src="assets/js/popup.js"></script>
+    <script src="assets/js/techlite.js"></script>
 </head>
+
 <body>
+    <!-- Preload Start-->
+    <div id="js-preloader" class="js-preloader">
+        <div class="preloader-inner">
+        <span class="dot"></span>
+        <div class="dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        </div>
+    </div>
+    <!-- Preload End-->
+
+  <!-- Header Start-->
+  <header class="header-area header-sticky">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav class="main-nav">
+                    <a href="index.html" class="logo">
+                        <img src="assets/images/logo.png" alt="">
+                    </a>
+                    <!-- Menu Start -->
+                    <!-- Popup Form (Hidden by default) -->
+                    <div id="loginPopup" class="login-popup" style="display: none;">
+                      <a href="" class="close">&times;</a>
+                      <h4>Login</h4>
+                      <form>
+                        <input type="text" name="username" class="username form-control" placeholder="Username"/>
+                        <input type="password" name="password" class="password form-control" placeholder="password"/>
+                        <input class="btn login" type="submit" value="Login" />
+                      </form>
+                    </div>
+                    <ul class="nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="reserve.html">Reserve</a></li>
+                        <li><a href="search.html" class="active">Search</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="profile.html">Profile <img src="assets/images/profile.jpg" alt=""></a></li>
+                    </ul>
+                    <a class='menu-trigger'>
+                        <span>Menu</span>
+                    </a>
+                    <!-- Menu End -->
+                </nav>
+            </div>
+        </div>
+    </div>
+  </header>
+  <!-- Header End -->
+  
 <div class="main-banner">
 <div class="search-page">
     <div class="search-container">
