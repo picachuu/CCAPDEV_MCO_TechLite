@@ -14,16 +14,32 @@ document.addEventListener("DOMContentLoaded", function() {
         serviceContent.innerHTML = `
             <h2>Order Food</h2>
             <p>Select items to order:</p>
-            <form id="foodOrderForm">
-                <label><input type="checkbox" name="food" value="Pancit Canton - P50"> Pancit Canton - P50</label><br>
-                <label><input type="checkbox" name="food" value="Shin Ramyun - P100"> Shin Ramyun - P100</label><br>
-                <label><input type="checkbox" name="food" value="Pepperoni Pizza - P120"> Pepperoni Pizza - P120</label><br>
-                <label><input type="checkbox" name="food" value="Coke - P70"> Coke - P70</label><br>
-                <label><input type="checkbox" name="food" value="Water - P50"> Water - P50</label><br>
-                <button type="button" onclick="submitOrder()">Order</button>
-            </form>
+            <div class="food-menu">
+                <div class="food-item">
+                    <img src="path/to/pancit-canton-image.jpg" alt="Pancit Canton">
+                    <label><input type="checkbox" name="food" value="Pancit Canton - P50"> Pancit Canton - P50</label>
+                </div>
+                <div class="food-item">
+                    <img src="path/to/shin-ramyun-image.jpg" alt="Shin Ramyun">
+                    <label><input type="checkbox" name="food" value="Shin Ramyun - P100"> Shin Ramyun - P100</label>
+                </div>
+                <div class="food-item">
+                    <img src="path/to/pepperoni-pizza-image.jpg" alt="Pepperoni Pizza">
+                    <label><input type="checkbox" name="food" value="Pepperoni Pizza - P120"> Pepperoni Pizza - P120</label>
+                </div>
+                <div class="food-item">
+                    <img src="path/to/coke-image.jpg" alt="Coke">
+                    <label><input type="checkbox" name="food" value="Coke - P70"> Coke - P70</label>
+                </div>
+                <div class="food-item">
+                    <img src="path/to/water-image.jpg" alt="Water">
+                    <label><input type="checkbox" name="food" value="Water - P50"> Water - P50</label>
+                </div>
+            </div>
+            <button type="button" onclick="submitOrder()">Order</button>
         `;
     });
+    
 
     document.getElementById("litecoinShop").addEventListener("click", function() {
         serviceContent.innerHTML = `
