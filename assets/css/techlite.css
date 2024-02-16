@@ -1577,7 +1577,7 @@ footer p a:hover {
 .main-profile img {
   border-radius: 500px;
   width: 290px;
-  height: auto;
+  height: 290px;
   border: 10px solid white; 
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   margin-right: 50px;
