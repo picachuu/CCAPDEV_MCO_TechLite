@@ -95,7 +95,7 @@ body {
 
 body .page-content {
   background-color: #27292a;
-  padding: 60px;
+  padding: 40px;
   border-radius: 23px;
   margin-top: -70px;
   position: relative;
@@ -1287,16 +1287,38 @@ footer p a:hover {
 }
 
 /* Profile */
+
 .main-profile {
-  border-radius: 23px;
-  padding: 30px;
-  background-color: #1f2122;
+  display: flex;
+  margin-top: -100px;
+  align-items: center;
+  padding: 0px 400px;
+
 }
 
-.main-profile .main-info span {
-  font-size: 14px;
+.main-profile img {
+  border-radius: 500px;
+  width: 290px;
+  height: auto;
+  border: 10px solid white; 
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  margin-right: 50px;
+}
+
+.cover-banner {
+  background-image: url(../images/cover-bg.jpg);
+  background-position: center center;
+  background-size: cover;
+  min-height: 320px;
+  padding: 80px 60px;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.main-profile span {
+  font-size: 17px;
   color: #fff;
-  background-color: #e75e8d;
+  background-color: #db3636;
   padding: 8px 20px;
   display: inline-block;
   border-radius: 25px;
@@ -1306,21 +1328,97 @@ footer p a:hover {
   margin-bottom: 15px;
 }
 
-.main-profile .main-info h4 {
+.main-profile h4 {
   margin-bottom: 20px;
+  font-size: 40px;
 }
 
-.main-profile .main-info .main-border-button {
-  margin-top: 25px;
+.main-profile p {
+  font-size: 20px;
 }
 
-.main-profile ul {
+.main-info {
+  margin-top: 100px;
+}
+
+.main-profile .profile-details i {
+  color: white;
+  font-size: 24px;
+  margin-top: 107px;
+  margin-left: 400px;
+}
+
+.main-profile .profile-details {
+  display: flex;
+}
+
+.profile-page-content {
+  background-color: #27292a;
+  margin-top: 40px;
+  padding: 40px;
+  border-radius: 23px;
+}
+
+.profile-reservations {
+  padding: 30px;
+  background-color: #1f2122;
+  border-radius: 23px;
+}
+
+.profile-reservations .item {
+  border-bottom: 1px solid #27292a;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+}
+
+.profile-reservations .last-item {
+  margin-bottom: 30px;
+}
+
+.profile-reservations .item ul li {
+  margin-top: 15px;
+}
+
+.profile-reservations .item ul li img {
+  margin-top: -30px;
+}
+
+.profile-reservations .item ul li {
+  display: inline-block;
+  width: 17%;
+}
+
+.profile-reservations .item ul li:first-child {
+  width: 110px;
+}
+
+.profile-reservations .item ul li:last-child {
+  width: 15%;
+  text-align: right;
+}
+
+.profile-reservations .item ul li h4 {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.profile-reservations .item ul li span {
+  color: #666;
+  font-size: 14px;
+}
+
+.profile-reservations .main-button {
+  text-align: center;
+  margin-bottom: -53px;
+}
+
+.proile-points ul {
   border-radius: 23px;
   padding: 30px;
-  background-color: #27292a;
+  background-color: #1f2122;
 }
 
-.main-profile ul li {
+.proile-points ul li {
   width: 100%;
   font-size: 14px;
   color: #666;
@@ -1329,70 +1427,14 @@ footer p a:hover {
   border-bottom: 1px solid #666;
 }
 
-.main-profile ul li span {
+.proile-points ul li span {
   float: right;
   font-weight: 500;
-  color: #ec6090;
+  color: #db3636;
 }
 
-.main-profile ul li:last-child {
+.proile-points ul li:last-child {
   border-bottom: none;
   padding-bottom: 0;
   margin-bottom: 0;
-}
-
-.clips {
-  margin-top: 30px;
-  border-top: 2px solid #27292a;
-}
-
-.clips .heading-section {
-  margin-top: 30px;
-}
-
-.clips .item  {
-  border-radius: 23px;
-  padding: 30px 15px;
-  background-color: #27292a;
-  margin-bottom: 30px;
-}
-
-.clips .item .thumb {
-  position: relative;
-  margin-bottom: 15px;
-}
-
-.clips .item .thumb a {
-  position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-23px, -23px);
-    width: 46px;
-    height: 46px;
-    background-color: #fff;
-    border-radius: 50%;
-    display: inline-block;
-    text-align: center;
-    line-height: 46px;
-    color: #ec6090;
-}
-
-.clips .item h4 {
-  font-size: 15px;
-  display: inline-block;
-}
-
-.clips .item span i {
-  color: #ec6090;
-}
-
-.clips .item span {
-  float: right;
-  color: #fff;
-  font-size: 14px;
-}
-
-.clips .main-button {
-  margin-top: 10px;
-  text-align: center;
 }
