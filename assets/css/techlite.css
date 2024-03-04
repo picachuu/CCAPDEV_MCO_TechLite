@@ -1465,6 +1465,23 @@ section {
   background-color: #c32f2f;
 }
 
+/* view all*/
+
+.view-all-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #27292a;
+  border-radius: 10px;
+  color: #FFF;
+}
+
+.view-all-container h2 {
+  color: #db3636;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 /* About */
 .about {
   background-image: url(../images/about.jpg);

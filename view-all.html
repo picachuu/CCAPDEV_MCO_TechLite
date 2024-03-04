@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View All Reservations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/techlite.css"> <!-- Update path as needed -->
+</head>
+<body>
+    <div class="view-all-container">
+        <h2>View All Reservations</h2>
+        <label for="tierSelect">Choose a Tier/Room:</label>
+        <select id="tierSelect" class="tier-select">
+            <option value="tier1">Tier 1</option>
+            <option value="tier2">Tier 2</option>
+            <option value="tier3">Tier 3</option>
+        </select>
+
+        <div id="seatsContainer" class="seats-container">
+            <!-- Dynamically load seats here -->
+        </div>
+    </div>
+
+    <script src="assets/js/view-all.js"></script> <!-- Update path as needed -->
+</body>
+</html>
