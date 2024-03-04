@@ -1,4 +1,6 @@
-//
+// Installation Procedure
+// npm init
+// npm i express express-handlebars body-parser
 
 const express = require('express');
 const server = express();
@@ -25,45 +27,13 @@ server.use(express.static('public'));
 //const dateinfo = require('./DateInfo');
 
 
-server.get('/', function(req, resp){
-    
-    resp.render('main',{
-        layout: 'index',
-        title: 'TechLite',
-    });
-});
-
-server.get('/profile', function(req, resp){
-    
-    resp.render('profile',{
-        layout: 'index',
-        title: 'TechLite - Profile',
-    });
-});
-
-server.get('/reserve', function(req, resp){
-    
-    resp.render('reserve',{
-        layout: 'index',
-        title: 'TechLite - Reserve Your Seat',
-    });
-});
-
-server.get('/search', function(req, resp){
-    
-    resp.render('search',{
-        layout: 'index',
-        title: 'TechLite - Search',
-    });
-});
-
-server.get('/services', function(req, resp){
-    
-    resp.render('services',{
-        layout: 'index',
-        title: 'TechLite - Services',
-    });
-});
+//This part of the code will load the controllers that will interact
+//with the rest of the system.
+const controllers = ['routes'];
+for(var i=0; i<controllers.length; i++){
+  const ctrl = require('./controllers/'+controllers[i]);
+  ctrl.add(server);
+}
 
 
 const port = process.env.PORT | 9090;
