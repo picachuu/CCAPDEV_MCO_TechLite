@@ -78,39 +78,22 @@
       </header>
       <!-- Header End -->
 
-<div class="reserve-main-banner">
-<div class="reservation-container">
-    <div class="tier-selection">
-        <label for="tierSelect">Choose a Tier:</label>
-        <select id="tierSelect" class = "tier-select" onchange="showSeats(this.value)">
-            <option value="">Select a Tier</option>
-            <option value="tier1">Tier 1</option>
-            <option value="tier2">Tier 2</option>
-            <option value="tier3">Tier 3</option>
-        </select>
-    </div>
+      
+<!-- Timetable container -->
+<div id="timetable" class="timetable"></div>
 
-    <div id="seatsContainer" class="seats-container">
-        <!-- JavaScript will populate this area with seat buttons based on the selected tier -->
+<!-- Reservation Modal (Hidden by default) -->
+<div id="reservationModal" class="reservation-modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h4>Reserve a Slot</h4>
+        <input type="hidden" id="selectedSlot" name="selectedSlot">
+        <input type="text" id="reservationName" name="name" placeholder="Your Name" required>
+        <input type="email" id="reservationEmail" name="email" placeholder="Your Email" required>
+        <button type="button" onclick="submitReservation()">Reserve</button>
     </div>
-
-    <div id="reservationForm" class="reservation-form" style="display:none;">
-        <form>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            
-            <label for="timeFrom">Time From:</label>
-            <input type="time" id="timeFrom" name="timeFrom" required>
-            
-            <label for="timeTo">Time To:</label>
-            <input type="time" id="timeTo" name="timeTo" required>
-            
-            <button type="button" onclick="submitReservation()">Reserve</button>
-        </form>
-    </div>
-
-    
 </div>
+
 
 <div id="confirmationPopup" class="confirmation-popup" style="display:none;">
     <p>Your reservation is confirmed!</p>

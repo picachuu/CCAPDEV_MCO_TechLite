@@ -328,8 +328,62 @@ function showSeats(tier) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    /* Get the timetable container element */
+    const timetable = document.getElementById('timetable');
 
+    /* Define time slots and rooms */
+    const timeSlots = ['9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm'];
+    const rooms = ['8A', '8B', '8G', '8H'];
 
+    /* Generate the timetable grid with clickable slots */
+    rooms.forEach(room => {
+        timeSlots.forEach(slot => {
+            let timeSlotDiv = document.createElement('div');
+            timeSlotDiv.className = 'time-slot';
+            timeSlotDiv.dataset.room = room;
+            timeSlotDiv.dataset.time = slot;
+            timeSlotDiv.textContent = slot;
+            timeSlotDiv.onclick = function() { openModal(this.dataset.room, this.dataset.time); };
+            timetable.appendChild(timeSlotDiv);
+        });
+    });
+
+    /* Open the modal for reservation details */
+    function openModal(room, time) {
+        document.getElementById('selectedSlot').value = `Room ${room} at ${time}`;
+        document.getElementById('reservationModal').style.display = 'block';
+    }
+
+    /* Close the reservation modal */
+    function closeModal() {
+        document.getElementById('reservationModal').style.display = 'none';
+    }
+
+    /* Submit the reservation */
+    function submitReservation() {
+        const selectedSlot = document.getElementById('selectedSlot').value;
+        const name = document.getElementById('reservationName').value;
+        const email = document.getElementById('reservationEmail').value;
+
+        /* Validate the input fields */
+        if (name.trim() === '' || email.trim() === '') {
+            alert('Please enter your name and email.');
+            return;
+        }
+
+        /* Simulate reservation submission and display confirmation */
+        console.log('Reservation submitted:', { selectedSlot, name, email });
+        alert(`Reserved ${selectedSlot} for ${name}`);
+
+        /* Close the modal and reset the form */
+        closeModal();
+        document.getElementById('reservationName').value = '';
+        document.getElementById('reservationEmail').value = '';
+    }
+});
+
+/*
 function submitReservation() {
     // Example validation: check if name is entered
     const name = document.getElementById('name').value;
@@ -340,7 +394,7 @@ function submitReservation() {
 
     // Simulate a successful reservation
     document.getElementById('confirmationPopup').style.display = 'block';
-}
+} */
 
 function closePopup() {
     document.getElementById('confirmationPopup').style.display = 'none';
