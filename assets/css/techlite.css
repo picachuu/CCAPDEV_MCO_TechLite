@@ -1045,6 +1045,11 @@ section {
   z-index: 100;
 }
 
+.time-block.selected {
+  background-color: #a12929; 
+  color: white; 
+}
+
 /* Search */
 
 .search-page{

@@ -281,12 +281,32 @@
 
 
 /* Reserve */
+document.addEventListener('DOMContentLoaded', function() {
+    populateDays();
+});
+
+function populateDays() {
+    const daySelect = document.getElementById('daySelect');
+    const today = new Date();
+    for (let i = 0; i < 3; i++) {
+        const optionDate = new Date(today);
+        optionDate.setDate(today.getDate() + i);
+        const option = document.createElement('option');
+        option.value = optionDate.toISOString().split('T')[0]; // Use ISO date string as value
+        option.textContent = optionDate.toLocaleDateString();
+        daySelect.appendChild(option);
+    }
+
+    // Trigger the rest of the flow once a day is selected
+    daySelect.addEventListener('change', function() {
+        // Example: Reset or prepare UI for the next steps
+    });
+}
+
 function showSeats(tier) {
     const seatsContainer = document.getElementById('seatsContainer');
     seatsContainer.innerHTML = ''; // Clear previous seats
-    let selectedSeat = null; // Keep track of the selected seat
 
-    // Create a container for each column to hold the seats
     const columns = [];
     for (let i = 0; i < 3; i++) {
         const column = document.createElement('div');
@@ -295,57 +315,90 @@ function showSeats(tier) {
         columns.push(column);
     }
 
-    // Populate each column with 5 seats
     for (let i = 1; i <= 15; i++) {
         const seat = document.createElement('button');
         seat.classList.add('seat');
-        
-        // Determine the column index (0, 1, or 2) based on the seat number
         const columnIndex = Math.floor((i - 1) / 5);
-
-        if (Math.random() < 0.3) { // 30% chance a seat is unavailable
-            seat.classList.add('unavailable');
-        } else {
-            // Add click event to available seats
-            seat.addEventListener('click', function() {
-                // Highlight the selected seat and unhighlight the previous one
-                if (selectedSeat) {
-                    selectedSeat.classList.remove('selected');
-                }
-                this.classList.add('selected');
-                selectedSeat = this;
-
-                // Display the reservation form
-                document.getElementById('reservationForm').style.display = 'block';
-                document.getElementById('name').value = ''; // Reset form values
-                document.getElementById('timeFrom').value = '';
-                document.getElementById('timeTo').value = '';
-            });
-        }
-
         seat.textContent = `Seat ${i}`;
+        seat.addEventListener('click', function() {
+            // Handle seat selection here
+            if (!this.classList.contains('selected')) {
+                // Optional: Clear previously selected seat if your logic requires single selection
+                document.querySelectorAll('.seat.selected').forEach(selectedSeat => {
+                    selectedSeat.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                populateTimeBlocks(); // Populate time blocks after seat is selected
+            }
+        });
         columns[columnIndex].appendChild(seat);
+    }
+}
+
+function populateTimeBlocks() {
+    const timeBlocksContainer = document.getElementById('timeBlocksContainer');
+    timeBlocksContainer.innerHTML = ''; // Clear previous time blocks
+    timeBlocksContainer.style.display = 'block'; // Ensure the container is visible
+
+    let selectedTimeBlocks = []; // Keep track of selected time blocks
+
+    // Generate time blocks
+    for (let hour = 0; hour < 24; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+            const timeBlock = document.createElement('button');
+            timeBlock.classList.add('time-block', 'available'); // 'available' for styling
+            const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+            timeBlock.textContent = timeString;
+            timeBlock.value = timeString;
+
+            timeBlock.addEventListener('click', function() {
+                // Toggle selection
+                if (selectedTimeBlocks.includes(this.value)) {
+                    this.classList.remove('selected'); // Visually indicate deselection
+                    selectedTimeBlocks = selectedTimeBlocks.filter(time => time !== this.value);
+                } else if (selectedTimeBlocks.length < 4) { // Limit selection to 4 blocks
+                    this.classList.add('selected'); // Visually indicate selection
+                    selectedTimeBlocks.push(this.value);
+                }
+
+                // Toggle form visibility based on number of selected time blocks
+                toggleFormVisibility(selectedTimeBlocks.length > 0);
+            });
+
+            timeBlocksContainer.appendChild(timeBlock);
+        }
+    }
+}
+
+function toggleFormVisibility(show) {
+    const reservationForm = document.getElementById('reservationForm');
+    if (show) {
+        reservationForm.style.display = 'block'; // Show the form
+    } else {
+        reservationForm.style.display = 'none'; // Hide the form
+        // Optionally reset the form fields here if desired
     }
 }
 
 
 
+
 function submitReservation() {
-    // Example validation: check if name is entered
     const name = document.getElementById('name').value;
-    if (name.trim() === '') {
-        alert('Please enter your name.');
+    const email = document.getElementById('email').value;
+    // Validate input (simplified)
+    if (name.trim() === '' || email.trim() === '') {
+        alert('Please enter both your name and email.');
         return;
     }
 
-    // Simulate a successful reservation
+    // Proceed with reservation logic
     document.getElementById('confirmationPopup').style.display = 'block';
 }
 
 function closePopup() {
     document.getElementById('confirmationPopup').style.display = 'none';
 }
-
 
 /* Search */
 function showSearchForm(option) {
