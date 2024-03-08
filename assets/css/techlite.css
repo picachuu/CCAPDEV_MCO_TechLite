@@ -1598,8 +1598,9 @@ footer p a:hover {
 
 .main-profile img {
   border-radius: 500px;
-  width: 290px;
-  height: 290px;
+  width: 28%;
+  height: 28%;
+  object-fit: cover;
   border: 10px solid white; 
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   margin-right: 50px;
@@ -1641,11 +1642,13 @@ footer p a:hover {
   margin-top: 100px;
 }
 
+.main-profile .edit {
+  margin-top: 107px;
+}
+
 .main-profile .profile-details i {
   color: white;
   font-size: 24px;
-  margin-top: 107px;
-  margin-left: 400px;
 }
 
 .main-profile .profile-details {
