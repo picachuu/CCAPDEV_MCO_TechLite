@@ -3,18 +3,30 @@
         <div class="row">
             <div class="col-12">
                 <nav class="main-nav">
-                    <a href="main" method='get' class="logo">
+                    <a href="index.html" class="logo">
                         <img src="assets/images/logo.png" alt="">
                     </a>
                     <!-- Menu Start -->
                     <!-- Popup Form (Hidden by default) -->
                     <div id="loginPopup" class="login-popup" style="display: none;">
                       <a href="" class="close">&times;</a>
-                      <h4>Login</h4>
-                      <form>
+                      <h4>Log In to Your Account</h4>
+                      <form name="login" action="login-account" onsubmit="return checkLogin()" method="post">
                         <input type="text" name="username" class="username form-control" placeholder="Username"/>
-                        <input type="password" name="password" class="password form-control" placeholder="password"/>
-                        <input class="btn login" type="submit" value="Login" />
+                        <input type="password" name="password" class="password form-control" placeholder="Password"/>
+                        <p>Don't have an account? <a href="#" id="createAccountLink">Create here</a></p>
+                        <input id="confirm-login" class="btn login" type="submit" value="Login" />
+                      </form>
+                    </div>
+                    <div id="createAccountPopup" class="create-account-popup" style="display: none;">
+                      <a href="#" class="close">&times;</a>
+                      <h4>Create an Account</h4>
+                      <form name="create" action="create-account" onsubmit="return checkCreateUser()" method="post">
+                        <input type="text" name="newUsername" class="form-control" placeholder="Username"/>
+                        <input type="email" name="email" class="form-control" placeholder="Email"/>
+                        <input type="password" name="newPassword" class="form-control" placeholder="Password"/>
+                        <input type="password" name="confirmPassword" class="form-control" placeholder="Confirm Password"/>
+                        <input class="btn create-account" type="submit" value="Create Account" />
                       </form>
                     </div>
                     <ul class="nav">
@@ -22,7 +34,8 @@
                         <li><a href='reserve' method='get'>Reserve</a></li>
                         <li><a href="search" method='get'>Search</a></li>
                         <li><a href="services" method='get'>Services</a></li>
-                        <li><a href="profile" method='get'>Profile <img src="assets/images/profile.jpg" alt=""></a></li>
+                        <!--<li><a href="profile.html">Profile <img src="assets/images/profile.jpg" alt=""></a></li>-->
+                        <li><a href="#" id="loginBtn" class="login-button">Log In</a></li>
                     </ul>
                     <a class='menu-trigger'>
                         <span>Menu</span>

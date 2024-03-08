@@ -177,6 +177,9 @@
 
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
+
+        // user data container
+        var userData = null;
 	    
 	    //smoothscroll
 	    $('.scroll-to-section a[href^="#"]').on('click', function (e) {
@@ -198,6 +201,24 @@
 	            $(document).on("scroll", onScroll);
 	        });
 	    });
+
+        
+
+        // // login-confirm button obtains user information from app.js
+        // $("#login-confirm").click(function(){
+        //     $.post(
+        //       /* Link sent to the server */
+        //       'login-account',
+        //       /* Input sent to the server */
+        //       {},
+        //       /* Call-back function that processes the server response */
+        //       function(data, status){
+        //         if(status === 'success'){
+        //           userData = data.user;
+        //           window.alert('User data obtained: ' + JSON.stringify(userData));
+        //         }//if
+        //       });//fn+post
+        //   });//btn
 	});
 
 	function onScroll(event){
@@ -556,6 +577,52 @@ function purchaseReward() {
     }
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+    var loginBtn = document.getElementById('loginBtn');
+    var loginPopup = document.getElementById('loginPopup');
+    var createAccountPopup = document.getElementById('createAccountPopup');
+    var closeBtns = document.querySelectorAll('.login-popup .close, .create-account-popup .close');
+    var createAccountLink = document.getElementById('createAccountLink');
+    var loginLink = document.getElementById('loginLink');
+
+    // Function to toggle the login popup
+    function togglePopup(popup) {
+        if (popup.style.display === "block") {
+            popup.style.display = "none";
+        } else {
+            popup.style.display = "block";
+        }
+    }
+
+    // Show the login popup when login button is clicked
+    if(loginBtn) {
+        loginBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            togglePopup(loginPopup);
+        });
+    }
+
+    // Close popups when close button is clicked
+    closeBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            togglePopup(this.closest('.login-popup') || this.closest('.create-account-popup'));
+        });
+    });
+
+    // Show the create account popup when "Create here" is clicked
+    createAccountLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default anchor behavior
+        togglePopup(loginPopup); // Close the login popup
+        togglePopup(createAccountPopup); // Open the create account popup
+    });
+
+    loginLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default anchor behavior
+        togglePopup(createAccountPopup); // Close the create account popup
+        togglePopup(loginPopup); // Open the login popup
+    });
+});
 
 
   
