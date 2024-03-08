@@ -556,6 +556,45 @@ function purchaseReward() {
     }
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+    var loginBtn = document.getElementById('loginBtn');
+    var loginPopup = document.getElementById('loginPopup');
+    var createAccountPopup = document.getElementById('createAccountPopup');
+    var closeBtns = document.querySelectorAll('.login-popup .close, .create-account-popup .close');
+    var createAccountLink = document.getElementById('createAccountLink');
+
+    // Function to toggle the login popup
+    function togglePopup(popup) {
+        if (popup.style.display === "block") {
+            popup.style.display = "none";
+        } else {
+            popup.style.display = "block";
+        }
+    }
+
+    // Show the login popup when login button is clicked
+    if(loginBtn) {
+        loginBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            togglePopup(loginPopup);
+        });
+    }
+
+    // Close popups when close button is clicked
+    closeBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            togglePopup(this.closest('.login-popup') || this.closest('.create-account-popup'));
+        });
+    });
+
+    // Show the create account popup when "Create here" is clicked
+    createAccountLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default anchor behavior
+        togglePopup(loginPopup); // Close the login popup
+        togglePopup(createAccountPopup); // Open the create account popup
+    });
+});
 
 
   
