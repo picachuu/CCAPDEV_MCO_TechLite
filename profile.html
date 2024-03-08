@@ -70,18 +70,23 @@
   </header>
   <!-- Header End -->
 
+  <input type="file" id="profileImageInput" style="display: none;" accept="image/*">
+  <input type="file" id="coverImageInput" style="display: none;" accept="image/*">
+  
+
   <!-- Cover Start -->
-  <div class="cover-banner"></div>
-    <div class="main-profile">
-        <img src="assets/images/profile.jpg" alt="">
+  <div class="cover-banner" id="coverBannerContainer">
+  </div>
+    <div div class="main-profile" id="profileImageContainer">
+      <img src="assets/images/profile.jpg" alt="" id="profileImage">
         <div class="profile-details">
           <div class="main-info">
             <span>Manager</span>
-            <h4>Epic Gamer</h4>
-            <p>Im just your average gamer</p>
+            <h4 id="userName" contenteditable="false">Epic Gamer</h4>
+            <p id="userBio" contenteditable="false">Im just your average gamer</p>
           </div> 
           <div class="edit">
-            <a href="#" id="editProfileBtn"><i class="fa fa-pencil"></i></a>
+            <a href="#" id="editProfileBtn"><i id="editIcon" class="fa fa-pencil"></i></a>
           </div>
       </div>
     </div>

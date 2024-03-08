@@ -1593,6 +1593,7 @@ footer p a:hover {
   margin-top: -100px;
   align-items: center;
   padding: 0px 400px;
+  position: relative;
 
 }
 
@@ -1614,6 +1615,7 @@ footer p a:hover {
   padding: 80px 60px;
   background-attachment: fixed;
   background-repeat: no-repeat;
+  position: relative;
 }
 
 .main-profile span {
@@ -1636,6 +1638,11 @@ footer p a:hover {
 
 .main-profile p {
   font-size: 20px;
+}
+
+.editable {
+background-color: #242222;
+border: 1.5px solid rgb(255, 255, 255);
 }
 
 .main-info {
@@ -1834,4 +1841,44 @@ footer p a:hover {
 .login:hover, .create-account:hover {
   background: #4477d6;
   color: #fff;
+}
+
+.main-profile.with-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 400px;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay; adjust as needed */
+  border-radius: 500px; /* Ensure it matches the container's border-radius */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url(../images/image.png); /* Path to your icon */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 30%; /* Adjust the size of the icon */
+  cursor: pointer;
+
+  width: 294px;
+  height: 294px;
+}
+
+.cover-banner.with-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay; adjust as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url(../images/image.png); /* Path to your icon */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 5%; /* Adjust the size of the icon */
+  cursor: pointer;
 }

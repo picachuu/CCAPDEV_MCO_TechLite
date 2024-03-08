@@ -603,5 +603,104 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    var editBtn = document.getElementById('editProfileBtn');
+    var userName = document.getElementById('userName');
+    var userBio = document.getElementById('userBio');
+    var profileImageContainer = document.getElementById('profileImageContainer');
+    var coverImageContainer = document.getElementById('coverBannerContainer');
+    var profileImageInput = document.getElementById('profileImageInput');
+    var coverImageInput = document.getElementById('coverImageInput');
+    var editIcon = document.getElementById('editIcon');
+    var editing = false;
 
+    function toggleEditMode() {
+        editing = !editing;
+        userName.contentEditable = editing;
+        userBio.contentEditable = editing;
+        if (editing) {
+            userName.classList.add('editable');
+            userBio.classList.add('editable');
+            focusAtEnd(userName);
+            editIcon.className = 'fa fa-check';
+        } else {
+            userName.classList.remove('editable');
+            userBio.classList.remove('editable');
+            editIcon.className = 'fa fa-pencil';
+        }
+        // Toggle overlay only if needed, make sure this logic matches your intent
+        profileImageContainer.classList.toggle('with-overlay', editing);
+        coverImageContainer.classList.toggle('with-overlay', editing);
+    }
+
+    editBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleEditMode();
+    });
+
+    function handleProfileImageUpload(e) {
+        e.stopPropagation(); // Prevent triggering edit mode toggle
+        if (editing) {
+            profileImageInput.click();
+        }
+    }
+
+    function handleCoverImageUpload(e) {
+        e.stopPropagation(); // Prevent triggering edit mode toggle
+        if (editing) {
+            coverImageInput.click();
+        }
+    }
+
+    profileImageContainer.addEventListener('click', handleProfileImageUpload);
+    coverImageContainer.addEventListener('click', handleCoverImageUpload);
+
+    profileImageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profileImage').src = e.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    coverImageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                coverImageContainer.style.backgroundImage = 'url(' + e.target.result + ')';
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Define the focusAtEnd function if it's not already defined
+    function focusAtEnd(element) {
+        var range = document.createRange();
+        var sel = window.getSelection();
+        range.selectNodeContents(element);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        element.focus();
+    }
+});
+
+  function saveProfileChanges() {
+    // Example logic to send updated profile information and images to the server
+    // You need to implement AJAX request here according to your server API
+  
+    var userName = document.getElementById('userName').innerText;
+    var userBio = document.getElementById('userBio').innerText;
+  
+    console.log('Saving profile changes:', userName, userBio);
+    // Here, add your AJAX call to send the userName, userBio, and image files to the server
+  
+    // Reset editing state
+    editing = false;
+    // Update UI to reflect the non-editing state
+  }
+
+  
   
