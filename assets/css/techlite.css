@@ -1598,8 +1598,8 @@ footer p a:hover {
 
 .main-profile img {
   border-radius: 500px;
-  width: 28%;
-  height: 28%;
+  width: 38%;
+  height: 38%;
   object-fit: cover;
   border: 10px solid white; 
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -1643,7 +1643,8 @@ footer p a:hover {
 }
 
 .main-profile .edit {
-  margin-top: 107px;
+  display: flex;
+  align-items: center;
 }
 
 .main-profile .profile-details i {
@@ -1653,6 +1654,8 @@ footer p a:hover {
 
 .main-profile .profile-details {
   display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .profile-page-content {
@@ -1776,12 +1779,12 @@ footer p a:hover {
   top: 30px; 
 }
 
-.login-popup p {
+.login-popup p, .create-account-popup p {
   font-weight: normal;
   color: #ffffff;
 }
 
-.login-popup a {
+.login-popup a, .create-account-popup a {
   font-weight: normal;
   color: #5791fc;
 }

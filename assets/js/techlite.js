@@ -562,6 +562,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var createAccountPopup = document.getElementById('createAccountPopup');
     var closeBtns = document.querySelectorAll('.login-popup .close, .create-account-popup .close');
     var createAccountLink = document.getElementById('createAccountLink');
+    var loginLink = document.getElementById('loginLink');
 
     // Function to toggle the login popup
     function togglePopup(popup) {
@@ -593,6 +594,12 @@ document.addEventListener("DOMContentLoaded", function() {
         event.preventDefault(); // Prevent default anchor behavior
         togglePopup(loginPopup); // Close the login popup
         togglePopup(createAccountPopup); // Open the create account popup
+    });
+
+    loginLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default anchor behavior
+        togglePopup(createAccountPopup); // Close the create account popup
+        togglePopup(loginPopup); // Open the login popup
     });
 });
 
