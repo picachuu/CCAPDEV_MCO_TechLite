@@ -279,6 +279,9 @@
 
 })(window.jQuery);
 
+//would be very convenient if we have the copy of db here
+//generate code to obtain the data from the database
+
 
 /* Reserve */
 function showSeats(tier) {
@@ -317,9 +320,39 @@ function showSeats(tier) {
 
                 // Display the reservation form
                 document.getElementById('reservationForm').style.display = 'block';
+                //include here logic to get the value from mongoDB
+                //use seat.textContent to get the seat number
+                let seatnumber = Number(this.textContent.slice(5));
+                let tiernumber = Number(document.getElementById("tierSelect").value);
+
+                $.post(
+                    /* Link sent to the server */
+                    'reserve',
+                    /* Input sent to the server */
+                    { seat_num: seatnumber, tier_num: tiernumber },
+                    /* Call-back function that processes the server response */
+                    function(data, status){
+                      if(status === 'success'){
+                        //using tier and seatnumber, get the array of available timeslots from the database
+                        //then populate the select element with the available timeslots
+                        //clear the select element first
+                        var selection = document.getElementById("tierSelect");
+
+                        // Remove all options
+                        while (selection.options.length > 0) {
+                            select.remove(0); // Remove the first option (index 0) repeatedly until no options are left
+                        }
+
+                        //let textContent = $("<div></div>").text($('#textinput').val()+' : '+data.sound);
+                        $('#contentbody').append(textContent);
+                      }//if
+                    });//fn+post
+
+            
                 document.getElementById('name').value = ''; // Reset form values
-                document.getElementById('timeFrom').value = '';
-                document.getElementById('timeTo').value = '';
+
+                //document.getElementById('timeFrom').value = '';
+                //document.getElementById('timeTo').value = '';
             });
         }
 
