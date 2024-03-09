@@ -445,8 +445,10 @@ section {
 
 .header-area .main-nav .nav li:last-child a:not(.login-button) img {
   max-width: 30px;
+  height: 30px;
   border-radius: 50%;
   margin-left: 5px;
+  object-fit: cover;
 }
 
 .header-area .main-nav .nav li:last-child a:not(.login-button):hover {
@@ -1599,13 +1601,15 @@ footer p a:hover {
 
 .main-profile img {
   border-radius: 500px;
-  height: 38%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
 .imageContainer{
   border-radius: 500px;
-  max-width: 294px;
+  width: 285px;
+  height: 285px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1887,10 +1891,10 @@ footer p a:hover {
 .imageContainer.with-overlay::before {
   content: '';
   position: absolute;
-  top: -3px;
+  top: 0;
   right: 0;
   bottom: 0;
-  left: 398px;
+  left: 400px;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 500px; 
   display: flex;
@@ -1901,8 +1905,8 @@ footer p a:hover {
   background-position: center;
   background-size: 30%;
   cursor: pointer;
-  width: 294px;
-  height: 294px;
+  width: 285px;
+  height: 285px;
 }
 
 .cover-banner.with-overlay::before {

@@ -615,6 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var coverImageInput = document.getElementById('coverImageInput');
     var editIcon = document.getElementById('editIcon');
     var mainProfile = document.getElementById('main-profile');
+
     var editing = false;
 
     function toggleEditMode() {
@@ -628,6 +629,7 @@ document.addEventListener('DOMContentLoaded', function() {
             editIcon.className = 'fa fa-check';
             imageOverlay.classList.add('cursor-pointer'); 
             coverOverlay.classList.add('cursor-pointer'); 
+            focusAtEnd(userName);
         } else {
             userName.classList.remove('editable');
             userBio.classList.remove('editable');
@@ -682,6 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('profileImage').src = e.target.result;
+                document.getElementById('navbarProfileImage').src = e.target.result;
             };
             reader.readAsDataURL(this.files[0]);
         }
