@@ -348,8 +348,8 @@ function showSeats(tier) {
                         for (var i = 0; i < data.seats.length; i++) {
                             var option1 = document.createElement("option");
                             var option2 = document.createElement("option");
-                            option1.value = Number(data.seats[i].Time_start); // Set the value property of the option (in hours)
-                            option2.value = Number(data.seats[i].Time_end);
+                            option1.value = Number(data.seats[i].time_start); // Set the value property of the option (in hours)
+                            option2.value = Number(data.seats[i].time_end);
                             
                             switch (Number(option1.value)) {
                                 case 900: option1.text = '9:00 AM'; option2.text = '10:00 AM'; break;

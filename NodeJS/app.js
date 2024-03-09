@@ -29,7 +29,7 @@ server.use(express.static('public'));
 
 //This part of the code will load the controllers that will interact
 //with the rest of the system.
-const controllers = ['routes'];
+const controllers = ['routes','dbquery'];
 for(var i=0; i<controllers.length; i++){
   const ctrl = require('./controllers/'+controllers[i]);
   ctrl.add(server);

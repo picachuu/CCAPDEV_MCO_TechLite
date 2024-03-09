@@ -1,17 +1,3 @@
-//Routes
-//const responder = require('../models/Responder'); //loads this model that is needed
-
-const dbmodel = require('../models/dbmodel');
-const T1 = "Tier1";
-const T2 = "Tier2";
-const T3 = "Tier3";
-const MongoClient = dbmodel.mongoClient;
-MongoClient.connect().then(function(con){
-    const dbo = MongoClient.db('techlite');
-    //Will create a collection if it has not yet been made
-    dbo.createCollection(T1)
-      .then(dbmodel.successFn).catch(dbmodel.errorFn);
-  }).catch(dbmodel.errorFn);
 
 function add(server){
   server.get('/', function(req, resp){
@@ -40,37 +26,6 @@ function add(server){
       });
   });
 
-  server.post('/reserve', function(req, resp){
-
-    console.log('Reserve post request received');
-    const dbo = MongoClient.db(dbmodel.databaseName);
-    let col;
-    switch(Number(req.body.tier_num)){
-        case 1: col = dbo.collection(T1); break;
-        case 2: col = dbo.collection(T2); break;
-        case 3: col = dbo.collection(T3); break;
-    }
-
-    const searchQuery = {
-        Seats: Number(req.body.seat_num), 
-        Taken: false
-    };
-
-    console.log(searchQuery);
-    
-    const cursor = col.find(searchQuery);
-    cursor.toArray().then(function(vals) {
-        console.log('List successful');
-        /*resp.render('reserve', {
-            layout: 'index',
-            title:  'TechLite - Reserve Your Seat',
-            seats: vals
-        });*/
-        console.log(vals);
-        resp.send({seats: vals});
-    }).catch(dbmodel.errorFn);
-
-  });
 
   server.get('/search', function(req, resp){
       
