@@ -642,8 +642,9 @@ document.addEventListener('DOMContentLoaded', function() {
         coverImageContainer.classList.toggle('with-overlay', editing);
     }
 
-    var userNameMaxLength = 30; // Set your desired max length
+    var userNameMaxLength = 19; // Set your desired max length
     var userBioMaxLength = 160; // Set your desired max length
+    
 
     userName.addEventListener('keypress', function(e) {
         if (userName.textContent.length >= userNameMaxLength) {
@@ -653,6 +654,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     userBio.addEventListener('keypress', function(e) {
         if (userBio.textContent.length >= userBioMaxLength) {
+            e.preventDefault();
+        }
+    });
+
+    userName.addEventListener('input', function() {
+        this.textContent = this.textContent.replace(/\s/g, '');
+    });
+    
+    userName.addEventListener('keydown', function(e) {
+        if (e.key === ' ') {
             e.preventDefault();
         }
     });

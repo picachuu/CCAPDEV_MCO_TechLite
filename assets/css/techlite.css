@@ -1699,6 +1699,10 @@ footer p a:hover {
   align-items: center;
 }
 
+.username-container {
+  display: flex;
+}
+
 .main-profile .profile-details i {
   color: white;
   font-size: 24px;
