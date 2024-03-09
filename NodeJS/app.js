@@ -21,10 +21,6 @@ server.use(express.static('public'));
 //a class that is consistent with the naming convention the
 //css file use.
 
-//Modify the code in this area
-
-
-//const dateinfo = require('./DateInfo');
 
 
 //This part of the code will load the controllers that will interact

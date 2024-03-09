@@ -177,6 +177,9 @@
 
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
+
+        // user data container
+        var userData = null;
 	    
 	    //smoothscroll
 	    $('.scroll-to-section a[href^="#"]').on('click', function (e) {
@@ -198,6 +201,24 @@
 	            $(document).on("scroll", onScroll);
 	        });
 	    });
+
+        
+
+        // // login-confirm button obtains user information from app.js
+        // $("#login-confirm").click(function(){
+        //     $.post(
+        //       /* Link sent to the server */
+        //       'login-account',
+        //       /* Input sent to the server */
+        //       {},
+        //       /* Call-back function that processes the server response */
+        //       function(data, status){
+        //         if(status === 'success'){
+        //           userData = data.user;
+        //           window.alert('User data obtained: ' + JSON.stringify(userData));
+        //         }//if
+        //       });//fn+post
+        //   });//btn
 	});
 
 	function onScroll(event){
@@ -279,9 +300,6 @@
 
 })(window.jQuery);
 
-//would be very convenient if we have the copy of db here
-//generate code to obtain the data from the database
-
 
 /* Reserve */
 function showSeats(tier) {
@@ -301,7 +319,6 @@ function showSeats(tier) {
     // Populate each column with 5 seats
     for (let i = 1; i <= 15; i++) {
         const seat = document.createElement('button');
-        seat.id = "seat" + i;
         seat.classList.add('seat');
         
         // Determine the column index (0, 1, or 2) based on the seat number
@@ -318,66 +335,12 @@ function showSeats(tier) {
                 }
                 this.classList.add('selected');
                 selectedSeat = this;
-                
-                document.getElementById("name").value = "noice"+i;
 
                 // Display the reservation form
                 document.getElementById('reservationForm').style.display = 'block';
-                //include here logic to get the value from mongoDB
-                //use seat.textContent to get the seat number
-                let seatnumber = i;
-                let tiernumber = 1; //modify with the new TierXs
-
-                $.post(
-                    'reserve',
-                    { seat_num: seatnumber, tier_num: tiernumber },
-                    function(data, status){
-                      if(status === 'success'){
-                        //clear the select element first
-                        console.log(data.seats);
-                        var selection1 = document.getElementById("timeFrom");
-                        var selection2 = document.getElementById("timeTo");
-
-                        // Remove all options
-                        while (selection1.options.length > 0) { //since sel1 is paired with sel2 it's aight to remove together.
-                            selection1.remove(0); // Remove the first option (index 0) repeatedly until no options are left
-                            selection2.remove(0);
-                        }
-
-                        //then populate the select element with the available timeslots
-                        for (var i = 0; i < data.seats.length; i++) {
-                            var option1 = document.createElement("option");
-                            var option2 = document.createElement("option");
-                            option1.value = Number(data.seats[i].time_start); // Set the value property of the option (in hours)
-                            option2.value = Number(data.seats[i].time_end);
-                            
-                            switch (Number(option1.value)) {
-                                case 900: option1.text = '9:00 AM'; option2.text = '10:00 AM'; break;
-                                case 1000: option1.text = '10:00 AM'; option2.text = '11:00 AM'; break;
-                                case 1100: option1.text = '11:00 AM'; option2.text = '12:00 PM'; break;
-                                case 1200: option1.text = '12:00 PM'; option2.text = '1:00 PM'; break;
-                                case 1300: option1.text = '1:00 PM'; option2.text = '2:00 PM'; break;
-                                case 1400: option1.text = '2:00 PM'; option2.text = '3:00 PM'; break;
-                                case 1500: option1.text = '3:00 PM'; option2.text = '4:00 PM'; break;
-                                case 1600: option1.text = '4:00 PM'; option2.text = '5:00 PM'; break;
-                                case 1700: option1.text = '5:00 PM'; option2.text = '6:00 PM'; break;
-                                case 1800: option1.text = '6:00 PM'; option2.text = '7:00 PM'; break;
-                                case 1900: option1.text = '7:00 PM'; option2.text = '8:00 PM'; break;
-                                case 2000: option1.text = '8:00 PM'; option2.text = '9:00 PM'; break;
-                                case 2100: option1.text = '9:00 PM'; option2.text = '10:00 PM'; break;
-                            }
-                            selection1.add(option1);
-                            selection2.add(option2);
-                        }
-                        
-                      }//if
-                    });//fn+post
-
-            
                 document.getElementById('name').value = ''; // Reset form values
-
-                //document.getElementById('timeFrom').value = '';
-                //document.getElementById('timeTo').value = '';
+                document.getElementById('timeFrom').value = '';
+                document.getElementById('timeTo').value = '';
             });
         }
 
@@ -386,19 +349,7 @@ function showSeats(tier) {
     }
 }
 
-function updateTimeSelected1(){
-    var timeFrom = document.getElementById("timeFrom");
-    var timeTo = document.getElementById("timeTo");
-    //generate to match the selected index of timeFrom with timeTo
-    timeTo.selectedIndex = timeFrom.selectedIndex;
-}
 
-function updateTimeSelected2(){
-    var timeFrom = document.getElementById("timeFrom");
-    var timeTo = document.getElementById("timeTo");
-    //generate to match the selected index of timeFrom with timeTo
-    timeFrom.selectedIndex = timeTo.selectedIndex;
-}
 
 function submitReservation() {
     // Example validation: check if name is entered
@@ -626,6 +577,52 @@ function purchaseReward() {
     }
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+    var loginBtn = document.getElementById('loginBtn');
+    var loginPopup = document.getElementById('loginPopup');
+    var createAccountPopup = document.getElementById('createAccountPopup');
+    var closeBtns = document.querySelectorAll('.login-popup .close, .create-account-popup .close');
+    var createAccountLink = document.getElementById('createAccountLink');
+    var loginLink = document.getElementById('loginLink');
+
+    // Function to toggle the login popup
+    function togglePopup(popup) {
+        if (popup.style.display === "block") {
+            popup.style.display = "none";
+        } else {
+            popup.style.display = "block";
+        }
+    }
+
+    // Show the login popup when login button is clicked
+    if(loginBtn) {
+        loginBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            togglePopup(loginPopup);
+        });
+    }
+
+    // Close popups when close button is clicked
+    closeBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            togglePopup(this.closest('.login-popup') || this.closest('.create-account-popup'));
+        });
+    });
+
+    // Show the create account popup when "Create here" is clicked
+    createAccountLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default anchor behavior
+        togglePopup(loginPopup); // Close the login popup
+        togglePopup(createAccountPopup); // Open the create account popup
+    });
+
+    loginLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default anchor behavior
+        togglePopup(createAccountPopup); // Close the create account popup
+        togglePopup(loginPopup); // Open the login popup
+    });
+});
 
 
   

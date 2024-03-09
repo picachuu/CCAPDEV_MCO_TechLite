@@ -4,6 +4,8 @@ const dbmodel = require('../models/dbmodel');
 const tier1_schedModel = dbmodel.tier1_schedModel;
 const tier2_schedModel = dbmodel.tier2_schedModel;
 const tier3_schedModel = dbmodel.tier3_schedModel;
+const userModel = dbmodel.userModel;
+const seatModel = dbmodel.seatModel;
 const db_url = dbmodel.db_url;
 const databaseName = dbmodel.databaseName;
 const errorFn = dbmodel.errorFn;
@@ -11,27 +13,11 @@ const successFn = dbmodel.successFn;
 
 mongoose.connect(db_url+databaseName);
 
-
-
-// MongoClient.connect().then(function(con){
-//     const dbo = MongoClient.db('techlite2');
-//     //Will create a collection if it has not yet been made
-//     dbo.createCollection(T1)
-//       .then(dbmodel.successFn).catch(dbmodel.errorFn);
-//   }).catch(dbmodel.errorFn);
-
 function add(server){
 
   server.post('/reserve', function(req, resp){
 
     console.log('Reserve post request received');
-    // const dbo = MongoClient.db(dbmodel.databaseName);
-    // let col;
-    // switch(Number(req.body.tier_num)){
-    //     case 1: col = dbo.collection(T1); break;
-    //     case 2: col = dbo.collection(T2); break;
-    //     case 3: col = dbo.collection(T3); break;
-    // }
 
     let tierModel;
     switch(Number(req.body.tier_num)){
@@ -53,21 +39,46 @@ function add(server){
         resp.send({seats: vals});
     }).catch(errorFn);
 
-    // console.log(searchQuery);
-    
-    // const cursor = col.find(searchQuery);
-    // cursor.toArray().then(function(vals) {
-    //     console.log('List successful');
-    //     /*resp.render('reserve', {
-    //         layout: 'index',
-    //         title:  'TechLite - Reserve Your Seat',
-    //         seats: vals
-    //     });*/
-    //     console.log(vals);
-    //     resp.send({seats: vals});
-    // }).catch(dbmodel.errorFn);
-
   });
+
+  // login post request for user log-in
+server.post('/login-account', function(req, resp){
+    //Creating a new instance can be made this way.
+    const searchQuery = { //searchQuery for username based log-in
+      username: req.body.username,
+      password: req.body.password
+    };
+  
+  //const dateinfo = require('./DateInfo');
+    const searchEmail = { //searchQuery for email based log-in
+      email: req.body.username,
+      password: req.body.password
+    };
+  
+    let user = null;  // user object for user information is default to null
+  
+    userModel.findOne(searchQuery).lean().then(function(user_data){ //search for username based log-in
+      if (user_data != null){
+  
+        user = user_data; // user object is assigned to user_data
+        resp.redirect('/?success=true'); //redirect to home page with success message
+  
+      } else {
+        userModel.findOne(searchEmail).lean().then(function(user_data){ //search for email based log-in
+  
+          if (user_data != null){
+            user = user_data; // user object is assigned to user_data
+            resp.redirect('/?success=true'); //redirect to home page with success message
+          } else {
+            resp.redirect('/?success=false'); //redirect to home page with failure message
+          }
+  
+        }).catch(errorFn);
+      }
+  
+    }).catch(errorFn);
+  });
+
 }
 
 module.exports.add = add;
