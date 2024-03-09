@@ -1854,6 +1854,7 @@ footer p a:hover {
   padding-left: 0;
   font-weight: normal;
   background: transparent;  
+  color: white;
 }
 .form-control:hover, .form-control:focus {
   box-shadow: none;  
@@ -1867,6 +1868,7 @@ footer p a:hover {
   padding-left: 0;
   font-weight: normal;
   background: transparent;  
+  color: white;
 }
 .form-control::-webkit-input-placeholder {
   color: #ffffff;  
