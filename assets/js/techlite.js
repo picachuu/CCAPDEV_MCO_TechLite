@@ -285,27 +285,46 @@ document.addEventListener('DOMContentLoaded', function() {
     populateDays();
 });
 
+function validateSelection() {
+    const tierSelect = document.getElementById('tierSelect').value;
+    const daySelect = document.getElementById('daySelect').value;
+    
+    // Check if both selections are valid
+    if (tierSelect && daySelect) {
+        showSeats(tierSelect); // Now we only show seats if both selections are valid
+    } else {
+        document.getElementById('seatsContainer').innerHTML = ''; // Clear seats
+        document.getElementById('timeBlocksContainer').style.display = 'none';
+        document.getElementById('reservationForm').style.display = 'none';
+    }
+}
+
+// Adjusted populateDays() function to use validateSelection
 function populateDays() {
     const daySelect = document.getElementById('daySelect');
+    daySelect.innerHTML = '<option value="">Select a Day</option>';
     const today = new Date();
     for (let i = 0; i < 3; i++) {
         const optionDate = new Date(today);
         optionDate.setDate(today.getDate() + i);
         const option = document.createElement('option');
-        option.value = optionDate.toISOString().split('T')[0]; // Use ISO date string as value
+        option.value = optionDate.toISOString().split('T')[0];
         option.textContent = optionDate.toLocaleDateString();
         daySelect.appendChild(option);
     }
 
-    // Trigger the rest of the flow once a day is selected
-    daySelect.addEventListener('change', function() {
-        // Example: Reset or prepare UI for the next steps
-    });
+    // Adjusted to call validateSelection on change
+    daySelect.addEventListener('change', validateSelection);
 }
 
 function showSeats(tier) {
     const seatsContainer = document.getElementById('seatsContainer');
     seatsContainer.innerHTML = ''; // Clear previous seats
+
+
+    if (!tier) {
+        return;
+    }
 
     const columns = [];
     for (let i = 0; i < 3; i++) {
@@ -334,6 +353,8 @@ function showSeats(tier) {
         columns[columnIndex].appendChild(seat);
     }
 }
+
+
 
 function populateTimeBlocks() {
     const timeBlocksContainer = document.getElementById('timeBlocksContainer');
@@ -379,8 +400,6 @@ function toggleFormVisibility(show) {
         // Optionally reset the form fields here if desired
     }
 }
-
-
 
 
 function submitReservation() {

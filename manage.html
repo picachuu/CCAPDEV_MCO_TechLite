@@ -78,30 +78,59 @@
           </header>
           <!-- Header End -->
 
-<div class="manage-page">
-    <div class="reservation-management">
-        <h2>Manage Reservation</h2>
-        <form id="reservationForm">
-            <div class="form-group">
-                <label for="userName">Name of User</label>
-                <input type="text" id="userName" name="userName" required>
-            </div>
-            <div class="form-group">
-                <label for="timeFrom">Time From</label>
-                <input type="time" id="timeFrom" name="timeFrom" required>
-            </div>
-            <div class="form-group">
-                <label for="timeTo">Time To</label>
-                <input type="time" id="timeTo" name="timeTo" required>
-            </div>
-            <div class="form-group">
-                <label for="seatNumber">Seat Number</label>
-                <input type="text" id="seatNumber" name="seatNumber" disabled> 
-            </div>
-            <button type="submit" class="submit-btn">Update Reservation</button>
-        </form>
-    </div>
-  </div>
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+              <title>Manage Reservation</title>
+              <!-- Stylesheets and other head elements remain unchanged -->
+          </head>
+          <body>
+            <div class="reservation-management">
+              <h2>Manage Reservation</h2>
+              <form id="reservationForm">
+                  <div class="form-group">
+                      <label for="userName">Name of User</label>
+                      <input type="text" id="userName" name="userName" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="userEmail">Email</label>
+                      <input type="email" id="userEmail" name="userEmail" required>
+                  </div>
+                  <!-- Tier Selector -->
+                  <div class="form-group">
+                      <label for="tierSelect">Choose a Tier:</label>
+                      <select id="tierSelect" class="tier-select">
+                          <option value="">Select a Tier</option>
+                          <option value="tier1">Tier 1</option>
+                          <option value="tier2">Tier 2</option>
+                          <option value="tier3">Tier 3</option>
+                      </select>
+                  </div>
+                  <!-- Date Selector -->
+                  <div class="form-group">
+                      <label for="daySelect">Choose a Date:</label>
+                      <select id="daySelect" class="day-select">
+                          <!-- Options will be populated by JavaScript -->
+                      </select>
+                  </div>
+                  <!-- Seats Container -->
+                  <div id="seatsContainer" class="seats-container">
+                      <!-- JavaScript will populate this area with seat buttons -->
+                  </div>
+                  <!-- Time Blocks Container -->
+                  <div id="timeBlocksContainer" class="time-blocks-container" style="display:none;">
+                      <!-- JavaScript will populate this area with time block buttons -->
+                  </div>
+                  <button type="button" class="submit-btn">Update Reservation</button>
+              </form>
+          </div>
+          
+              <!-- Contact and Footer elements remain unchanged -->
+          </body>
+          </html>
+          
 
     <!-- Contact Start -->
   <div class="contact">
