@@ -109,6 +109,18 @@ p {
   margin-bottom: 0px;
 }
 
+/* Form Field Enhancements */
+input[type="text"], input[type="email"], select {
+  background-color: #333;
+  border: 2px solid #555;
+  border-radius: 5px;
+  color: #FFF;
+  font-size: 16px;
+  margin: 5px 0 20px; /* Increase spacing */
+  padding: 10px;
+  width: calc(100% - 24px); /* Adjust width for padding */
+}
+
 ::selection {
   background: #db3636;
   color: #fff;
@@ -1053,17 +1065,7 @@ section {
 
 
 
-/* Form Field Enhancements */
-input[type="text"], input[type="email"], select {
-  background-color: #333;
-  border: 2px solid #555;
-  border-radius: 5px;
-  color: #FFF;
-  font-size: 16px;
-  margin: 5px 0 20px; /* Increase spacing */
-  padding: 10px;
-  width: calc(100% - 24px); /* Adjust width for padding */
-}
+
 
 /* Button Enhancements */
 /* Time Blocks Container Grid Layout */
