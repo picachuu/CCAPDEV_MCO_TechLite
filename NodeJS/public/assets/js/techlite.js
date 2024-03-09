@@ -362,6 +362,10 @@ function showSeats(tier) {
     seatsContainer.innerHTML = ''; // Clear previous seats
     let selectedSeat = null; // Keep track of the selected seat
 
+    const reserveContainer = document.getElementById('reservationForm');
+    reserveContainer.style.display = 'none';
+
+
     // Create a container for each column to hold the seats
     const columns = [];
     for (let i = 0; i < 3; i++) {
@@ -388,8 +392,6 @@ function showSeats(tier) {
             case "tier2" : tiernumber = 2; break;
             case "tier3" : tiernumber = 3; break;
             case "tier0" : {
-                const reserveContainer = document.getElementById('reservationForm');
-                reserveContainer.style.display = 'none';
                 seatsContainer.innerHTML = '';
                 continue;}
         }
