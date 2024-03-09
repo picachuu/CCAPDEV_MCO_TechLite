@@ -12,6 +12,14 @@ function add(server){
     resp.redirect('/');
   });
 
+  server.get('/manage', function(req, resp){
+    
+    resp.render('manage',{
+        layout: 'index',
+        title: 'TechLite - Manage Reservations',
+    });
+  });
+
   server.get('/profile', function(req, resp){
       resp.render('profile',{
           layout: 'index',

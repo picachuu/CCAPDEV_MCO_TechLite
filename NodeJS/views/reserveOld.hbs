@@ -1,0 +1,56 @@
+
+        <!-- Preload Start-->
+        {{> preload}}
+        <!-- Preload End-->
+    
+      <!-- Header Start-->
+        {{> header}}
+      <!-- Header End -->
+
+<div class="reserve-main-banner">
+<div class="reservation-container">
+    <div class="tier-selection">
+        <label for="tierSelect">Choose a Tier:</label>
+        <select id="tierSelect" class = "tier-select" onchange="showSeats(this.value)">
+            <option value="tier0">Select a Tier</option>
+            <option value="tier1">Tier 1</option>
+            <option value="tier2">Tier 2</option>
+            <option value="tier3">Tier 3</option>
+        </select>
+    </div>
+
+    <div id="seatsContainer" class="seats-container">
+        <!-- JavaScript will populate this area with seat buttons based on the selected tier -->
+    </div>
+
+    <div id="reservationForm" class="reservation-form" style="display:none;">
+        <form>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            
+            <label for="timeFrom">Time From:</label>
+            <!-- convert this into one selection-->
+            <select class = "tier-select" id="timeFrom" name="timeFrom" onchange="updateTimeSelected1()">
+            </select>
+            <label for="timeTo">Time To:</label>
+            
+            <select class = "tier-select" id="timeTo" name="timeTo" onchange="updateTimeSelected2()">
+            </select>
+            <button type="button" onclick="submitReservation()">Reserve</button>
+        </form>
+    </div>
+
+    
+</div>
+
+<div id="confirmationPopup" class="confirmation-popup" style="display:none;">
+    <p>Your reservation is confirmed!</p>
+    <button onclick="closePopup()">Close</button>
+</div>
+</div>
+<!-- Contact Start -->
+{{> contact}}
+  <!-- Contact End -->
+  
+  {{> footer}}

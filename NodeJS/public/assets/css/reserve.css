@@ -1,0 +1,60 @@
+/* new Reserve */
+
+#seats-container {
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .seat-column {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+  }
+  
+  .seat {
+    margin: 5px 0; /* Adjust vertical spacing between seats */
+    width: 100px; /* Adjust based on desired width */
+    height: 50px; /* Adjust based on desired height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .seat .unavailable {
+    background-color: #F44336;
+  }
+  
+  #timetable {
+    display: table; /* Changed from flex to table */
+    border-collapse: collapse;
+    width: 100%; /* Set to full width of its container */
+    margin-top: 20px; /* Optional: adds some space above the timetable */
+  }
+  
+  .time-slot, .time-slot .unavailable {
+    display: table-cell; /* Changed from inline-block to table-cell */
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    text-align: center;
+    background-color: #4CAF50; /* This will be overridden for unavailable slots */
+    cursor: pointer; /* Change the cursor to signify the ability to click */
+  }
+  
+  .time-slot .unavailable {
+    background-color: #F44336;
+    cursor: not-allowed;
+  }
+  
+  /* Add additional styling for the borders of the first and last children if needed */
+  
+  /* Add additional styling for the borders of the first and last children */
+  .timetable .time-slot:first-child {
+    border-left: 1px solid #ccc;
+  }
+  
+  .timetable .time-slot:last-child {
+    border-right: 1px solid #ccc;
+  }
+  
+  /* new Reserve end */

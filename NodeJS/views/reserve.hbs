@@ -8,47 +8,57 @@
       <!-- Header End -->
 
 <div class="reserve-main-banner">
-<div class="reservation-container">
-    <div class="tier-selection">
-        <label for="tierSelect">Choose a Tier:</label>
-        <select id="tierSelect" class = "tier-select" onchange="showSeats(this.value)">
-            <option value="tier0">Select a Tier</option>
-            <option value="tier1">Tier 1</option>
-            <option value="tier2">Tier 2</option>
-            <option value="tier3">Tier 3</option>
-        </select>
-    </div>
-
-    <div id="seatsContainer" class="seats-container">
-        <!-- JavaScript will populate this area with seat buttons based on the selected tier -->
-    </div>
-
-    <div id="reservationForm" class="reservation-form" style="display:none;">
-        <form>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            
-            
-            <label for="timeFrom">Time From:</label>
-            <!-- convert this into one selection-->
-            <select class = "tier-select" id="timeFrom" name="timeFrom" onchange="updateTimeSelected1()">
+    <div class="reservation-container">
+        <!-- Tier Selection -->
+        <div class="tier-selection">
+            <label for="tierSelect">Choose a Tier:</label>
+            <select id="tierSelect" class="tier-select" onchange="showSeats(this.value)">
+                <option value="tier0">Select a Tier</option>
+                <option value="tier1">Tier 1</option>
+                <option value="tier2">Tier 2</option>
+                <option value="tier3">Tier 3</option>
             </select>
-            <label for="timeTo">Time To:</label>
-            
-            <select class = "tier-select" id="timeTo" name="timeTo" onchange="updateTimeSelected2()">
+        </div>
+
+        <!-- Day Selection -->
+        <div class="day-selection">
+            <label for="daySelect">Choose a Day:</label>
+            <select id="daySelect" class="day-select">
+                <!-- Options will be populated by JavaScript -->
             </select>
-            <button type="button" onclick="submitReservation()">Reserve</button>
-        </form>
+        </div>
+
+        <!-- Seats Container -->
+        <div id="seatsContainer" class="seats-container">
+            <!-- JavaScript will populate this area with seat buttons -->
+        </div>
+
+        <!-- Time Blocks Container -->
+        <div id="timeBlocksContainer" class="time-blocks-container" style="display:none;">
+            <!-- JavaScript will populate this area with time block buttons -->
+        </div>
+
+        <!-- Reservation Form -->
+        <div id="reservationForm" class="reservation-form" style="display:none;">
+            <form>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <button type="button" onclick="submitReservation()">Reserve</button>
+            </form>
+        </div>
     </div>
 
-    
+    <!-- Confirmation Popup -->
+    <div id="confirmationPopup" class="confirmation-popup" style="display:none;">
+        <p>Your reservation is confirmed!</p>
+        <button onclick="closePopup()">Close</button>
+    </div>
 </div>
 
-<div id="confirmationPopup" class="confirmation-popup" style="display:none;">
-    <p>Your reservation is confirmed!</p>
-    <button onclick="closePopup()">Close</button>
-</div>
-</div>
 <!-- Contact Start -->
 {{> contact}}
   <!-- Contact End -->
