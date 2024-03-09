@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (editing) {
             userName.classList.add('editable');
             userBio.classList.add('editable');
-            editIcon.className = 'fa fa-pencil-alt';
+            editIcon.className = 'fa fa-check';
             imageOverlay.classList.add('cursor-pointer'); 
             coverOverlay.classList.add('cursor-pointer'); 
         } else {
