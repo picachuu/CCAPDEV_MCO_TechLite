@@ -609,26 +609,33 @@ document.addEventListener('DOMContentLoaded', function() {
     var userBio = document.getElementById('userBio');
     var profileImageContainer = document.getElementById('profileImageContainer');
     var coverImageContainer = document.getElementById('coverBannerContainer');
+    var imageOverlay = document.getElementById('imageOverlay');
+    var coverOverlay = document.getElementById('coverOverlay');
     var profileImageInput = document.getElementById('profileImageInput');
     var coverImageInput = document.getElementById('coverImageInput');
     var editIcon = document.getElementById('editIcon');
+    var mainProfile = document.getElementById('main-profile');
     var editing = false;
 
     function toggleEditMode() {
         editing = !editing;
         userName.contentEditable = editing;
         userBio.contentEditable = editing;
+    
         if (editing) {
             userName.classList.add('editable');
             userBio.classList.add('editable');
-            focusAtEnd(userName);
-            editIcon.className = 'fa fa-check';
+            editIcon.className = 'fa fa-pencil-alt';
+            imageOverlay.classList.add('cursor-pointer'); 
+            coverOverlay.classList.add('cursor-pointer'); 
         } else {
             userName.classList.remove('editable');
             userBio.classList.remove('editable');
             editIcon.className = 'fa fa-pencil';
+            imageOverlay.classList.remove('cursor-pointer'); 
+            coverOverlay.classList.remove('cursor-pointer'); 
         }
-        // Toggle overlay only if needed, make sure this logic matches your intent
+    
         profileImageContainer.classList.toggle('with-overlay', editing);
         coverImageContainer.classList.toggle('with-overlay', editing);
     }
@@ -652,8 +659,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    profileImageContainer.addEventListener('click', handleProfileImageUpload);
-    coverImageContainer.addEventListener('click', handleCoverImageUpload);
+    imageOverlay.addEventListener('click', handleProfileImageUpload);
+    coverOverlay.addEventListener('click', handleCoverImageUpload);
 
     profileImageInput.addEventListener('change', function() {
         if (this.files && this.files[0]) {
