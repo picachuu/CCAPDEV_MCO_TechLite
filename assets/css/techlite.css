@@ -1670,15 +1670,24 @@ footer p a:hover {
 
 .main-profile p {
   font-size: 20px;
+  text-align: justify;
+  display: block;
+  hyphens: auto;
+  word-wrap: break-word;
 }
 
 .editable {
-background-color: #242222;
-border: 1.5px solid rgb(255, 255, 255);
+  background-color: #242222;
+  border: 1.5px solid rgb(255, 255, 255);
+  display: block;
+  width: 735px;
+  hyphens: auto;
+  word-wrap: break-word;
 }
 
 .main-info {
-  margin-top: 100px;
+  margin-top: 65px;
+  width: 735px;
 }
 
 .main-profile .edit {
@@ -1689,12 +1698,12 @@ border: 1.5px solid rgb(255, 255, 255);
 .main-profile .profile-details i {
   color: white;
   font-size: 24px;
+  margin-left:5px;
 }
 
 .main-profile .profile-details {
   display: flex;
   justify-content: space-between;
-  width: 100%;
 }
 
 .profile-page-content {
@@ -1878,10 +1887,10 @@ border: 1.5px solid rgb(255, 255, 255);
 .imageContainer.with-overlay::before {
   content: '';
   position: absolute;
-  top: 0;
+  top: -3px;
   right: 0;
   bottom: 0;
-  left: 400px;
+  left: 398px;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 500px; 
   display: flex;

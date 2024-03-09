@@ -640,6 +640,21 @@ document.addEventListener('DOMContentLoaded', function() {
         coverImageContainer.classList.toggle('with-overlay', editing);
     }
 
+    var userNameMaxLength = 30; // Set your desired max length
+    var userBioMaxLength = 160; // Set your desired max length
+
+    userName.addEventListener('keypress', function(e) {
+        if (userName.textContent.length >= userNameMaxLength) {
+            e.preventDefault();
+        }
+    });
+
+    userBio.addEventListener('keypress', function(e) {
+        if (userBio.textContent.length >= userBioMaxLength) {
+            e.preventDefault();
+        }
+    });
+
     editBtn.addEventListener('click', function(e) {
         e.preventDefault();
         toggleEditMode();
