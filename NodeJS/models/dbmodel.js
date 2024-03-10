@@ -33,8 +33,10 @@ const userSchema = new mongoose.Schema({
     username: { type: String },
     email: { type: String },
     password: { type: String },
-    img_link: { type: String },
-    quote: { type: String }
+    is_manager: { type: Boolean },
+    img_url: { type: String },
+    banner_url: { type: String },
+    bio_msg: { type: String }
   },{ versionKey: false });
 
 const userModel = mongoose.model(userInfoCollection, userSchema);

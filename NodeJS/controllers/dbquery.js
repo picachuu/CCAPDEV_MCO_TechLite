@@ -41,6 +41,32 @@ function add(server){
 
   });
 
+  server.post('/tier-slots', function(req, resp){
+    console.log('tier-slots query received');
+
+    let tierModel;
+    switch(Number(req.body.tier_num)){
+        case 1: tierModel = tier1_schedModel; break;
+        case 2: tierModel = tier2_schedModel; break;
+        case 3: tierModel = tier3_schedModel; break;
+    }
+
+    const searchQuery = { taken: false };
+
+    console.log("Searching for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
+
+    tierModel.findOne(searchQuery).lean().then(function(val){
+        console.log('Tier-slot query successful');
+        let isAvailable = true;
+        if(val == null){
+            isAvailable = false;
+        }
+        console.log('Tier'+req.body.tier_num+' Availability: '+ isAvailable);
+        resp.send({isAvail: isAvailable});
+    }).catch(errorFn);
+
+  });
+
   // login post request for user log-in
 server.post('/login-account', function(req, resp){
     //Creating a new instance can be made this way.
@@ -80,5 +106,7 @@ server.post('/login-account', function(req, resp){
   });
 
 }
+
+
 
 module.exports.add = add;

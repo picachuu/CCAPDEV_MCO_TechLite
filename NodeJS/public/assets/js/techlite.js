@@ -178,8 +178,82 @@
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
 
-        // user data container
-        var userData = null;
+        // user information
+        const username = "admin";
+        const email = "admin@email.com";
+        const img_url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+        const banner_url = "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg";
+        const bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
+        const is_manager = true;
+
+
+        let navbarProfileImage = document.getElementById('navbarProfileImage');
+        if (navbarProfileImage) {
+            navbarProfileImage.src = img_url;
+        }
+
+        // Change behavior based on user role
+        if (is_manager) {
+            document.getElementById('navbarReserve').innerText = "Reservations";
+        }
+        
+        // To execute this code only when user is on the / page
+        if (window.location.pathname === '/') {
+            document.getElementById('navbarHome').classList.add('active');
+
+            // Check if a tier is available and update the main redirect buttons accordingly
+            let htmlText;
+            for (let i = 1; i <= 3; i++) {
+                if (isTierAvailable(i)) {
+                    htmlText = `<a href="reserve?tier=${i}">Reserve</a>`;
+                } else {
+                    htmlText = '<a href="#">All Slots Full</a>';
+                    document.getElementById(`tier${i}MainBtn`).classList.add('border-no-active'); 
+                }
+                document.getElementById(`tier${i}MainBtn`).innerHTML = htmlText;
+                
+            }
+        }
+
+        // To execute this code only when user is on the /reserve page
+        if (window.location.pathname === '/reserve') {
+            document.getElementById('navbarReserve').classList.add('active');
+
+            // Check if receives a redirect from a tier button
+            let urlParams = new URLSearchParams(window.location.search);
+            for (let i = 1; i <= 3; i++) {
+                if (urlParams.has('tier') && urlParams.get('tier') == i) {
+                    // The page was redirected from the button with id 'tier i' and default the select to that tier
+                    document.getElementById('tierSelect').value = `tier${i}`;
+                }
+            }  
+        }
+
+        // To execute this code only when user is on the /search page
+        if (window.location.pathname === '/search') {
+            document.getElementById('navbarSearch').classList.add('active');
+        }
+
+        // To execute this code only when user is on the /services page
+        if (window.location.pathname === '/services') {
+            document.getElementById('navbarServices').classList.add('active');
+        }
+
+        // To execute this code only when user is on the /profile page
+        if (window.location.pathname === '/profile') {
+            document.getElementById('navbarProfile').classList.add('active');
+            document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
+            document.getElementById('profileImage').src = img_url;
+            document.getElementById('userName').innerText = username;
+            document.getElementById('userBio').innerText = bio_msg;
+            let role = "Member";
+            if (is_manager) {
+                role = "Manager";
+            } 
+            document.getElementById('roleTag').innerText = role;
+        }
+
+        
 	    
 	    //smoothscroll
 	    $('.scroll-to-section a[href^="#"]').on('click', function (e) {
@@ -201,7 +275,29 @@
 	            $(document).on("scroll", onScroll);
 	        });
 	    });
-	});
+	}); // $(document).ready end
+
+    // Function to check if a tier is available
+    function isTierAvailable(tierNumber) {
+        let isAvailable = false;
+        $.ajax({
+            url: 'tier-slots',
+            type: 'POST',
+            data: { tier_num: tierNumber},
+            async: false,  // Make the request synchronous
+            success: function(data, status) {
+                if (status === 'success') {
+                    isAvailable = data.isAvail;
+                }
+            },
+            error: function() {
+                //no errors :)
+            }
+        });
+        
+        return isAvailable;
+        //return isUnavailable;
+    }
 
 	function onScroll(event){
 	    var scrollPos = $(document).scrollTop();

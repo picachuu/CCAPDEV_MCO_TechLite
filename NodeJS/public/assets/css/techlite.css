@@ -332,7 +332,7 @@ section {
 .header-area .main-nav .logo {
   margin-top: 12px;
   flex-basis: 55%;
-  margin-right: 5%;
+   /* culprit, works when I just remove it "margin-right: 5%;"*/
   -webkit-transition: all 0.3s ease 0s;
   -moz-transition: all 0.3s ease 0s;
   -o-transition: all 0.3s ease 0s;
@@ -1719,7 +1719,7 @@ footer p a:hover {
   margin-top: 40px;
   padding: 40px;
   border-radius: 23px;
-  margin-bottom: 80px;
+  margin-bottom: 40px;
 }
 
 .profile-reservations {
@@ -1803,6 +1803,30 @@ footer p a:hover {
   border-bottom: none;
   padding-bottom: 0;
   margin-bottom: 0;
+}
+
+.logout-container {
+  text-align: center;
+  background-color: #27292a;
+  padding: 40px;
+  border-radius: 23px;
+  margin-bottom: 60px;
+}
+
+.logout-button {
+  background-color: rgba(240, 94, 94, 0.2);
+  color: #eb2424;
+  padding: 10px 80px;
+  border-radius: 5px;
+  border: 2px solid #db3636;
+  text-decoration: none;
+  font-size: 20px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: rgba(219, 54, 54, 0.7); 
 }
 
 .login-popup, .create-account-popup {
