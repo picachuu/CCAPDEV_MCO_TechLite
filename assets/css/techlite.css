@@ -1071,8 +1071,8 @@ section {
 /* Time Blocks Container Grid Layout */
 #timeBlocksContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjust minmax values as needed */
-  gap: 10px; /* Adjust gap size as needed */
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+  gap: 10px; 
 }
 
 
@@ -1108,7 +1108,7 @@ section {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
 }
 
-/* Adapt to Modern, Minimal Design */
+
 .tier-selection, .day-selection {
   justify-content: start;
   margin-bottom: 20px; /* Add more space below selections */
