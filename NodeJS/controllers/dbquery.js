@@ -26,10 +26,27 @@ function add(server){
         case 3: tierModel = tier3_schedModel; break;
     }
 
-    const searchQuery = {
-        seats: Number(req.body.seat_num), 
-        taken: false
-    };
+    //change searchQuery based on mode: "all", "taken_false", "taken_true"
+    let searchQuery;
+    switch(req.body.mode){
+      case "all": searchQuery = {
+        seats: Number(req.body.seat_num),
+        day: Number(req.body.day_num)
+      }; break;
+
+      case "taken_false": searchQuery = {
+        seats: Number(req.body.seat_num),
+        taken: false,
+        day: Number(req.body.day_num)
+      }; break;
+
+      //taken_true has not been used yet pero could be useful for finding which are to be editable
+      case "taken_true": searchQuery = {
+        seats: Number(req.body.seat_num),
+        taken: true,
+        day: Number(req.body.day_num)
+      }; break;
+    }
 
     console.log("Searching for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
 
