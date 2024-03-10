@@ -3,10 +3,98 @@
   justify-content: flex-start;
 }
 
+#timeBlocksContainer .time-slot.selected {
+  background-color: #a12929; 
+  color: white; 
+}
+
+input[type="text"], input[type="email"], select {
+  background-color: #333;
+  border: 2px solid #555;
+  border-radius: 5px;
+  color: #FFF;
+  font-size: 16px;
+  margin: 5px 0 20px; /* Increase spacing */
+  padding: 10px;
+  width: calc(100% - 24px); /* Adjust width for padding */
+}
+
+#timeBlocksContainer .time-slot.unavailable {
+  background-color: #182e19; 
+  color: white; 
+  cursor: not-allowed;
+}
+
+/* Button Enhancements */
+/* Time Blocks Container Grid Layout */
+#timeBlocksContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+  gap: 10px; 
+}
+
+input[type="text"], input[type="email"], select {
+  background-color: #333;
+  border: 2px solid #555;
+  border-radius: 5px;
+  color: #FFF;
+  font-size: 16px;
+  margin: 5px 0 20px; /* Increase spacing */
+  padding: 10px;
+  width: calc(100% - 24px); /* Adjust width for padding */
+}
+
+/* Time Block Button Adjustments for Grid */
+#timeBlocksContainer button {
+  background-color: #db3636;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px 15px;
+  text-transform: uppercase; /* Maintain button enhancements */
+  transition: background-color 0.3s ease;
+}
+
+#timeBlocksContainer button:hover {
+  background-color: #a12929;
+}
+
+/* Time Block Enhancements */
+.time-slot {
+  margin: 5px; /* Add space around time blocks */
+}
+
+/* Confirmation Popup Enhancements */
+.confirmation-popup {
+  background-color: #27292a;
+  color: #FFF;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+}
+
+
+.tier-selection, .day-selection {
+  justify-content: start;
+  margin-bottom: 20px; /* Add more space below selections */
+}
+
+
 .seat-column {
   display: flex;
   flex-direction: column;
   margin: 5px;
+}
+
+.slot-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  margin-bottom: 10px;
 }
 
 .seat {
@@ -32,6 +120,7 @@
 
 .time-slot, .time-slot.unavailable {
   display: table-cell; /* Changed from inline-block to table-cell */
+  width: 90px;
   border: 1px solid #ccc;
   padding: 10px 20px;
   text-align: center;
@@ -39,10 +128,10 @@
   cursor: pointer; /* Change the cursor to signify the ability to click */
 }
 
-.time-slot.unavailable {
+/* .time-slot.unavailable {
   background-color: #F44336;
   cursor: not-allowed;
-}
+} */
 
 /* Add additional styling for the borders of the first and last children if needed */
 
