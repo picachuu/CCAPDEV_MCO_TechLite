@@ -218,15 +218,15 @@
 
             // Check if a tier is available and update the main redirect buttons accordingly
             let htmlText;
-            for (let i = 1; i <= 3; i++) {
-                if (isTierAvailable(i)) {
+            for (let i = 1; i <= 3; i++) { (async()=>{// asynchronous operation function since isTierAvailable is an asynchronous function
+                if (await isTierAvailable(i)) { // waits for the isTierAvailable function to return a value
                     htmlText = `<a href="reserve?tier=${i}">Reserve</a>`;   // Make the button redirect to the reserve page with the tier number
                 } else {
                     htmlText = '<a href="#">All Slots Full</a>';    // Make the button without a redirect
                     document.getElementById(`tier${i}MainBtn`).classList.add('border-no-active');   // Add a class to make the button look inactive (gray)
                 }
                 document.getElementById(`tier${i}MainBtn`).innerHTML = htmlText;    // Update the buttons with the new html (buttons)
-                
+            })();// <-- parentheses to call the function immediately (the async operation)
             }
         }
 
@@ -314,13 +314,13 @@
 	}); // $(document).ready end
 
     // Function to check if a tier is available
-    function isTierAvailable(tierNumber) {
+    async function isTierAvailable(tierNumber) {
         let isAvailable = false;
-        $.ajax({
+        await $.ajax({
             url: 'tier-slots',
             type: 'POST',
             data: { tier_num: tierNumber},
-            async: false,  // Make the request synchronous
+            async: true,  // Make the request synchronous
             success: function(data, status) {
                 if (status === 'success') {
                     isAvailable = data.isAvail;
@@ -808,7 +808,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
 // Forms
+
 // make the funciton to be async with async keyword (required by await keyword)
+// at the form [ onsubmit="event.preventDefault(); checkLogin().then(valid => { if (valid) this.submit(); })" ]
+// ^^ supports for asynchronous operations --- checkLogin() is assumed to be a function that returns a Promise. This Promise represents the ongoing AJAX request to check the login credentials.
+// ^^ The .then(valid => { if (valid) this.submit(); }) part is a Promise chain. When the Promise returned by checkLogin() resolves, the function passed to .then() is called with the resolved value. 
+// ^^ If the resolved value (valid) is truthy, the form is manually submitted with this.submit().
 async function checkLogin() {
     let form = $('form[name="login"]'); // Selects the form with the name 'login'
     let username = form.find('input[name="username"]').val(); // Gets the value of the input with the name 'username'
@@ -828,17 +833,12 @@ async function checkLogin() {
             }
         });
 
-        if (response.user) {    // checks if user object contains a username element
-            valid = true;
-            user = response.user;
-        } else {
-            valid = false;
-        }
+        valid = response.valid;
     } catch (error) {
         console.error('Error:', error);
     }
 
-    window.alert(valid ? ("Login successful: "+user.username) : 'Login failed');
+    window.alert(valid ? "Login successful" : 'Login failed');
 
     return valid;
 }

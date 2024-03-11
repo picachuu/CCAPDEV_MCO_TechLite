@@ -85,7 +85,7 @@ function add(server){
   });
   
 
-  // login post request for user log-in
+  // login post request for user log-in, returns user object
   server.post('/login-account', async function(req, resp){  //async function for asynchronous operations
     //Creating a new instance can be made this way.
     const searchQuery = { //searchQuery for username based log-in
@@ -134,13 +134,15 @@ function add(server){
 
   });
 
-  // check-login post request for user log-in validation
+  // check-login post request for user log-in validation, returns validation boolean
   server.post('/check-login', async function(req, resp){  //async function for asynchronous operations
     //Creating a new instance can be made this way.
     const searchQuery = { //searchQuery for username based log-in
       username: req.body.username,
       password: req.body.password
     };
+
+    let valid = false;
 
     let user = await checkLoginDB(searchQuery); // wait for the function to finish before proceeding
 
@@ -150,7 +152,11 @@ function add(server){
       console.log('No User Found');
     }
 
-    resp.send({user: user});
+    if (user) {
+      valid = true;
+    }
+
+    resp.send({valid: valid});
   });
 
   async function checkLoginDB(searchQuery){ //async function for asynchronous operations
