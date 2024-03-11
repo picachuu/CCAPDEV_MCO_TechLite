@@ -83,47 +83,191 @@ function add(server){
     }).catch(errorFn);
 
   });
+  
 
   // login post request for user log-in
-server.post('/login-account', function(req, resp){
+  server.post('/login-account', async function(req, resp){  //async function for asynchronous operations
     //Creating a new instance can be made this way.
     const searchQuery = { //searchQuery for username based log-in
       username: req.body.username,
       password: req.body.password
     };
   
-  //const dateinfo = require('./DateInfo');
-    const searchEmail = { //searchQuery for email based log-in
+    //const dateinfo = require('./DateInfo');
+    /* const searchEmail = { //searchQuery for email based log-in
       email: req.body.username,
       password: req.body.password
-    };
+    }; */
   
     let user = null;  // user object for user information is default to null
   
-    userModel.findOne(searchQuery).lean().then(function(user_data){ //search for username based log-in
+    /* userModel.findOne(searchQuery).lean().then(function(user_data){ //search for username based log-in
       if (user_data != null){
-  
+
         user = user_data; // user object is assigned to user_data
         resp.redirect('/?success=true'); //redirect to home page with success message
-  
+
       } else {
         userModel.findOne(searchEmail).lean().then(function(user_data){ //search for email based log-in
-  
+
           if (user_data != null){
             user = user_data; // user object is assigned to user_data
             resp.redirect('/?success=true'); //redirect to home page with success message
           } else {
             resp.redirect('/?success=false'); //redirect to home page with failure message
           }
+
+        }).catch(errorFn);
+      }
   
+    }).catch(errorFn); */
+
+    user = await checkLoginDB(searchQuery); // wait for the function to finish before proceeding
+
+
+    // below is a placeholder
+    if (user != null){
+      resp.redirect('/?success=true'); //redirect to home page with success message
+    } else {
+      resp.redirect('/?success=false'); //redirect to home page with failure message
+    }
+
+  });
+
+  // check-login post request for user log-in validation
+  server.post('/check-login', async function(req, resp){  //async function for asynchronous operations
+    //Creating a new instance can be made this way.
+    const searchQuery = { //searchQuery for username based log-in
+      username: req.body.username,
+      password: req.body.password
+    };
+
+    let user = await checkLoginDB(searchQuery); // wait for the function to finish before proceeding
+
+    if (user != null){
+      console.log('Obtained Username: ' + user.username);
+    } else {
+      console.log('No User Found');
+    }
+
+    resp.send({user: user});
+  });
+
+  async function checkLoginDB(searchQuery){ //async function for asynchronous operations
+
+    console.log('Checking login credentials...');
+
+    // Check if searchQuery is an object
+    if (typeof searchQuery !== 'object' || searchQuery === null) {
+        throw new Error('searchQuery must be an object');
+    }
+
+    // Check if searchQuery has a 'username' property
+    if (!searchQuery.hasOwnProperty('username')) {
+        throw new Error('searchQuery must have a username property');
+    }
+
+    // Check if searchQuery has a 'password' property
+    if (!searchQuery.hasOwnProperty('password')) {
+        throw new Error('searchQuery must have a password property');
+    }
+/* 
+    const searchUsername = searchQuery;
+
+    const searchEmail = { //searchQuery for email based log-in
+      email: searchQuery.username,
+      password: searchQuery.password
+    };
+
+    // user object for user information is default to null
+    let user = null;  // also used as boolean
+  
+    await userModel.findOne(searchUsername).lean().then(function(user_data){ //search for username based log-in
+      if (user_data != null){
+
+        user = user_data; // user object is assigned to user_data
+        console.log('1User Credentials: ' + user);
+
+
+
+      } else {
+        await userModel.findOne(searchEmail).lean().then(function(user_data){ //search for email based log-in
+
+          if (user_data != null){
+
+            user = user_data; // user object is assigned to user_data
+            console.log('1User Credentials: ' + user);
+            
+          }
+
         }).catch(errorFn);
       }
   
     }).catch(errorFn);
-  });
+
+    console.log('2User Credentials: ' + user); */
+    let user;
+    let username = await checkLoginUsername(searchQuery); // wait for the function to finish before proceeding
+    let email = await checkLoginEmail(searchQuery); // wait for the function to finish before proceeding
+
+    console.log('Wtihtin username User Credentials: ' + JSON.stringify(username));
+    console.log('Wtihtin email User Credentials: ' + JSON.stringify(email));
+
+    if (username != null){  // check if username based log-in is successful
+      user = username;
+    } else if (email != null){ // check if email based log-in is successful
+      user = email;
+    } else {
+      user = null;
+    }
+    
+    // return {user_username: await checkLoginUsername(searchQuery), user_email: await checkLoginEmail(searchQuery)};
+    return user;
+  }
+
+  // check user credentials based on username
+  async function checkLoginUsername(searchQuery) {  //async function for asynchronous operations
+    let user = null;
+
+    console.log('Checking Credentials: Username');
+
+    //searchQuery for username based log-in (wait for the function to finish before proceeding)
+    await userModel.findOne(searchQuery).lean().then(function(user_data){
+      if (user_data != null){ // if query is successful
+
+        user = user_data;
+        // console.log('Wtihtin username User Credentials: ' + JSON.stringify(user));
+        
+      }
+    }).catch(errorFn);
+
+    return user;
+  }
+
+  // check user credentials based on email
+  async function checkLoginEmail(searchQuery) { //async function for asynchronous operations
+    searchQuery = { //searchQuery for email based log-in
+      email: searchQuery.username,
+      password: searchQuery.password
+    };
+
+    let user = null;
+
+    console.log('Checking Credentials: Email');
+    //searchQuery for email based log-in (wait for the function to finish before proceeding)
+    await userModel.findOne(searchQuery).lean().then(function(user_data){
+      if (user_data != null){
+
+        user = user_data;
+        
+        // console.log('Wtihtin email User Credentials: ' + JSON.stringify(user));
+      }
+    }).catch(errorFn);
+
+    return user;
+  }
 
 }
-
 
 
 module.exports.add = add;

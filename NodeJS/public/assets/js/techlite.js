@@ -175,20 +175,35 @@
 		}
 	});
 
+    // whether user is logged
+    var logged = false;
+    // user information
+    var username = "admin";
+    var email = "admin@email.com";
+    var img_url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+    var banner_url = "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg";
+    var bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
+    const is_manager = true;
+
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
 
-        // user information
-        const username = "admin";
-        const email = "admin@email.com";
-        const img_url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-        const banner_url = "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg";
-        const bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
-        const is_manager = true;
 
+        // Check if the user is not logged in
+        if (!logged) {
+            // hide navigation bar profile image and button, id = navbarProfileImage, navbarProfile
+            document.getElementById('navbarProfileImage').style.display = 'none';
+            document.getElementById('navbarProfile').style.display = 'none';
+        }
+        // Check if the user is logged in
+        if (logged) {
+            // hide login button, id = loginBtn
+            document.getElementById('loginBtn').style.display = 'none';
+        }
 
+        // Check if the navbarProfileImage exists, and replace with user image accordingly
         let navbarProfileImage = document.getElementById('navbarProfileImage');
-        if (navbarProfileImage) {
+        if (navbarProfileImage) {   
             navbarProfileImage.src = img_url;
         }
 
@@ -205,12 +220,12 @@
             let htmlText;
             for (let i = 1; i <= 3; i++) {
                 if (isTierAvailable(i)) {
-                    htmlText = `<a href="reserve?tier=${i}">Reserve</a>`;
+                    htmlText = `<a href="reserve?tier=${i}">Reserve</a>`;   // Make the button redirect to the reserve page with the tier number
                 } else {
-                    htmlText = '<a href="#">All Slots Full</a>';
-                    document.getElementById(`tier${i}MainBtn`).classList.add('border-no-active'); 
+                    htmlText = '<a href="#">All Slots Full</a>';    // Make the button without a redirect
+                    document.getElementById(`tier${i}MainBtn`).classList.add('border-no-active');   // Add a class to make the button look inactive (gray)
                 }
-                document.getElementById(`tier${i}MainBtn`).innerHTML = htmlText;
+                document.getElementById(`tier${i}MainBtn`).innerHTML = htmlText;    // Update the buttons with the new html (buttons)
                 
             }
         }
@@ -241,6 +256,12 @@
 
         // To execute this code only when user is on the /profile page
         if (window.location.pathname === '/profile') {
+            // if the user is not logged and visits /profile, redirect to home page
+            if (!logged) {
+                window.location.href = '/';
+                return;
+            }
+
             document.getElementById('navbarProfile').classList.add('active');
             document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
             document.getElementById('profileImage').src = img_url;
@@ -275,6 +296,21 @@
 	            $(document).on("scroll", onScroll);
 	        });
 	    });
+
+
+        // Within /profile page
+        let logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            $('#logoutBtn').on('click', function(event) {
+                event.preventDefault(); // Prevent default anchor behavior
+
+                // ==== Placeholder: Logic to logout user ====
+
+                alert('Logging out...');
+                window.location.href = '/'; // Redirect to home page
+            });
+        }
+
 	}); // $(document).ready end
 
     // Function to check if a tier is available
@@ -771,4 +807,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update UI to reflect the non-editing state
   }
 
-  
+// Forms
+// make the funciton to be async with async keyword (required by await keyword)
+async function checkLogin() {
+    let form = $('form[name="login"]'); // Selects the form with the name 'login'
+    let username = form.find('input[name="username"]').val(); // Gets the value of the input with the name 'username'
+    let password = form.find('input[name="password"]').val(); // Gets the value of the input with the name 'password'
+    
+    let valid = false;
+    let user = null;
+
+    try {  
+        // uses await to wait for the response from the server instead of forcing synchronousity
+        let response = await $.ajax({   // returns a JSON with user element object
+            url: '/check-login',
+            type: 'POST',
+            data: {
+                username: username,
+                password: password
+            }
+        });
+
+        if (response.user) {    // checks if user object contains a username element
+            valid = true;
+            user = response.user;
+        } else {
+            valid = false;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+    window.alert(valid ? ("Login successful: "+user.username) : 'Login failed');
+
+    return valid;
+}
+
+function checkLogins(){return false};
