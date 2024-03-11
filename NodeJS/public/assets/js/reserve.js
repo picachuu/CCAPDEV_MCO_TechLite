@@ -105,7 +105,7 @@ function showSeats(tier) {
         let selected_tier = Number(document.getElementById('tierSelect').value.slice(4));
         let day = Number(document.getElementById('daySelect').value.slice(8));
 
-         
+        
         if (  isSeatUnavailable(i, selected_tier, day) ) {
             seat.classList.add('unavailable');
         }//else, then available
@@ -126,6 +126,8 @@ function showSeats(tier) {
         columns[columnIndex].appendChild(seat);
     }
 }
+
+var is_prev_timeBlock_taken = false;
 
 function populateTimeBlocks(seat_number, tier_number, day_number) {
     const container = document.getElementById('timeBlocksContainer');
@@ -168,16 +170,53 @@ function populateTimeBlocks(seat_number, tier_number, day_number) {
                         block.classList.add('unavailable');
                         unavailableTimeSlots[time] = { name: all.seats[i].assigned_to, email: all.seats[i].email };
                         //better we modify na rin the unavailableTimeSlots[]
+                        
                         block.onclick = () => showDetails(time);
                     } else {
                         block.onclick = () =>  {
+
+                            if (is_prev_timeBlock_taken) {
+                                // Clear the 'name' input field
+                                let nameInput = document.getElementById('reservationName');
+                                if (nameInput) {
+                                    nameInput.value = '';
+                                }
+
+                                // Clear the 'email' input field
+                                let emailInput = document.getElementById('reservationEmail');
+                                if (emailInput) {
+                                    emailInput.value = '';
+                                }
+                            }
+                            is_prev_timeBlock_taken = false;
+
                             if (selectedBlocks < 4) { 
                                 block.classList.toggle('selected');
                                 const isSelected = block.classList.contains('selected');
                                 selectedBlocks = isSelected ? selectedBlocks + 1 : selectedBlocks - 1;
                         
                                 const form = document.getElementById('reservationForm');
-                                form.style.display = selectedBlocks > 0 ? 'block' : 'none';
+
+                                
+
+                                let hasSelectedBlcoks = selectedBlocks > 0;
+
+                                if (!hasSelectedBlcoks) {
+                                    // Clear the 'name' input field
+                                    let nameInput = document.getElementById('reservationName');
+                                    if (nameInput) {
+                                        nameInput.value = '';
+                                    }
+
+                                    // Clear the 'email' input field
+                                    let emailInput = document.getElementById('reservationEmail');
+                                    if (emailInput) {
+                                        emailInput.value = '';
+                                    }
+                                }
+
+                                form.style.display = hasSelectedBlcoks ? 'block' : 'none';  // hides the reservationForm section
+
                                 if (form.style.display === 'none') {
                                     document.getElementById('deleteButton').style.display = 'none';
                                     document.getElementById('editButton').style.display = 'none';
@@ -219,16 +258,29 @@ function populateTimeBlocks(seat_number, tier_number, day_number) {
     // }
 }
 
+function submitReservation() {
+    if (!logged) {
+        alert('Please log in to reserve a seat.');
+        return false;
+    }
+    return true;
+}
+
 function showDetails(time) {
+    is_prev_timeBlock_taken = true;
+
     const details = unavailableTimeSlots[time];
-    document.getElementById('name').value = details.name;
-    document.getElementById('email').value = details.email;
+    
+    const form = $('#reservationForm');
+    document.getElementById('reservationName').value = details.name; 
+    document.getElementById('reservationEmail').value = details.email; 
+    
     document.getElementById('reservationForm').style.display = 'block';
     document.getElementById('deleteButton').style.display = 'inline-block';
     document.getElementById('editButton').style.display = 'inline-block';
 }
 
-function toggleSelection(block, selectedBlocks) {
+function toggleSelection(block, selectedBlocks) {   //currenlty unused
     block.classList.toggle('selected');
     const isSelected = block.classList.contains('selected');
     selectedBlocks = isSelected ? selectedBlocks + 1 : selectedBlocks - 1;
@@ -254,7 +306,7 @@ function editReservation() {
 document.getElementById('deleteButton').addEventListener('click', deleteReservation);
 document.getElementById('editButton').addEventListener('click', editReservation);
 
-function toggleFormVisibility(show) {
+function toggleFormVisibility(show) {   // currently unused
     const reservationForm = document.getElementById('reservationForm');
     if (show) {
         reservationForm.style.display = 'block'; // Show the form
