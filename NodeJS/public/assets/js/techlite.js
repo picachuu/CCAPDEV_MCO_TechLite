@@ -218,7 +218,7 @@
 
             // Check if a tier is available and update the main redirect buttons accordingly
             let htmlText;
-            for (let i = 1; i <= 3; i++) { (async()=>{// asynchronous operation function since isTierAvailable is an asynchronous function
+            for (let i = 1; i <= 3; i++) { (async function(){// asynchronous operation function since isTierAvailable is an asynchronous function
                 if (await isTierAvailable(i)) { // waits for the isTierAvailable function to return a value
                     htmlText = `<a href="reserve?tier=${i}">Reserve</a>`;   // Make the button redirect to the reserve page with the tier number
                 } else {
@@ -807,7 +807,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update UI to reflect the non-editing state
   }
 
-// Forms
+
+
+// === Forms ===
 
 // make the funciton to be async with async keyword (required by await keyword)
 // at the form [ onsubmit="event.preventDefault(); checkLogin().then(valid => { if (valid) this.submit(); })" ]
@@ -842,5 +844,3 @@ async function checkLogin() {
 
     return valid;
 }
-
-function checkLogins(){return false};
