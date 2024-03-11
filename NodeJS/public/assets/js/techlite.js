@@ -176,7 +176,7 @@
 	});
 
     // whether user is logged
-    var logged = false;
+    var logged = true;
     // user information
     var username = "admin";
     var email = "admin@email.com";
@@ -792,21 +792,134 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-  function saveProfileChanges() {
+function saveProfileChanges() {
     // Example logic to send updated profile information and images to the server
     // You need to implement AJAX request here according to your server API
-  
+
     var userName = document.getElementById('userName').innerText;
     var userBio = document.getElementById('userBio').innerText;
-  
+
     console.log('Saving profile changes:', userName, userBio);
     // Here, add your AJAX call to send the userName, userBio, and image files to the server
-  
+
     // Reset editing state
     editing = false;
     // Update UI to reflect the non-editing state
-  }
+}
 
+/* === Manage === */
+
+// Placeholder data to simulate backend response
+const reservationDetails = {
+    userName: "John Doe",
+    userEmail: "johndoe@example.com",
+    tierSelected: "tier2",
+    selectedDate: "2024-03-15", // Example date
+    selectedSeat: 5, // Example seat number
+    selectedTimeBlocks: ["09:00", "09:30"] // Example selected time blocks
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadReservationDetails();
+    lockSelections();
+});
+
+function loadReservationDetails() {
+    // Load user details
+    document.getElementById('userName').value = reservationDetails.userName;
+    document.getElementById('userEmail').value = reservationDetails.userEmail;
+
+    // Select and lock the tier
+    const tierSelect = document.getElementById('tierSelect');
+    tierSelect.value = reservationDetails.tierSelected;
+    tierSelect.disabled = true; // Lock the tier selection
+
+    // Populate and lock date selection (assuming you have a function to populate dates)
+    populateDates(); // This function should populate your date select options
+    const dateSelect = document.getElementById('daySelect');
+    dateSelect.value = reservationDetails.selectedDate;
+    dateSelect.disabled = true; // Optionally lock the date selection
+
+    // Mark the selected seat as selected
+    // This should ideally run after your seat generation code
+    markSelectedSeat(reservationDetails.selectedSeat);
+
+    // Populate and mark selected time blocks
+    populateTimeBlocks(reservationDetails.selectedTimeBlocks);
+}
+
+function populateDates() {
+    // Populate your date options here, similar to how you populate time blocks
+    const daySelect = document.getElementById('daySelect');
+    // Example: Populate with dates. This should be dynamic based on your requirements.
+    const option = document.createElement('option');
+    option.value = reservationDetails.selectedDate; // Use the placeholder date
+    option.textContent = reservationDetails.selectedDate; // Same as above
+    daySelect.appendChild(option);
+}
+
+function markSelectedSeat(seatNumber) {
+    // Assuming seats are already generated and have IDs or data attributes to identify them
+    const selectedSeat = document.querySelector(`.seat[data-seat-number="${seatNumber}"]`);
+    if (selectedSeat) {
+        selectedSeat.classList.add('selected');
+        selectedSeat.disabled = true; // Disable the button to prevent changing the selection
+    }
+}
+
+function populateTimeBlocks(selectedTimes = []) {
+    const isManagePage = document.getElementById('managePage') !== null;
+    const timeBlocksContainer = document.getElementById('timeBlocksContainer');
+    timeBlocksContainer.innerHTML = ''; // Clear previous time blocks
+    timeBlocksContainer.style.display = 'block'; // Ensure the container is visible
+
+    // Generate time blocks
+    for (let hour = 0; hour < 24; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+            const timeBlock = document.createElement('button');
+            timeBlock.classList.add('time-block', 'available'); // 'available' for styling
+            const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+            timeBlock.textContent = timeString;
+            timeBlock.value = timeString;
+
+            if (isManagePage) {
+                // For manage.html, disable the time blocks and mark selected ones
+                timeBlock.disabled = true; // Disable the buttons to prevent changing the selection
+                if (selectedTimes.includes(timeString)) {
+                    timeBlock.classList.add('selected');
+                }
+            } else {
+                // For reserve.html, keep the time blocks interactive
+                timeBlock.addEventListener('click', function() {
+                    // Toggle selection logic here
+                });
+            }
+
+            timeBlocksContainer.appendChild(timeBlock);
+        }
+    }
+}
+
+
+// Call this function after your seat and time block generation logic to lock the selections
+function lockSelections() {
+    // Additional logic to lock selections, if not already handled in the above functions
+}
+
+
+function fetchReservationDetails() {
+    fetch('path/to/your/api/endpoint')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('userName').value = data.userName;
+            document.getElementById('userEmail').value = data.userEmail;
+            document.getElementById('tierText').textContent = data.tierSelected;
+            // Process additional data as needed
+        })
+        .catch(error => console.error('Error loading reservation details:', error));
+}
+
+/* === Manage END ===*/
 
 
 // === Forms ===

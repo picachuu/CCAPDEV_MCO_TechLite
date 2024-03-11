@@ -118,7 +118,7 @@ function showSeats(tier) {
                         selectedSeat.classList.remove('selected');
                     });
                     this.classList.add('selected');
-                    populateTimeBlocks(i, selected_tier, day); // Populate time blocks after seat is selected
+                    populateTimeBlocksRes(i, selected_tier, day); // Populate time blocks after seat is selected
                 }
             });
         }
@@ -129,7 +129,7 @@ function showSeats(tier) {
 
 var is_prev_timeBlock_taken = false;
 
-function populateTimeBlocks(seat_number, tier_number, day_number) {
+function populateTimeBlocksRes(seat_number, tier_number, day_number) {
     const container = document.getElementById('timeBlocksContainer');
     container.innerHTML = ''; // Clear previous blocks
     container.style.display = 'block';
