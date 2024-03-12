@@ -171,9 +171,15 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                         unavailableTimeSlots[time] = { name: all.seats[i].assigned_to, email: all.seats[i].email };
                         //better we modify na rin the unavailableTimeSlots[]
                         
-                        block.onclick = () => showDetails(time);
+                        if (getIsManager()) {
+                            block.onclick = () => showDetails(time,block);
+                        }
                     } else {
                         block.onclick = () =>  {
+
+                            if (prevUnavailBlock) {
+                                prevUnavailBlock.style.backgroundColor = "#182e19";
+                            }
 
                             if (is_prev_timeBlock_taken) {
                                 // Clear the 'name' input field
@@ -188,6 +194,16 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                                     emailInput.value = '';
                                 }
                             }
+
+                            if (getIsManager()) {
+                                let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
+                                submitButton.value = "Reserve"
+                                submitButton.style.width = "100%";
+                                let deleteButtonRes = document.getElementById('deleteButtonRes');
+                                deleteButtonRes.style.display = "none";
+                                deleteButtonRes.style.width = "100%";
+                            }
+
                             is_prev_timeBlock_taken = false;
 
                             if (selectedBlocks < 4) { 
@@ -266,14 +282,37 @@ function submitReservation() {
     return true;
 }
 
-function showDetails(time) {
+let prevUnavailBlock = null;
+
+function showDetails(time,block) {
+    block.style.backgroundColor = "#4CAF50";
+
+    if (prevUnavailBlock) {
+        prevUnavailBlock.style.backgroundColor = "#182e19";
+    }
+
+    prevUnavailBlock = block;
+
+    // if it's manager
+    if (getIsManager()) {
+        let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
+        submitButton.value = "Edit"
+        submitButton.style.width = "48%";
+        let deleteButtonRes = document.getElementById('deleteButtonRes');
+        deleteButtonRes.style.display = "block";
+        deleteButtonRes.style.width = "48%";
+    }
+
+
     is_prev_timeBlock_taken = true;
 
     const details = unavailableTimeSlots[time];
     
     const form = $('#reservationForm');
-    document.getElementById('reservationName').value = details.name; 
-    document.getElementById('reservationEmail').value = details.email; 
+    form.find('input[name="name"]').val(details.name);
+    form.find('input[name="email"]').val(details.email);
+    //document.getElementById('reservationName').value = details.name; 
+    //document.getElementById('reservationEmail').value = details.email; 
     
     document.getElementById('reservationForm').style.display = 'block';
     document.getElementById('deleteButton').style.display = 'inline-block';
@@ -315,3 +354,15 @@ function toggleFormVisibility(show) {   // currently unused
         // Optionally reset the form fields here if desired
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    window.alert('This is a manager.');
+    
+
+
+    if (getIsManager()) {
+        
+          
+        document.querySelector('.reservation-form input[type="submit"]').style.width = "50%";
+    }
+});

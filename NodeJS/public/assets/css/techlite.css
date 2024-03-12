@@ -1048,11 +1048,16 @@ section {
   outline: none;
 }
 
+.reservation-form-buttons-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 .reservation-form button {
   width: 100%;
   padding: 10px;
   margin: 10px 0px;
-  margin-top: 20px;
+  /* margin-top: 20px; */
   border-radius: 14px;
   border: none;
   background-color: #a12929;

@@ -1,3 +1,41 @@
+// whether user is logged
+var logged = true;
+// user information
+var username = "admin";
+var email = "admin@email.com";
+var img_url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+var banner_url = "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg";
+var bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
+const is_manager = true;
+
+function getLogged() {
+    return logged;
+}
+
+function getUsername() {
+    return username;
+}
+
+function getEmail() {
+    return email;
+}
+
+function getImgUrl() {
+    return img_url;
+}
+
+function getBannerUrl() {
+    return banner_url;
+}
+
+function getBioMsg() {
+    return bio_msg;
+}
+
+function getIsManager() {
+    return is_manager;
+}
+
 (function ($) {
 	
 	"use strict";
@@ -175,15 +213,7 @@
 		}
 	});
 
-    // whether user is logged
-    var logged = true;
-    // user information
-    var username = "admin";
-    var email = "admin@email.com";
-    var img_url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-    var banner_url = "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg";
-    var bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
-    const is_manager = true;
+    
 
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
@@ -242,6 +272,12 @@
                     document.getElementById('tierSelect').value = `tier${i}`;
                 }
             }  
+
+            if (is_manager){ // if manager show the reservation-form-fields-container class div
+                document.querySelector('div.reservation-form-fields-container').style.display = "block";
+                document.querySelector('div.reservation-form-fields-container input[name="name"]').readOnly = false;
+                document.querySelector('div.reservation-form-fields-container input[name="email"]').readOnly = false;
+            }
         }
 
         // To execute this code only when user is on the /search page
