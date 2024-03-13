@@ -41,12 +41,12 @@
         <!-- Reservation Form -->
         <div id="reservationForm" class="reservation-form" style="display:none;">
             <form name="reservationForm" {{!-- action="" method="" --}} onsubmit="return true">
-            <div class="reservation-form-fields-container" style="display:none;">
+            <div class="reservation-form-fields-container" style="display:block;">
                 <label for="name">Name:</label>
-                <input type="text" id="reservationName" name="name" required readonly>
+                <input type="text" id="reservationName" name="name" placeholder="Username" required readonly>
                 
                 <label for="email">Email:</label>
-                <input type="email" id="reservationEmail" name="email" required readonly>
+                <input type="email" id="reservationEmail" name="email" placeholder="Email" required readonly>
             </div>
             <div class="reservation-form-buttons-container">
                 <input type="submit" value="Reserve">

@@ -127,6 +127,17 @@ function showSeats(tier) {
     }
 }
 
+// helper function to convert hex to rgb
+function hexToRgb(hex) {
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); // to parse a hexadecimal color string
+    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : null;
+}
+
+// helper function to compare the background color of an element to a hex color
+function compareBackgroundColorHex(element, color) {
+    return window.getComputedStyle(element).backgroundColor == hexToRgb(color);
+}
+
 var is_prev_timeBlock_taken = false;
 
 function populateTimeBlocksRes(seat_number, tier_number, day_number) {
@@ -171,12 +182,14 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                         unavailableTimeSlots[time] = { name: all.seats[i].assigned_to, email: all.seats[i].email };
                         //better we modify na rin the unavailableTimeSlots[]
                         
+                        // only allow managers to click on unavailable time slots
                         if (getIsManager()) {
                             block.onclick = () => showDetails(time,block);
                         }
                     } else {
                         block.onclick = () =>  {
 
+                            // manually changing instead of toggle to esnure robustness
                             if (prevUnavailBlock) {
                                 prevUnavailBlock.style.backgroundColor = "#182e19";
                             }
@@ -195,13 +208,16 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                                 }
                             }
 
-                            if (getIsManager()) {
+                            if (getIsManager()) {   // manager to revert UI to reserve
                                 let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
                                 submitButton.value = "Reserve"
                                 submitButton.style.width = "100%";
                                 let deleteButtonRes = document.getElementById('deleteButtonRes');
                                 deleteButtonRes.style.display = "none";
                                 deleteButtonRes.style.width = "100%";
+                            } else { // if not manager, automatically fill fields with user info
+                                document.querySelector('div.reservation-form-fields-container input[name="name"]').value = getUsername();
+                                document.querySelector('div.reservation-form-fields-container input[name="email"]').value = getEmail();
                             }
 
                             is_prev_timeBlock_taken = false;
@@ -215,9 +231,9 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
 
                                 
 
-                                let hasSelectedBlcoks = selectedBlocks > 0;
+                                hasSelectedBlocks = selectedBlocks > 0;
 
-                                if (!hasSelectedBlcoks) {
+                                if (!hasSelectedBlocks) {
                                     // Clear the 'name' input field
                                     let nameInput = document.getElementById('reservationName');
                                     if (nameInput) {
@@ -231,7 +247,7 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                                     }
                                 }
 
-                                form.style.display = hasSelectedBlcoks ? 'block' : 'none';  // hides the reservationForm section
+                                form.style.display = hasSelectedBlocks ? 'block' : 'none';  // hides the reservationForm section
 
                                 if (form.style.display === 'none') {
                                     document.getElementById('deleteButton').style.display = 'none';
@@ -283,40 +299,90 @@ function submitReservation() {
 }
 
 let prevUnavailBlock = null;
+let prevUnavailBlock_InnerHTML = null;
+let hasSelectedBlocks = false;
 
-function showDetails(time,block) {
+function showDetails(time,block) { // should only execute if it's manager
     block.style.backgroundColor = "#4CAF50";
 
+    // manually changing instead of toggle to esnure robustness
     if (prevUnavailBlock) {
         prevUnavailBlock.style.backgroundColor = "#182e19";
-    }
-
-    prevUnavailBlock = block;
-
-    // if it's manager
-    if (getIsManager()) {
-        let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
-        submitButton.value = "Edit"
-        submitButton.style.width = "48%";
-        let deleteButtonRes = document.getElementById('deleteButtonRes');
-        deleteButtonRes.style.display = "block";
-        deleteButtonRes.style.width = "48%";
-    }
-
-
-    is_prev_timeBlock_taken = true;
-
-    const details = unavailableTimeSlots[time];
+    }    
     
-    const form = $('#reservationForm');
-    form.find('input[name="name"]').val(details.name);
-    form.find('input[name="email"]').val(details.email);
-    //document.getElementById('reservationName').value = details.name; 
-    //document.getElementById('reservationEmail').value = details.email; 
-    
-    document.getElementById('reservationForm').style.display = 'block';
-    document.getElementById('deleteButton').style.display = 'inline-block';
-    document.getElementById('editButton').style.display = 'inline-block';
+    let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
+    submitButton.value = "Edit"
+    submitButton.style.width = "48%";
+    let deleteButtonRes = document.getElementById('deleteButtonRes');
+    deleteButtonRes.style.display = "block";
+    deleteButtonRes.style.width = "48%";
+
+    if (prevUnavailBlock_InnerHTML != block.innerHTML){ // toggles unavailable time block selection to be visible 
+        prevUnavailBlock = block;
+        prevUnavailBlock_InnerHTML = block.innerHTML;
+
+        is_prev_timeBlock_taken = true;
+        
+        const details = unavailableTimeSlots[time];
+        
+        const form = $('#reservationForm');
+        form.find('input[name="name"]').val(details.name);
+        form.find('input[name="email"]').val(details.email);
+        //document.getElementById('reservationName').value = details.name; 
+        //document.getElementById('reservationEmail').value = details.email; 
+        
+        document.getElementById('reservationForm').style.display = 'block';
+
+    } else if (hasSelectedBlocks) { // if have reservation selections, then change UI to reserve, and keeps reservation form
+
+        prevUnavailBlock = null;
+        prevUnavailBlock_InnerHTML = null;
+        is_prev_timeBlock_taken = false;
+        
+        submitButton.value = "Reserve"
+        submitButton.style.width = "100%";
+        deleteButtonRes = document.getElementById('deleteButtonRes');
+        deleteButtonRes.style.display = "none";
+        deleteButtonRes.style.width = "100%";
+
+        // Clear the 'name' input field
+        let nameInput = document.getElementById('reservationName');
+        if (nameInput) {
+            nameInput.value = '';
+        }
+
+        // Clear the 'email' input field
+        let emailInput = document.getElementById('reservationEmail');
+        if (emailInput) {
+            emailInput.value = '';
+        }
+
+    } else {    // if no selected time blocks when toggling the same unavailable time block selection, then hide the reservation form
+        
+        prevUnavailBlock = null;
+        prevUnavailBlock_InnerHTML = null;
+        is_prev_timeBlock_taken = false;
+
+        document.getElementById('reservationForm').style.display = 'none';
+        
+        submitButton.value = "Reserve"
+        submitButton.style.width = "100%";
+        deleteButtonRes = document.getElementById('deleteButtonRes');
+        deleteButtonRes.style.display = "none";
+        deleteButtonRes.style.width = "100%";
+
+        // Clear the 'name' input field
+        let nameInput = document.getElementById('reservationName');
+        if (nameInput) {
+            nameInput.value = '';
+        }
+
+        // Clear the 'email' input field
+        let emailInput = document.getElementById('reservationEmail');
+        if (emailInput) {
+            emailInput.value = '';
+        }
+    }
 }
 
 function toggleSelection(block, selectedBlocks) {   //currenlty unused
@@ -354,15 +420,3 @@ function toggleFormVisibility(show) {   // currently unused
         // Optionally reset the form fields here if desired
     }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    window.alert('This is a manager.');
-    
-
-
-    if (getIsManager()) {
-        
-          
-        document.querySelector('.reservation-form input[type="submit"]').style.width = "50%";
-    }
-});

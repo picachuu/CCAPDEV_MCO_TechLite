@@ -273,8 +273,7 @@ function getIsManager() {
                 }
             }  
 
-            if (is_manager){ // if manager show the reservation-form-fields-container class div
-                document.querySelector('div.reservation-form-fields-container').style.display = "block";
+            if (is_manager){ // if manager, then allow to edit fields
                 document.querySelector('div.reservation-form-fields-container input[name="name"]').readOnly = false;
                 document.querySelector('div.reservation-form-fields-container input[name="email"]').readOnly = false;
             }
