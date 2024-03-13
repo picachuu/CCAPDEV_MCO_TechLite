@@ -132,8 +132,7 @@ function loadReservations() {
     let tier_total = 0;
     //determine if there were any reservations made by the user, if none then display "No reservations made, go add one!"
 
-    addReservationsPerTier(1);
-    // for (let i = 1; i < 4; i++) {
-    //     tier_total = tier_total + addReservationsPerTier(i);
-    // }
+    for (let i = 1; i < 4; i++) {
+        tier_total = tier_total + addReservationsPerTier(i);
+    }
 }
