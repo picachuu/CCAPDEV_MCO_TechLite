@@ -35,10 +35,7 @@ function checkSelectionAndPopulateTimeBlocks() {
     }
 }
 
-let unavailableTimeSlots = {
-    '12:00': { name: 'John Doe', email: 'john@example.com' },
-    '12:30': { name: 'Jane Doe', email: 'jane@example.com' }
-};
+let unavailableTimeSlots = {};
 
 function validateSelection() {
     const tierSelect = document.getElementById('tierSelect').value;
@@ -111,6 +108,7 @@ function showSeats(tier) {
         }//else, then available
         else {
             seat.addEventListener('click', function() {
+                // is_prev_timeBlock_taken = false;    // reset the flag for unavailable time block selection
                 // Handle seat selection here
                 if (!this.classList.contains('selected')) {
                     // Optional: Clear previously selected seat if your logic requires single selection
@@ -427,4 +425,8 @@ function toggleFormVisibility(show) {   // currently unused
         reservationForm.style.display = 'none'; // Hide the form
         // Optionally reset the form fields here if desired
     }
+}
+
+function testAlert(){
+    alert("This is a test alert!");
 }

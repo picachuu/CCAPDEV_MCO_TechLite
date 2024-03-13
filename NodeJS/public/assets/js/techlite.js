@@ -667,23 +667,24 @@ function purchaseReward() {
     }
 }
 
+// Function to toggle popups
+function togglePopup(popup) {
+    if (popup.style.display === "block") {
+        popup.style.display = "none";
+    } else {
+        popup.style.display = "block";
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     let loginBtn = document.getElementById('loginBtn');
     let loginPopup = document.getElementById('loginPopup');
     let createAccountPopup = document.getElementById('createAccountPopup');
+    let confirmationPopup = document.getElementById('confirmationPopup');
     let closeBtns = document.querySelectorAll('.login-popup .close, .create-account-popup .close');
     let createAccountLink = document.getElementById('createAccountLink');
     let loginLink = document.getElementById('loginLink');
     let forms = document.querySelectorAll('form');
-
-    // Function to toggle the login popup
-    function togglePopup(popup) {
-        if (popup.style.display === "block") {
-            popup.style.display = "none";
-        } else {
-            popup.style.display = "block";
-        }
-    }
 
     // Show the login popup when login button is clicked
     if(loginBtn) {
@@ -697,9 +698,18 @@ document.addEventListener("DOMContentLoaded", function() {
     closeBtns.forEach(function(btn) {
         btn.addEventListener('click', function(event) {
             event.preventDefault(); // Prevent default anchor behavior
-            togglePopup(this.closest('.login-popup') || this.closest('.create-account-popup'));
-            // clears all forms
-            forms.forEach(form => form.reset());
+            togglePopup(this.closest('.login-popup') || this.closest('.create-account-popup') || this.closest('.confirmation-popup'));
+            
+            // clears the form within the popup div when close button is clicked
+            // Find the closest div and then find the form within that div
+            let closestDiv = this.closest('div');
+            if (closestDiv) {
+                let formInClosestDiv = closestDiv.querySelector('form');
+                // Reset the form if it exists
+                if (formInClosestDiv) {
+                    formInClosestDiv.reset();
+                }
+            }
         });
     });
     
@@ -716,6 +726,209 @@ document.addEventListener("DOMContentLoaded", function() {
         togglePopup(createAccountPopup); // Close the create account popup
         togglePopup(loginPopup); // Open the login popup
     });
+
+    //Reservation page form confirmation popup handler
+    let reservationForm = document.forms["reservationForm"];
+    if (reservationForm) {
+        let submitBool = false;
+        let h4Element = document.querySelector('#confirmationPopup h4');
+
+        // Add an event listener for the form's submit event
+        reservationForm.addEventListener('submit', function(event) {
+            // Prevent the form from being submitted
+            event.preventDefault();
+
+            submitBool = true;
+
+            if (logged) {// Show the popup confirmation
+                // Replace the HTML of the h4 element
+                h4Element.innerHTML = 'Confirm Reservation';
+                // Show the confirmation popup
+
+                // Select the #seatsContainer div
+                let divElement = document.querySelector('#timeBlocksContainer');
+
+                // Select all child elements within the div
+                let childElements = divElement.querySelectorAll('*');
+                let time = '(placeholder)';
+
+
+                // seats
+                divElement = document.querySelector('#seatsContainer');
+                // Select all child elements within the div
+                childElements = divElement.querySelectorAll('*');
+                let seat = null;
+                childElements.forEach(function(childElement) {
+                    let blockElements = childElement.querySelectorAll('button');
+                    blockElements.forEach(function(blockElement) {
+                        if (compareBackgroundColorHex(blockElement, "#FFFFFF")) { // rgb(76, 175, 80) is the RGB equivalent of #4CAF50
+                            seat = blockElement.innerText;
+                        }
+                    });
+                    
+                });
+
+                // Select the dropdowns
+                let tierSelect = document.querySelector('#tierSelect');
+                let daySelect = document.querySelector('#daySelect');
+
+                // Get the selected values
+                let selectedTier = tierSelect.value;
+                let selectedDay = daySelect.value;
+
+                console.log('Selected Tier:', selectedTier);
+                console.log('Selected Day:', selectedDay);
+
+                // Get the input values
+                const reserveUsername = reservationForm.elements['name'].value;
+                const reserveEmail = reservationForm.elements['email'].value;
+                
+                h4Element.insertAdjacentHTML('afterend', `<p>Username: ${reserveUsername}</p><p>Email: ${reserveEmail}</p><p>Selected Tier: ${selectedTier}</p><p>Selected Day: ${selectedDay}</p><p>Selected Time/s: ${time}</p><p>Selected Seat: ${seat}</p>`);
+                togglePopup(confirmationPopup);
+            } else {
+                togglePopup(loginPopup);
+            }
+        });
+
+        // Select the delete button
+        let deleteButton = document.getElementById('deleteButtonRes');
+
+        // Add an event listener for the delete button's click event
+        deleteButton.addEventListener('click', function(event) {
+            if (logged) {
+                // Show the confirmation popup
+
+                // Replace the HTML of the h4 element
+                h4Element.innerHTML = 'Confirm Deletion';
+
+                // Select the #seatsContainer div
+                let divElement = document.querySelector('#timeBlocksContainer');
+
+                // Select all child elements within the div
+                let childElements = divElement.querySelectorAll('*');
+                let time = null;
+                // Loop through the child elements and check their color
+                childElements.forEach(function(childElement) {
+                    let blockElements = childElement.querySelectorAll('button');
+                    blockElements.forEach(function(blockElement) {
+                        if (compareBackgroundColorHex(blockElement, "#4CAF50")) { // rgb(76, 175, 80) is the RGB equivalent of #4CAF50
+                            time = blockElement.innerText;
+                        }
+                    });
+                    
+                });
+
+
+                // seats
+                divElement = document.querySelector('#seatsContainer');
+                // Select all child elements within the div
+                childElements = divElement.querySelectorAll('*');
+                let seat = null;
+                childElements.forEach(function(childElement) {
+                    let blockElements = childElement.querySelectorAll('button');
+                    blockElements.forEach(function(blockElement) {
+                        if (compareBackgroundColorHex(blockElement, "#FFFFFF")) { // rgb(76, 175, 80) is the RGB equivalent of #4CAF50
+                            seat = blockElement.innerText;
+                        }
+                    });
+                    
+                });
+
+                // Select the dropdowns
+                let tierSelect = document.querySelector('#tierSelect');
+                let daySelect = document.querySelector('#daySelect');
+
+                // Get the selected values
+                let selectedTier = tierSelect.value;
+                let selectedDay = daySelect.value;
+
+                console.log('Selected Tier:', selectedTier);
+                console.log('Selected Day:', selectedDay);
+
+                //alert(time);
+
+                const details = unavailableTimeSlots[time];
+                const delUsername = details.name;
+                const delEmail = details.email;
+                
+                h4Element.insertAdjacentHTML('afterend', `<p>Username: ${delUsername}</p><p>Email: ${delEmail}</p><p>Selected Tier: ${selectedTier}</p><p>Selected Day: ${selectedDay}</p><p>Selected Time: ${time}</p><p>Selected Seat: ${seat}</p>`);
+                togglePopup(confirmationPopup);
+            } else {
+                // Show the login popup
+                togglePopup(loginPopup);
+            }
+        });
+
+        // Select the confirmation button
+        let confirmationButton = document.getElementById('confirm-confirmation');
+        // Add an event listener for the confirmation button's click event
+        confirmationButton.addEventListener('click', function(event) {
+            // Prevent the button's default action
+            event.preventDefault();
+
+            // Submit the form manually
+            if (submitBool == true) {
+                submitBool = false;
+                reservationForm.submit();   
+            } else {
+                window.location.href = '/reserve?delete=true';
+                // for delete popup function
+            }
+        });
+
+        // Select the cancel button
+        let cancelButton = document.getElementById('cancel-confirmation');
+
+        // Add an event listener for the cancel button's click event
+        cancelButton.addEventListener('click', function(event) {
+            submitBool = false;
+            // Prevent the button's default action
+            event.preventDefault();
+
+            
+            togglePopup(confirmationPopup);
+
+            // clears confirmation popup details
+            // Hide the popup confirmation
+            // Select the confirmationdiv
+            let divElement = document.querySelector('#confirmationPopup');
+
+            // Select all p elements within the div
+            let pElements = divElement.querySelectorAll('p');
+
+            // Loop through the p elements and remove each one
+            pElements.forEach(function(pElement) {
+                pElement.remove();
+            });
+        });
+
+        // Select the close button
+        let closeButton = document.querySelector('#confirmationPopup .close');
+        // Add an event listener for the close button's click event
+        closeButton.addEventListener('click', function(event) {
+            submitBool = false;
+            
+            // Prevent the button's default action
+            event.preventDefault();
+
+            // Hide the popup confirmation
+            togglePopup(confirmationPopup);
+
+            // clears confirmation popup details
+            // Hide the popup confirmation
+            // Select the confirmationdiv
+            let divElement = document.querySelector('#confirmationPopup');
+
+            // Select all p elements within the div
+            let pElements = divElement.querySelectorAll('p');
+
+            // Loop through the p elements and remove each one
+            pElements.forEach(function(pElement) {
+                pElement.remove();
+            });
+        });
+    } //Reservation page confirmation popup handler END
+
 });
 
 
