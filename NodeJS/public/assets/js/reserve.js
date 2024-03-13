@@ -1,7 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
-    populateDays();
-    attachEventListeners();
-});
+if (window.location.pathname === '/reserve') {
+    document.addEventListener('DOMContentLoaded', function() {
+        populateDays();
+        attachEventListeners();
+    });
+}
 
 function populateDays() {
     const daySelect = document.getElementById('daySelect');
