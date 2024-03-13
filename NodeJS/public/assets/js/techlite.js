@@ -277,6 +277,14 @@ function getIsManager() {
                 document.querySelector('div.reservation-form-fields-container input[name="name"]').readOnly = false;
                 document.querySelector('div.reservation-form-fields-container input[name="email"]').readOnly = false;
             }
+
+            // Check if the user is not logged in
+            if (!logged) {
+                // hide and disable input reservation fields
+                document.querySelector('div.reservation-form-fields-container input[name="name"]').disabled = true;
+                document.querySelector('div.reservation-form-fields-container input[name="email"]').disabled = true;
+                $('.reservation-form-fields-container').hide();
+            }
         }
 
         // To execute this code only when user is on the /search page
@@ -660,12 +668,13 @@ function purchaseReward() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    var loginBtn = document.getElementById('loginBtn');
-    var loginPopup = document.getElementById('loginPopup');
-    var createAccountPopup = document.getElementById('createAccountPopup');
-    var closeBtns = document.querySelectorAll('.login-popup .close, .create-account-popup .close');
-    var createAccountLink = document.getElementById('createAccountLink');
-    var loginLink = document.getElementById('loginLink');
+    let loginBtn = document.getElementById('loginBtn');
+    let loginPopup = document.getElementById('loginPopup');
+    let createAccountPopup = document.getElementById('createAccountPopup');
+    let closeBtns = document.querySelectorAll('.login-popup .close, .create-account-popup .close');
+    let createAccountLink = document.getElementById('createAccountLink');
+    let loginLink = document.getElementById('loginLink');
+    let forms = document.querySelectorAll('form');
 
     // Function to toggle the login popup
     function togglePopup(popup) {
@@ -689,8 +698,11 @@ document.addEventListener("DOMContentLoaded", function() {
         btn.addEventListener('click', function(event) {
             event.preventDefault(); // Prevent default anchor behavior
             togglePopup(this.closest('.login-popup') || this.closest('.create-account-popup'));
+            // clears all forms
+            forms.forEach(form => form.reset());
         });
     });
+    
 
     // Show the create account popup when "Create here" is clicked
     createAccountLink.addEventListener('click', function(event) {

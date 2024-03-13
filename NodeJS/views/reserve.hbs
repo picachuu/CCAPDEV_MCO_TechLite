@@ -40,7 +40,7 @@
 
         <!-- Reservation Form -->
         <div id="reservationForm" class="reservation-form" style="display:none;">
-            <form name="reservationForm" {{!-- action="" method="" --}} onsubmit="return true">
+            <form name="reservationForm" {{!-- action="" method="" --}} onsubmit="return submitReservation()">
             <div class="reservation-form-fields-container" style="display:block;">
                 <label for="name">Name:</label>
                 <input type="text" id="reservationName" name="name" placeholder="Username" required readonly>

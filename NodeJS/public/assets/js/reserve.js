@@ -189,27 +189,30 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                     } else {
                         block.onclick = () =>  {
                             let selectionLimit = 4;
+                            const formDiv = $('#reservationForm');
 
                             // manually changing instead of toggle to esnure robustness
                             if (prevUnavailBlock) {
                                 prevUnavailBlock.style.backgroundColor = "#182e19";
+                                prevUnavailBlock = null;
+                                prevUnavailBlock_InnerHTML = null;
                             }
 
-                            if (is_prev_timeBlock_taken) {
-                                // Clear the 'name' input field
-                                let nameInput = document.getElementById('reservationName');
-                                if (nameInput) {
-                                    nameInput.value = '';
+                            if (!getLogged()){ // guards against hardcoded values
+                                $('form[name="reservationForm"] :submit').val('Login to Reserve');
+                            } else if (getIsManager()) {   // manager to revert UI to reserve
+
+                                if (!is_prev_timeBlock_taken) {
+                                    previousNameField = formDiv.find('input[name="name"]').val();
+                                    previousEmailField = formDiv.find('input[name="email"]').val();
                                 }
 
-                                // Clear the 'email' input field
-                                let emailInput = document.getElementById('reservationEmail');
-                                if (emailInput) {
-                                    emailInput.value = '';
+                                if (previousNameField || is_prev_timeBlock_taken) {
+                                    document.forms["reservationForm"].reset(); // always reset form for robustness
+                                    formDiv.find('input[name="name"]').val(previousNameField);
+                                    formDiv.find('input[name="email"]').val(previousEmailField);
                                 }
-                            }
-
-                            if (getIsManager()) {   // manager to revert UI to reserve
+                                
                                 selectionLimit = 48; // manager gets full selection limit
                                 let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
                                 submitButton.value = "Reserve"
@@ -222,7 +225,7 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                                 document.querySelector('div.reservation-form-fields-container input[name="email"]').value = getEmail();
                             }
 
-                            is_prev_timeBlock_taken = false;
+                            
 
                             if (selectedBlocks < selectionLimit) { 
                                 block.classList.toggle('selected');
@@ -235,7 +238,7 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
 
                                 hasSelectedBlocks = selectedBlocks > 0;
 
-                                if (!hasSelectedBlocks) {
+                                /* if (!hasSelectedBlocks) {
                                     // Clear the 'name' input field
                                     let nameInput = document.getElementById('reservationName');
                                     if (nameInput) {
@@ -247,7 +250,7 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                                     if (emailInput) {
                                         emailInput.value = '';
                                     }
-                                }
+                                } */
 
                                 form.style.display = hasSelectedBlocks ? 'block' : 'none';  // hides the reservationForm section
 
@@ -260,6 +263,7 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                                 block.classList.toggle('selected');
                                 selectedBlocks = selectedBlocks - 1;
                             }
+                            is_prev_timeBlock_taken = false;
                         }
                     }
                     rows[rowIndex].appendChild(block);
@@ -304,7 +308,16 @@ let prevUnavailBlock = null;
 let prevUnavailBlock_InnerHTML = null;
 let hasSelectedBlocks = false;
 
+// these two are only used for the manager UI
+let previousNameField = null;
+let previousEmailField = null;
+
 function showDetails(time,block) { // should only execute if it's manager
+    if (!getLogged()){ // guards against hardcoded values
+        $('form[name="reservationForm"] :submit').val('Login to Reserve');
+        return;
+    }
+    
     block.style.backgroundColor = "#4CAF50";
 
     // manually changing instead of toggle to esnure robustness
@@ -323,19 +336,24 @@ function showDetails(time,block) { // should only execute if it's manager
         prevUnavailBlock = block;
         prevUnavailBlock_InnerHTML = block.innerHTML;
 
+        const formDiv = $('#reservationForm');
+
+        if (!is_prev_timeBlock_taken) { // detect if previous selection is a open slot
+            previousNameField = formDiv.find('input[name="name"]').val();
+            previousEmailField = formDiv.find('input[name="email"]').val();
+        }
+
         is_prev_timeBlock_taken = true;
         
         const details = unavailableTimeSlots[time];
-        
-        const form = $('#reservationForm');
-        form.find('input[name="name"]').val(details.name);
-        form.find('input[name="email"]').val(details.email);
+
+        formDiv.find('input[name="name"]').val(details.name);
+        formDiv.find('input[name="email"]').val(details.email);
         //document.getElementById('reservationName').value = details.name; 
         //document.getElementById('reservationEmail').value = details.email; 
-        
         document.getElementById('reservationForm').style.display = 'block';
 
-    } else if (hasSelectedBlocks) { // if have reservation selections, then change UI to reserve, and keeps reservation form
+    } else if (hasSelectedBlocks) { // if have reservation selections, then change UI to reserve, and keeps reservation form (reverting to previous values)
 
         prevUnavailBlock = null;
         prevUnavailBlock_InnerHTML = null;
@@ -347,18 +365,11 @@ function showDetails(time,block) { // should only execute if it's manager
         deleteButtonRes.style.display = "none";
         deleteButtonRes.style.width = "100%";
 
-        // Clear the 'name' input field
-        let nameInput = document.getElementById('reservationName');
-        if (nameInput) {
-            nameInput.value = '';
-        }
+        // reverts input fields of the form
+        const formDiv = $('#reservationForm');
 
-        // Clear the 'email' input field
-        let emailInput = document.getElementById('reservationEmail');
-        if (emailInput) {
-            emailInput.value = '';
-        }
-
+        formDiv.find('input[name="name"]').val(previousNameField);
+        formDiv.find('input[name="email"]').val(previousEmailField);
     } else {    // if no selected time blocks when toggling the same unavailable time block selection, then hide the reservation form
         
         prevUnavailBlock = null;
@@ -366,24 +377,19 @@ function showDetails(time,block) { // should only execute if it's manager
         is_prev_timeBlock_taken = false;
 
         document.getElementById('reservationForm').style.display = 'none';
-        
         submitButton.value = "Reserve"
         submitButton.style.width = "100%";
         deleteButtonRes = document.getElementById('deleteButtonRes');
         deleteButtonRes.style.display = "none";
         deleteButtonRes.style.width = "100%";
-
-        // Clear the 'name' input field
-        let nameInput = document.getElementById('reservationName');
-        if (nameInput) {
-            nameInput.value = '';
-        }
-
-        // Clear the 'email' input field
-        let emailInput = document.getElementById('reservationEmail');
-        if (emailInput) {
-            emailInput.value = '';
-        }
+        
+        // clears the input fields of the form and reverts
+        const formDiv = $('#reservationForm');
+        //reset
+        document.forms["reservationForm"].reset(); // always reset form for robustness
+        //revert
+        formDiv.find('input[name="name"]').val(previousNameField);
+        formDiv.find('input[name="email"]').val(previousEmailField);
     }
 }
 
