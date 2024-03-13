@@ -188,6 +188,7 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                         }
                     } else {
                         block.onclick = () =>  {
+                            let selectionLimit = 4;
 
                             // manually changing instead of toggle to esnure robustness
                             if (prevUnavailBlock) {
@@ -209,6 +210,7 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                             }
 
                             if (getIsManager()) {   // manager to revert UI to reserve
+                                selectionLimit = 48; // manager gets full selection limit
                                 let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
                                 submitButton.value = "Reserve"
                                 submitButton.style.width = "100%";
@@ -222,7 +224,7 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
 
                             is_prev_timeBlock_taken = false;
 
-                            if (selectedBlocks < 4) { 
+                            if (selectedBlocks < selectionLimit) { 
                                 block.classList.toggle('selected');
                                 const isSelected = block.classList.contains('selected');
                                 selectedBlocks = isSelected ? selectedBlocks + 1 : selectedBlocks - 1;
