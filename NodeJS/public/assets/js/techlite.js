@@ -745,12 +745,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 h4Element.innerHTML = 'Confirm Reservation';
                 // Show the confirmation popup
 
-                // Select the #seatsContainer div
+                // Select the #timeBlocksContainer div
                 let divElement = document.querySelector('#timeBlocksContainer');
 
                 // Select all child elements within the div
                 let childElements = divElement.querySelectorAll('*');
-                let time = '(placeholder)';
+                let time = "";
+                childElements.forEach(function(childElement) {
+                    if (compareBackgroundColorHex(childElement, "#A12929")) {
+                        time = time + childElement.innerText + " ";
+                    }
+                });
 
 
                 // seats
@@ -801,7 +806,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Replace the HTML of the h4 element
                 h4Element.innerHTML = 'Confirm Deletion';
 
-                // Select the #seatsContainer div
+                // Select the #timeBlocksContainer div
                 let divElement = document.querySelector('#timeBlocksContainer');
 
                 // Select all child elements within the div
