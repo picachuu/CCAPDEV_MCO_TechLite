@@ -102,31 +102,25 @@ function showSeats(tier) {
         const columnIndex = Math.floor((i - 1) / 5);
         seat.textContent = `Seat ${i}`;
 
-        
 
         // Check if seat is unavailable
-
         let selected_tier = Number(document.getElementById('tierSelect').value.slice(4));
         let day = Number(document.getElementById('daySelect').value.slice(8));
         const seatAvail = !isSeatUnavailable(i, selected_tier, day)
-        //alert(seatAvail);
+
         seatsAvailArray.push(seatAvail);
         seatsArray.push(seat);
         
         if (!seatAvail) {
             seat.classList.add('unavailable');
+            // adds not allow cursor to the unavailable seats classe of not manager
+            if (!getIsManager()) {
+                // seat.style.pointerEvents = "none";
+                seat.style.cursor = "not-allowed";
+            }
         }//else, then available
         if (seatAvail || getIsManager()) {  // manager allowed to click on unavailable seats
             seat.addEventListener('click', function() {
-                // === Manager part ===
-                // if (!this.classList.contains('unavailable')) {
-                //     // Optional: Clear previously selected seat if your logic requires single selection
-                //     document.querySelectorAll('.seat.selected').forEach(selectedSeat => {
-                //         selectedSeat.classList.remove('selected');
-                //     });
-                //     this.classList.add('selected');
-                //     populateTimeBlocksRes(i, selected_tier, day); // Populate time blocks after seat is selected
-                // }
 
                 // Handle seat selection here
                 if (!this.classList.contains('selected')) {
@@ -139,19 +133,19 @@ function showSeats(tier) {
                     this.classList.add('selected');
 
 
-                    // manager part 
-                    if (this.classList.contains('unavailable')) { //remove unvavailable class to avoid overriding (manager part)
-                        this.classList.remove('unavailable');
-                    } 
-                    // (make all seats that was initially unavailable to be unavailable again)
+                    // // manager part for initial unavailable seats
+                    // if (this.classList.contains('unavailable')) { //remove unvavailable class to avoid overriding (manager part)
+                    //     this.classList.remove('unavailable');
+                    // } 
+                    // // (make all seats that was initially unavailable to be unavailable again)
                     
-                    let match = this.innerHTML.match(/\d+/);
-                    let number = match ? Number(match[0]) : null;
-                    for (let i = 0; i < 15; i++) {
-                        if (!seatsAvailArray[i] && i != number-1) {
-                            seatsArray[i].classList.add('unavailable');
-                        }
-                    }   // manager part end
+                    // let match = this.innerHTML.match(/\d+/);
+                    // let number = match ? Number(match[0]) : null;
+                    // for (let i = 0; i < 15; i++) {
+                    //     if (!seatsAvailArray[i] && i != number-1) {
+                    //         seatsArray[i].classList.add('unavailable');
+                    //     }
+                    // }   // manager part end
 
                     populateTimeBlocksRes(i, selected_tier, day); // Populate time blocks after seat is selected
                 }

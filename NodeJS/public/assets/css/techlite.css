@@ -1026,6 +1026,10 @@ section {
   background-color: #ac2525;
 }
 
+.seat.unavailable.selected {
+  background-color: white;
+}
+
 .seat.selected {
   background-color: white;
   color: #333; 

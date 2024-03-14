@@ -11,6 +11,14 @@ const databaseName = dbmodel.databaseName;
 const errorFn = dbmodel.errorFn;
 const successFn = dbmodel.successFn;
 
+let username = null;
+let email = null;
+let logged_status = false;
+let is_manager = null;
+let img_url = null;
+let banner_url = null;
+let bio_msg = null;
+
 mongoose.connect(db_url+databaseName);
 
 function add(server){
@@ -196,37 +204,10 @@ function add(server){
       password: req.body.password
     };
   
-    //const dateinfo = require('./DateInfo');
-    /* const searchEmail = { //searchQuery for email based log-in
-      email: req.body.username,
-      password: req.body.password
-    }; */
-  
     let user = null;  // user object for user information is default to null
   
-    /* userModel.findOne(searchQuery).lean().then(function(user_data){ //search for username based log-in
-      if (user_data != null){
-
-        user = user_data; // user object is assigned to user_data
-        resp.redirect('/?success=true'); //redirect to home page with success message
-
-      } else {
-        userModel.findOne(searchEmail).lean().then(function(user_data){ //search for email based log-in
-
-          if (user_data != null){
-            user = user_data; // user object is assigned to user_data
-            resp.redirect('/?success=true'); //redirect to home page with success message
-          } else {
-            resp.redirect('/?success=false'); //redirect to home page with failure message
-          }
-
-        }).catch(errorFn);
-      }
-  
-    }).catch(errorFn); */
 
     user = await checkLoginDB(searchQuery); // wait for the function to finish before proceeding
-
 
     // below is a placeholder
     if (user != null){
@@ -236,6 +217,7 @@ function add(server){
     }
 
   });
+
 
   // check-login post request for user log-in validation, returns validation boolean
   server.post('/check-login', async function(req, resp){  //async function for asynchronous operations
@@ -257,9 +239,79 @@ function add(server){
 
     if (user) {
       valid = true;
+      logged_status = true;
+      username = user.username;
+      email = user.email;
+      is_manager = user.is_manager;
+      img_url = user.img_url;
+      banner_url = user.banner_url;
+      bio_msg = user.bio_msg;
+    } else {
+      logged_status = false;
     }
 
     resp.send({valid: valid});
+  });
+
+  server.post('/obtain-credentials', async function(req, resp){  //async function for asynchronous operations
+    let user = null;
+
+
+    console.log("Obtaining credentials...");
+    console.log("Logged Status: " + logged_status);
+    console.log("Username: " + username);
+    console.log("Email: " + email);
+    console.log("Is_Manager: " + is_manager);
+
+    
+
+    if (logged_status) {
+      user = {
+        username: username,
+        email: email,
+        is_manager: is_manager,
+        img_url: img_url,
+        banner_url: banner_url,
+        bio_msg: bio_msg
+      }
+    } else {
+      username = null;
+      email = null;
+      is_manager = null;
+      img_url = null;
+      banner_url = null;
+      bio_msg = null;
+    }
+
+    if (user){
+      console.log('Obtained Username: ' + user.username);
+    } else {
+      console.log('No User Found');
+    }
+
+    resp.send({logged: logged_status, user: user});
+  });
+
+  server.post('/log-out', async function(req, resp){
+    // set all user credentials to null
+    console.log('Logging out...');
+    logged_status = false;
+    username = null;
+    email = null;
+    is_manager = null;
+    img_url = null;
+    banner_url = null;
+    bio_msg = null;
+
+    console.log('Logged Status: ' + logged_status);
+    
+    
+
+    if (logged_status){
+      resp.redirect('/?success=false');
+    } else {
+      resp.redirect('/?success=true');
+    }
   });
 
   async function checkLoginDB(searchQuery){ //async function for asynchronous operations

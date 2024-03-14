@@ -1,39 +1,81 @@
+// // whether user is logged
+// var logged = true;
+// // user information
+// var username = "admin";
+// var email = "admin@email.com";
+// var img_url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+// var banner_url = "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg";
+// var bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
+// var is_manager = true;
+
 // whether user is logged
-var logged = true;
+var logged = getLogged();
 // user information
-var username = "admin";
-var email = "admin@email.com";
-var img_url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-var banner_url = "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg";
-var bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
-const is_manager = true;
+var username = getUsername();
+var email = getEmail();
+var img_url = getImgUrl();
+var banner_url = getBannerUrl();
+var bio_msg = getBioMsg();
+var is_manager = getIsManager();
+
+// don't know how to make it asynchronous yet, should not even need these when cookies and sessions are introduced
+function getUserData() {
+    let response = $.ajax({
+        url: 'obtain-credentials',
+        type: 'POST',
+        async: false  // Make the AJAX request synchronous
+    }).responseJSON;
+
+    if (response.logged) {
+        let userObject = response.user;
+        return {
+            logged: true,
+            username: userObject.username,
+            email: userObject.email,
+            img_url: userObject.img_url,
+            banner_url: userObject.banner_url,
+            bio_msg: userObject.bio_msg,
+            is_manager: userObject.is_manager
+        };
+    } else {
+        return {
+            logged: false,
+            username: null,
+            email: null,
+            img_url: null,
+            banner_url: null,
+            bio_msg: null,
+            is_manager: null
+        };
+    }
+}
 
 function getLogged() {
-    return logged;
+    return getUserData().logged;
 }
 
 function getUsername() {
-    return username;
+    return getUserData().username;
 }
 
 function getEmail() {
-    return email;
+    return getUserData().email;
 }
 
 function getImgUrl() {
-    return img_url;
+    return getUserData().img_url;
 }
 
 function getBannerUrl() {
-    return banner_url;
+    return getUserData().banner_url;
 }
 
 function getBioMsg() {
-    return bio_msg;
+    return getUserData().bio_msg;
 }
 
 function getIsManager() {
-    return is_manager;
+    return getUserData().is_manager;
 }
 
 (function ($) {
@@ -348,8 +390,8 @@ function getIsManager() {
                 event.preventDefault(); // Prevent default anchor behavior
 
                 // ==== Placeholder: Logic to logout user ====
-
                 alert('Logging out...');
+                $.post('/log-out'); //kinda weird but it works
                 window.location.href = '/'; // Redirect to home page
             });
         }
