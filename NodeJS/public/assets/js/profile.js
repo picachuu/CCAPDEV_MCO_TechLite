@@ -57,7 +57,7 @@ function addReservationsPerTier(tier) {
                                 spani.textContent = 'Tier ' + tier + ' Seat ' + own.reservations[i].seats;
                                 break;
                             case 3: //l3: header and date 31/12/2023
-                                headeri.textContent = 'Date Added';
+                                headeri.textContent = 'Date Reserved';
                                 //For MCO3, convert this in respect to new db date format
                                 spani.textContent = own.reservations[i].day + '/' + own.reservations[i].month + '/' + own.reservations[i].year;
                                 break;
@@ -75,11 +75,18 @@ function addReservationsPerTier(tier) {
                                 // for now, ongoing
                                 spani.textContent = 'Ongoing';
                                 break;
+                                
+                                //TO DO FOR MCO3: Display Time Left
                             case 5:
-                                headeri.textContent = 'Time Left';
-                                spani.textContent = '30 minutes';
-                                // for now no math involved, just display the time left (30 minutes)
+                                headeri.textContent = 'Time Start';
+                                spani.textContent = `${Math.floor((own.reservations[i].time_start)/100).toString().padStart(2, '0')}:${((own.reservations[i].time_start)%100).toString().padStart(2, '0')}` + ' (30 minutes)';
                                 break;
+                            // case 6:
+                            //     headeri.textContent = 'Time Left';
+                            //     spani.textContent = '30 minutes';
+                            //     // for now no math involved, just display the time left (30 minutes)
+                            //     break;
+                            
                         }
                         reservation_li.appendChild(headeri);
                         reservation_li.appendChild(spani);
@@ -98,10 +105,18 @@ function addReservationsPerTier(tier) {
 
                     var link6 = document.createElement("a");
                     var url = "/manage" + 
-                        "?seats=" + encodeURIComponent(own.reservations[i].seats) + 
+                    
+                        "?tier=" + encodeURIComponent(tier) + 
+                        "&seats=" + encodeURIComponent(own.reservations[i].seats) + 
                         "&username=" + encodeURIComponent(own.reservations[i].assigned_to) +
                         "&email=" + encodeURIComponent(own.reservations[i].email) + 
-                        "&time_start=" + encodeURIComponent(own.reservations[i].time_start) + 
+                        //include here the number of reserved timeblocks of the seat. For now just one
+                        "&reservations=" + encodeURIComponent(1) + 
+
+                        //this should depend on number of reservations, for now just one, just improvise on the new db
+                        //imagine this should be a for loop based on number of time_starts in the reservation
+                        "&time_start1=" + encodeURIComponent(own.reservations[i].time_start) + 
+
                         "&month=" + encodeURIComponent(own.reservations[i].month) + 
                         "&day=" + encodeURIComponent(own.reservations[i].day) + 
                         "&year=" + encodeURIComponent(own.reservations[i].year);

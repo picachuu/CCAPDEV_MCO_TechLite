@@ -121,9 +121,40 @@ function add(server){
       
   });
 
+  server.post('/manageable-check', function(req, resp) {
+    console.log('Manage post request received');
+
+    let tierModel;
+    switch(Number(req.body.tier_num)) {
+        case 0: tierModel = null; break;
+        case 1: tierModel = tier1_schedModel; break;
+        case 2: tierModel = tier2_schedModel; break;
+        case 3: tierModel = tier3_schedModel; break;
+    }
+
+    //change searchQuery based on mode: "days", "taken_false", "taken_true"
+    let searchQuery;
+    switch(req.body.mode){
+      
+      //this is for hasReservations_atDayX() in manage.js
+      case "find_timeslot": searchQuery = {
+        seats: Number(req.body.seat_num),
+        assigned_to: String(req.body.user_name),
+        time_start: String(req.body.time_start),
+        //taken: true, //this is for customers lang naman
+        day: Number(req.body.day_num)
+      }; findAll = false; break;
+    }
+
+    tierModel.findOne(searchQuery).lean().then(function(vals){
+      console.log('Timeslot found for manage page');
+      resp.send({seat: vals});
+    }).catch(errorFn);
+
+  });
+
   // Nothing to see here. Never used, never existed
   // 
-
   // // manage post request for determining which seats are manageable by req.body.username
   // server.post('/manageable-check', function(req, resp) {  
   //   console.log('Manage post request received');

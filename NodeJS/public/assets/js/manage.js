@@ -1,22 +1,107 @@
 //This file is here for future reference if needed. Remnants of LV's stupidity e_e
 
 // //to avoid conflict with reserve.js 
-// if (window.location.pathname === '/manage') {
-//     document.addEventListener('DOMContentLoaded', function() {
-//         //this is here so that populateDays2 won't run into a null value of tierSelect
-//         document.forms["reservationForm"]["tierSelect"].value = 'tier0';
-//         document.forms["reservationForm"]["tierSelect"].disabled = false;
-//         document.forms["reservationForm"]["daySelect"].disabled = false;
-//         //document.getElementById('tierSelect').value = 'tier0';
-//         document.forms["reservationForm"]["userName"].value = getUsername();
-//         document.forms["reservationForm"]["userEmail"].value = getEmail();
-//         document.getElementById('timeBlocksContainer').style.display = 'none';
-//         populateDays2();
-//         populateTiers();
-//         attachEventListeners2();
-//     });
-// }
+if (window.location.pathname === '/manage') {
+    document.addEventListener('DOMContentLoaded', function() {
+        //document.forms["reservationForm"]["tierSelect"].value = 'tier0';
+        //document.forms["reservationForm"]["tierSelect"].disabled = false;
+        //document.forms["reservationForm"]["daySelect"].disabled = false;
+        //document.getElementById('tierSelect').value = 'tier0';
+        //document.forms["reservationForm"]["userName"].value = getUsername();
+        //document.forms["reservationForm"]["userEmail"].value = getEmail();
+        displayManageablecontent();
+    });
+}
 
+function displayManageablecontent() {
+    // Get the current URL
+    const url = new URL(window.location.href);
+
+    // Get the search parameters from the URL
+    const searchParams = url.searchParams;
+
+    // Access individual parameters by name
+    const tier = searchParams.get('tier'); 
+    const seats = searchParams.get('seats');
+    const username = searchParams.get('username'); 
+    const email = searchParams.get('email'); 
+    const reservations = Number(searchParams.get('reservations'));
+    // In new db implementation, just obtain the iso 8601 date format
+    
+    const month = searchParams.get('month'); 
+    const day = searchParams.get('day');
+    const year = searchParams.get('year'); 
+
+    
+    switch (Number(tier)) {
+        case 1: document.forms["reservationForm"]["tierSelect"].value = "tier1"; break;
+        case 2: document.forms["reservationForm"]["tierSelect"].value = "tier2"; break;
+        case 3: document.forms["reservationForm"]["tierSelect"].value = "tier3"; break;
+    }
+
+    document.forms["reservationForm"]["userName"].value = username;
+    document.forms["reservationForm"]["userEmail"].value = email;
+
+    //modify the date
+    const daySelect = document.getElementById('daySelect');
+    daySelect.innerHTML = `<option value = "${year}-${month}-${day}">${year}-${month}-${day}</option>`; // Reset
+    document.forms["reservationForm"]["daySelect"].value = `${year}-${month}-${day}`;
+
+    //add the seat
+    const seat = document.createElement('button');
+    seat.classList.add('seat');
+    seat.textContent = `Seat ${seats}`;
+    seat.classList.add('unavailable');
+    const seatsContainer = document.getElementById('seatsContainer');
+    seatsContainer.appendChild(seat);
+
+    //clear the timeblocks container
+    const container = document.getElementById('timeBlocksContainer');
+    container.innerHTML = ''; // Clear previous blocks
+    container.style.display = 'block';
+
+    for (let i = 1; i <= reservations; i++) {
+        const time_start = searchParams.get('time_start' + i);
+        addTimeblock(seats, tier, day, time_start, username);
+    }
+   
+}
+
+function addTimeblock(seatNumber, tierNumber, daySelected, time_start, assigned_to) {
+
+    $.ajax({
+        url: 'manageable-check',
+        type: 'POST',
+        data: { 
+            tier_num: tierNumber, 
+            seat_num: Number(seatNumber), 
+            user_name: assigned_to,
+            time_start: time_start,
+            day_num: daySelected, 
+            mode: "find_timeslot"
+        },
+        
+        async: false,  // Make the request synchronous
+        success: function(reserved, status) {
+            if (status === 'success') {
+                const timeBlocksContainer = document.getElementById('timeBlocksContainer');
+                const block = document.createElement('button');
+                block.classList.add('time-slot');
+                block.textContent = `${Math.floor((reserved.seat.time_start)/100).toString().padStart(2, '0')}:${((reserved.seat.time_start)%100).toString().padStart(2, '0')}`;
+
+                block.onclick = () =>  {
+                    block.classList.toggle('selected');
+                }
+                
+                timeBlocksContainer.appendChild(block);
+            }
+        },
+        error: function() {
+            //no errors :)
+        }
+    });
+    
+}
 // //added 2 to every function name to avoid conflict with the reserve.js functions
 // // Why? Cause element 'reservationForm' should not be hidden in manage.hbs
 // function attachEventListeners2() {

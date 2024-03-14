@@ -106,7 +106,7 @@ function showSeats(tier) {
         // Check if seat is unavailable
         let selected_tier = Number(document.getElementById('tierSelect').value.slice(4));
         let day = Number(document.getElementById('daySelect').value.slice(8));
-        const seatAvail = !isSeatUnavailable(i, selected_tier, day)
+        const seatAvail = !isSeatUnavailable(i, selected_tier, day);
 
         seatsAvailArray.push(seatAvail);
         seatsArray.push(seat);
