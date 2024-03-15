@@ -3,7 +3,7 @@
   justify-content: flex-start;
 }
 
-#timeBlocksContainer .time-slot.selected {
+#timeBlocksContainer .time-slot.selected, .time-blocks-container .time-slot.selected{
   background-color: #a12929; 
   color: white; 
 }
@@ -19,7 +19,7 @@ input[type="text"], input[type="email"], select {
   width: calc(100% - 24px); /* Adjust width for padding */
 }
 
-#timeBlocksContainer .time-slot.unavailable {
+#timeBlocksContainer .time-slot.unavailable, .time-blocks-container .time-slots.unavailable {
   background-color: #182e19; 
   color: white; 
   cursor: not-allowed;
@@ -27,7 +27,7 @@ input[type="text"], input[type="email"], select {
 
 /* Button Enhancements */
 /* Time Blocks Container Grid Layout */
-#timeBlocksContainer {
+#timeBlocksContainer, .time-blocks-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
   gap: 10px; 
@@ -45,7 +45,7 @@ input[type="text"], input[type="email"], select {
 }
 
 /* Time Block Button Adjustments for Grid */
-#timeBlocksContainer button {
+#timeBlocksContainer button, .time-blocks-container button {
   background-color: #db3636;
   border: none;
   border-radius: 5px;
@@ -57,7 +57,7 @@ input[type="text"], input[type="email"], select {
   transition: background-color 0.3s ease;
 }
 
-#timeBlocksContainer button:hover {
+#timeBlocksContainer button:hover, .time-blocks-container button:hover {
   background-color: #a12929;
 }
 

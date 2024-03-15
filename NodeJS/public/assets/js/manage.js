@@ -52,11 +52,13 @@ function displayManageablecontent() {
     seat.classList.add('seat');
     seat.textContent = `Seat ${seats}`;
     seat.classList.add('unavailable');
+    // make seat not hoverable
+    seat.style.pointerEvents = 'none';
     const seatsContainer = document.getElementById('seatsContainer');
     seatsContainer.appendChild(seat);
 
     //clear the timeblocks container
-    const container = document.getElementById('timeBlocksContainer');
+    const container = document.getElementById('userTimeBlocksContainer');
     container.innerHTML = ''; // Clear previous blocks
     container.style.display = 'block';
 
@@ -84,13 +86,21 @@ function addTimeblock(seatNumber, tierNumber, daySelected, time_start, assigned_
         async: false,  // Make the request synchronous
         success: function(reserved, status) {
             if (status === 'success') {
-                const timeBlocksContainer = document.getElementById('timeBlocksContainer');
+                const timeBlocksContainer = document.getElementById('userTimeBlocksContainer');
                 const block = document.createElement('button');
                 block.classList.add('time-slot');
                 block.textContent = `${Math.floor((reserved.seat.time_start)/100).toString().padStart(2, '0')}:${((reserved.seat.time_start)%100).toString().padStart(2, '0')}`;
 
                 block.onclick = () =>  {
                     block.classList.toggle('selected');
+                    let element = document.getElementById('userTimeBlocksContainer');
+
+                    if (element.querySelector('.selected.time-slot')) {
+                        populateTimeBlocksManage(seatNumber, tierNumber, daySelected)
+                    } else {
+                        document.getElementById('timeBlocksContainer').innerHTML = "";
+                    }
+                    
                 }
                 
                 timeBlocksContainer.appendChild(block);

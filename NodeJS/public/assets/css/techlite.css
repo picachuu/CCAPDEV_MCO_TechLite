@@ -1080,14 +1080,14 @@ section {
   z-index: 100;
 }
 
-#timeBlocksContainer .time-block.selected {
+.time-blocks-container .time-block.selected, #timeBlocksContainer .time-block.selected {
   background-color: #a12929; 
   color: white; 
 }
 
 /* Button Enhancements */
 /* Time Blocks Container Grid Layout */
-#timeBlocksContainer {
+.time-blocks-container, #timeBlocksContainer {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjust minmax values as needed */
   gap: 10px; /* Adjust gap size as needed */
@@ -1095,7 +1095,7 @@ section {
 
 
 /* Time Block Button Adjustments for Grid */
-#timeBlocksContainer button {
+#timeBlocksContainer button, .time-blocks-container button {
   background-color: #db3636;
   border: none;
   border-radius: 5px;
@@ -1107,7 +1107,7 @@ section {
   transition: background-color 0.3s ease;
 }
 
-#timeBlocksContainer button:hover {
+#timeBlocksContainer button:hover, .time-blocks-container button:hover {
   background-color: #a12929;
 }
 

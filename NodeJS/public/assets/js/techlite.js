@@ -359,6 +359,15 @@ function getIsManager() {
             document.getElementById('roleTag').innerText = role;
         }
 
+        // To execute this code only when user is on the /manage page
+        if (window.location.pathname === '/manage') {
+            // if the user is not logged and visits /profile, redirect to home page
+            if (!logged) {
+                window.location.href = '/';
+                return;
+            }
+        }
+
         
 	    
 	    //smoothscroll
@@ -1127,8 +1136,12 @@ const reservationDetails = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadReservationDetails();
-    lockSelections();
+    // To execute this code only when user is not on the /manage page
+    if (!(window.location.pathname === '/manage')) {
+        loadReservationDetails();
+        lockSelections();
+    }
+    
 });
 
 function loadReservationDetails() {
@@ -1174,6 +1187,7 @@ function markSelectedSeat(seatNumber) {
     }
 }
 
+//not used
 function populateTimeBlocks(selectedTimes = []) {
     const isManagePage = document.getElementById('managePage') !== null;
     const timeBlocksContainer = document.getElementById('timeBlocksContainer');
