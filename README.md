@@ -26,7 +26,7 @@ node app.js
 
 Open [http://localhost:3000](http://localhost:3000) and take a look around.
 
-#Usage
+## Usage
 Users can navigate to the TechLite website to explore the range of services offered. Key features include:
 
 - Workstation Reservation: Choose from various tiers of gaming workstations and reserve your slot in advance.
