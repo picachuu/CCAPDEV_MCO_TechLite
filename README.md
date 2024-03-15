@@ -7,7 +7,7 @@ TechLite is an innovative web-based platform designed to elevate the gaming expe
 Clone the repo:
 
 ```bash
-git https://github.com/picachuu/CCAPDEV_MCO_TechLite.git
+git clone https://github.com/picachuu/CCAPDEV_MCO_TechLite.git
 cd CCAPDEV_MCO_TechLite
 ```
 
