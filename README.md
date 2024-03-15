@@ -19,6 +19,11 @@ Install the dependencies:
 npm i express express-handlebars body-parser mongoose
 ```
 
+Load the database:
+- Launch node app.js (to create database)
+- Open mongodb compass 
+- Load all collections given the csv files corresponding to the collections in mongodb compass
+
 Run the application:
 
 ```bash
