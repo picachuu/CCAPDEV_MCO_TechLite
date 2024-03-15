@@ -11,7 +11,6 @@ Clone the repo:
 
 ```bash
 git clone https://github.com/picachuu/CCAPDEV_MCO_TechLite.git
-cd CCAPDEV_MCO_TechLite
 ```
 
 Install the dependencies:
@@ -23,6 +22,7 @@ npm i express express-handlebars body-parser mongoose
 Run the application:
 
 ```bash
+cd CCAPDEV_MCO_TechLite
 cd NodeJS
 node app.js
 ```
