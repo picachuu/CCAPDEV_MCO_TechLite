@@ -836,8 +836,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log('Selected Day:', selectedDay);
 
                 // Get the input values
-                const reserveUsername = reservationForm.elements['name'].value;
-                const reserveEmail = reservationForm.elements['email'].value;
+                let reserveUsername = reservationForm.elements['name'].value;
+                let reserveEmail = reservationForm.elements['email'].value;
+
+                if (getIsManager()){
+                    if (reserveUsername == "") {
+                        reserveUsername = "Walk-in";
+                    }
+                    if ( reserveEmail == "") {
+                        reserveEmail = "Walk-in";
+                    }
+                }
                 
                 h4Element.insertAdjacentHTML('afterend', `<p>Username: ${reserveUsername}</p><p>Email: ${reserveEmail}</p><p>Selected Tier: ${selectedTier}</p><p>Selected Day: ${selectedDay}</p><p>Selected Time/s: ${time}</p><p>Selected Seat: ${seat}</p>`);
                 togglePopup(confirmationPopup);
