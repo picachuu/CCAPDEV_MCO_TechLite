@@ -1,0 +1,63 @@
+
+    <!-- Preload Start-->
+{{> preload}}
+    <!-- Preload End-->
+
+  <!-- Header Start-->
+{{> header}}
+  <!-- Header End -->
+
+<div class="search-main-banner">
+<div class="search-page">
+    <div class="search-container">
+        <label for="searchOptions">Choose a search option:</label>
+        <select id="searchOptions" onchange="showSearchForm(this.value)">
+            <option value="">Select an Option</option>
+            <option value="member">Search Member</option>
+            <option value="seats">Search Available Seats</option>
+        </select>
+    </div>
+
+    <div id="searchMemberForm" class="search-form" style="display:none;">
+        <form>
+            <label for="memberName">Name:</label>
+            <input type="text" id="memberName" name="memberName">
+            
+            <label for="memberId">ID:</label>
+            <input type="text" id="memberId" name="memberId">
+            
+            <button type="button" onclick="submitMemberSearch()">Search Member</button>
+        </form>
+    </div>
+
+    <div id="searchSeatsForm" class="search-form" style="display:none;">
+        <label for="timeInput">Select Time:</label>
+        <input type="time" id="timeInput" name="timeInput">
+        <button type="button" onclick="filterSeatsByTime()">Search Seats</button>
+    </div>
+
+    <div id="availableSeats" class="seats-container" style="display:none;">
+        <!-- Available seats will be dynamically inserted here -->
+    </div>
+</div>
+
+<div id="reservationForm" class="reservation-form search-page" style="display:none;">
+    <form>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="timeFrom">Time From:</label>
+        <input type="time" id="timeFrom" name="timeFrom" required>
+        
+        <label for="timeTo">Time To:</label>
+        <input type="time" id="timeTo" name="timeTo" required>
+        
+        <button type="button" onclick="submitReservation()">Reserve</button>
+    </form>
+</div>
+</div>
+<!-- Contact Start -->
+  {{> contact}}
+  <!-- Contact End -->
+  
+  {{> footer}}

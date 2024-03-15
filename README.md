@@ -19,6 +19,11 @@ Install the dependencies:
 npm i express express-handlebars body-parser mongoose
 ```
 
+Load the database:
+- Launch node app.js (to create database)
+- Open mongodb compass 
+- Load all collections given the csv files corresponding to the collections in mongodb compass
+
 Run the application:
 
 ```bash
@@ -35,4 +40,3 @@ Users can navigate to the TechLite website to explore the range of services offe
 - Workstation Reservation: Choose from various tiers of gaming workstations and reserve your slot in advance.
 - Service Access: Order food, print documents, and redeem rewards directly from the platform.
 - Profile Management: Users can create and manage their profiles, including viewing past reservations and managing current ones.
-
