@@ -4,16 +4,20 @@ TechLite is an innovative web-based platform designed to elevate the gaming expe
 
 ## Installation
 
-Clone the repo and install the dependencies.
+Clone the repo:
 
 ```bash
 git https://github.com/picachuu/CCAPDEV_MCO_TechLite.git
 cd CCAPDEV_MCO_TechLite
 ```
 
+Install the dependencies:
+
 ```bash
 npm i express express-handlebars body-parser mongoose
 ```
+
+Run the application:
 
 ```bash
 cd NodeJS
