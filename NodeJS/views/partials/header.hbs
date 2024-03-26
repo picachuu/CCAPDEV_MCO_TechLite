@@ -21,7 +21,7 @@
                     <div id="createAccountPopup" class="create-account-popup" style="display: none;">
                       <a href="#" class="close">&times;</a>
                       <h4>Create an Account</h4>  {{!-- mco3 funcitonality --}}
-                      <form name="create" {{!-- action="create-account" --}} onsubmit="return checkCreateUser()" {{!-- method="post" --}}>
+                      <form name="createUser" action="create-account-success" onsubmit="if (validateCreateUser()){event.preventDefault(); checkCreateUser().then(valid => { if (valid) this.submit(); })} else return false" method="get">
                         <input type="text" name="newUsername" class="form-control" placeholder="Username"/>
                         <input type="email" name="email" class="form-control" placeholder="Email"/>
                         <input type="password" name="newPassword" class="form-control" placeholder="Password"/>

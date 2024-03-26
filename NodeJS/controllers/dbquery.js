@@ -459,6 +459,91 @@ function add(server){
     return user;
   }
 
+
+  async function createUserDB(data) {
+    let username = data.username;
+    let email = data.email;
+    let password = data.password;
+    let is_manager = data.is_manager;
+    
+    // check if username already exists
+    await userModel.findOne({username:username}).lean().then(async function(user_data){
+      if (user_data != null){
+        return "Username already exists";
+      } else {
+        // check if email already exists
+
+        await userModel.findOne({email:email}).lean().then(async function(user_data){
+          if (user_data != null){
+            return "Email already exists";
+          } else {
+            // create new user
+            let newUser = new userModel({
+              username: username,
+              email: email,
+              password: password,
+              is_manager: is_manager
+            });
+
+            await newUser.save().then(function(user_data){
+              return null;
+            }).catch(errorFn);
+          }
+        }).catch(errorFn);
+      }
+    }).catch(errorFn);
+  }
+
+  // check creation of new account
+  server.post('/create-account', async function(req, resp){  //async function for asynchronous operations
+    const data = req.body;
+    reason = validateCreateUserDB(data);
+    if (!reason) {
+      reason = await createUserDB(data); // wait for the function to finish before proceeding
+      if (!reason) {
+        resp.send({valid: true, reason: "Account created successfully"}); // not sure if reason here is going to be used
+      } else {
+        resp.send({valid: false, reason: reason});
+      }
+    } else {
+      resp.send({valid: false, reason: reason});
+    }
+  });
+
+  // returns a string to validate if there is an error in account creation
+  function validateCreateUserDB(data) {
+    let username = data.username;
+    let email = data.email;
+    let password = data.password;
+    let confirmPassword = data.confirmPassword;
+
+
+    // Validate form values
+    if (username == "" || email == "" || password == "" || confirmPassword == "") {
+        return "All fields must be filled out";
+    }
+
+    // Username validation
+    let usernameRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+    if (!usernameRegex.test(username)) {
+        return "Username must only contain letters, numbers, and underscores, and must start with a letter or underscore.";
+    }
+
+    if (password != confirmPassword) {
+      return "Passwords do not match";
+    }
+
+    // Password validation
+    let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return "Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric, and 1 special character.";
+  
+    }
+
+    // If all validation passes, return null to allow the form to continue submitting
+    return null;  // reason
+  }
+
 }
 
 

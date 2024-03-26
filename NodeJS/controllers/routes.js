@@ -12,6 +12,11 @@ function add(server){
     resp.redirect('/');
   });
 
+  // redirect to toggle login pop-up
+  server.get('/create-account-success', function(req, resp){
+    resp.redirect('/?create_account=success');
+  });
+
   server.get('/manage', function(req, resp){
     
     resp.render('manage',{
