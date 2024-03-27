@@ -32,6 +32,7 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     username: { type: String },
     email: { type: String },
+    display: { type: String, default: ""},
     password: { type: String },
     is_manager: { type: Boolean },
     img_url: { type: String, default: ""},

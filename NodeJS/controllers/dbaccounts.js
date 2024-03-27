@@ -14,6 +14,7 @@ const successFn = dbmodel.successFn;
 let username = null;
 let email = null;
 let logged_status = false;
+let display = null;
 let is_manager = null;
 let img_url = null;
 let banner_url = null;
@@ -22,7 +23,6 @@ let bio_msg = null;
 mongoose.connect(db_url+databaseName);
 
 function add(server,bcrypt,saltRounds){
-  
 
   // login post request for user log-in, returns user object
   server.post('/login-account', async function(req, resp){  //async function for asynchronous operations
@@ -70,6 +70,7 @@ function add(server,bcrypt,saltRounds){
       logged_status = true;
       username = user.username;
       email = user.email;
+      display = user.display;
       is_manager = user.is_manager;
       img_url = user.img_url;
       banner_url = user.banner_url;
@@ -88,12 +89,14 @@ function add(server,bcrypt,saltRounds){
     console.log("Logged Status: " + logged_status);
     console.log("Username: " + username);
     console.log("Email: " + email);
+    console.log("Display: " + display);
     console.log("Is_Manager: " + is_manager);
 
     if (logged_status) {
       user = {
         username: username,
         email: email,
+        display: display,
         is_manager: is_manager,
         img_url: img_url,
         banner_url: banner_url,
@@ -102,6 +105,7 @@ function add(server,bcrypt,saltRounds){
     } else {
       username = null;
       email = null;
+      display = null;
       is_manager = null;
       img_url = null;
       banner_url = null;
@@ -123,6 +127,7 @@ function add(server,bcrypt,saltRounds){
     logged_status = false;
     username = null;
     email = null;
+    display = null;
     is_manager = null;
     img_url = null;
     banner_url = null;
@@ -216,7 +221,55 @@ function add(server,bcrypt,saltRounds){
         return user;
     }
 
-  async function createUserDB(data) {
+
+    async function createUserDB(data) {
+        let username = data.username;
+        let email = data.email;
+        let password = data.password;
+        let is_manager = data.is_manager;
+        let reason = "Account creation error";
+        
+        // check if username already exists
+        let user_data = await userModel.findOne({username:username}).lean();
+        if (user_data != null){
+            console.log('Create Account------Username already exists');
+            return "Username already exists";
+        }
+    
+        // check if email already exists
+        user_data = await userModel.findOne({email:email}).lean();
+        if (user_data != null){
+            return "Email already exists";
+        }
+    
+        // hash the password
+        let encrypted_pass = await new Promise((resolve, reject) => {
+            bcrypt.hash(password, saltRounds, function(err, hash) {
+                if (err) reject(err);
+                else resolve(hash);
+            });
+        });
+    
+        // create new user
+        let newUser = new userModel({
+            username: username,
+            email: email,
+            password: encrypted_pass,
+            is_manager: is_manager
+        });
+    
+        try {
+            await newUser.save();
+            reason = null;
+        } catch (error) {
+            errorFn(error);
+        }
+    
+        return reason;
+    }
+
+    //test (not used)
+  async function createdUserDB(data) {
     let username = data.username;
     let email = data.email;
     let password = data.password;
