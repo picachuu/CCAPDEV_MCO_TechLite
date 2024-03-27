@@ -1377,7 +1377,7 @@ async function checkCreateAccount(data) {
 
         valid = response.valid;
         reason = response.reason;
-        window.alert(valid ? "Account Creation Successful" : reason);
+        window.alert(reason);
         return valid;
     } catch (error) {
         window.alert('Error:', error);
