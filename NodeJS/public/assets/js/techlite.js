@@ -1346,6 +1346,8 @@ async function checkCreateUser(){
     let form = $('form[name="createUser"]'); // Selects the form with the name 'createUser'
     let username = form.find('input[name="newUsername"]').val(); // Gets the value of the input with the name 'newUsername'
     let email = form.find('input[name="email"]').val(); // Gets the value of the input with the name 'email'
+    let displayname = form.find('input[name="displayName"]').val(); // Gets the value of the input with the name 'displayName'
+    //let displayname = "";
     let password = form.find('input[name="newPassword"]').val(); // Gets the value of the input with the name 'newPassword'
     let confirmPassword = form.find('input[name="confirmPassword"]').val(); // Gets the value of the input with the name 'password
     let is_manager = false;
@@ -1353,6 +1355,7 @@ async function checkCreateUser(){
     let data = {
         username: username,
         email: email,
+        display: displayname,
         password: password,
         confirmPassword: confirmPassword,
         is_manager: is_manager

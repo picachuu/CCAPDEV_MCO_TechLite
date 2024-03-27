@@ -226,6 +226,7 @@ function add(server,bcrypt,saltRounds){
         let username = data.username;
         let email = data.email;
         let password = data.password;
+        let display = data.display;
         let is_manager = data.is_manager;
         let reason = "Account creation error";
         
@@ -254,6 +255,7 @@ function add(server,bcrypt,saltRounds){
         let newUser = new userModel({
             username: username,
             email: email,
+            display: display,
             password: encrypted_pass,
             is_manager: is_manager
         });
@@ -272,6 +274,7 @@ function add(server,bcrypt,saltRounds){
   async function createdUserDB(data) {
     let username = data.username;
     let email = data.email;
+    let display = data.display;
     let password = data.password;
     let is_manager = data.is_manager;
     let reason = "Account creation error";
@@ -301,6 +304,7 @@ function add(server,bcrypt,saltRounds){
                 let newUser = new userModel({
                     username: username,
                     email: email,
+                    display: display,
                     password: encrypted_pass,
                     is_manager: is_manager
                 });
@@ -316,11 +320,29 @@ function add(server,bcrypt,saltRounds){
     }).catch(errorFn);
 
     return reason;
-  }
+  }// not used
 
+  /* let data = {
+    username: username,
+    email: email,
+    display: displayname,
+    password: password,
+    confirmPassword: confirmPassword,
+    is_manager: is_manager
+}; */
   // check creation of new account
   server.post('/create-account', async function(req, resp){  //async function for asynchronous operations
-    const data = req.body;
+    // trim whitespaces in every element in the data object
+    let data = req.body;
+    data = {
+        username: data.username.trim(),
+        email: data.email.trim(),
+        display: data.display.trim(),
+        password: data.password.trim(),
+        confirmPassword: data.confirmPassword.trim(),
+        is_manager: data.is_manager
+    }
+
     let reason = validateCreateUserDB(data);
     console.log('create-account Reason: ' + reason);
     if (!reason) {
@@ -343,7 +365,6 @@ function add(server,bcrypt,saltRounds){
     let email = data.email;
     let password = data.password;
     let confirmPassword = data.confirmPassword;
-
 
     // Validate form values
     if (username == "" || email == "" || password == "" || confirmPassword == "") {
