@@ -96,11 +96,10 @@ function add(server){
     console.log('Profile post request received');
 
     const page = Math.max(1, Number(req.body.page));
-    const pageSize = 3; // Your page size is 3
+    const pageSize = 1;
     const skip = (page - 1) * pageSize;
 
     if (skip < 0) {
-      // Return an error response if skip is negative
       return resp.status(400).json({ error: 'Page must be greater than 0.' });
     }
 
@@ -117,9 +116,7 @@ function add(server){
 
     console.log("Paginated search for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
 
-    // Find total number of items
     tierModel.countDocuments(searchQuery).then(total => {
-        // Find paginated items
         tierModel.find(searchQuery).skip(skip).limit(pageSize).lean().then(reservations => {
             console.log('Pagination list successful');
             console.log(`Sending page ${page} with ${reservations.length} reservations`);

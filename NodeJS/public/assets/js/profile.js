@@ -1,17 +1,16 @@
 if (window.location.pathname === '/profile') {
     document.addEventListener('DOMContentLoaded', function() {
-        loadReservations();
+        loadReservations(1);
     });
 }
+
+let currentPage = 1; 
 
 function addReservationsPerTier(tier, page) {
 
     let hadReservation_thisTier = false;
     const reservations_container = document.getElementById('items-container');
-    pageSize = 3;
-    if (page === 1) {
-        reservations_container.innerHTML = '';
-    }
+    pageSize = 1; // Number of reservations per tier per page
 
     $.ajax({
         url: 'profile-reservations',
@@ -150,35 +149,34 @@ function addReservationsPerTier(tier, page) {
 }
 
 function loadReservations(page) {
-    
     //determine if there were any reservations made by the user, if none then display "No reservations made, go add one!"
     document.getElementById('items-container').innerHTML = '';
     for (let i = 1; i < 4; i++) {
         addReservationsPerTier(i, page);
     }
-    // In the loadReservations function in profile.js
-console.log(`Requesting page ${page} with page size ${pageSize}`); // Debug log
-
+    console.log(`Requesting page ${page} with page size ${pageSize}`);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initial load of reservations
     loadReservations(1);
 
-    // Set up pagination event listeners
-    document.getElementById('nextButton').addEventListener('click', function() {
-        currentPage++; // Increment the current page
-        loadReservations(currentPage); // Load the new page of reservations
-    });
-
+    //pagination event listeners
     document.getElementById('prevButton').addEventListener('click', function() {
-        if (currentPage > 1) { // Check to avoid going below page 1
-            currentPage--; // Decrement the current page
-            loadReservations(currentPage); // Load the new page of reservations
+        if (currentPage > 1) {
+            updateAndLoadPage(currentPage - 1);
         }
     });
 
-    // More code to set up your page...
+    document.getElementById('nextButton').addEventListener('click', function() {
+        // Assuming you have a way to determine the maximum number of pages, use it here to prevent going over.
+        // This example doesn't limit the 'Next' button because it's unclear how many pages of data exist.
+        // Ideally, you should disable this button or not perform any action if there are no more pages to show.
+        updateAndLoadPage(currentPage + 1);
+    });
 });
 
-let currentPage = 1; // This variable should be accessible to both event listeners and the loadReservations function
+function updateAndLoadPage(newPage) {
+    currentPage = newPage;
+    document.getElementById('currentPage').textContent = newPage;
+    loadReservations(newPage);
+}

@@ -46,26 +46,19 @@
         <div class="col-lg-10">
           <div class="profile-reservations">
             <div class="heading-section">
-                  <h4><em>Your</em>  Reservations</h4>
-                </div>
-                <div id="items-container">
-                
-                <!-- ... existing code ... -->
-
-
-            </div><div id="pagination">
-  <button onclick="loadReservations(1)">First</button>
-  <button onclick="loadReservations(currentPage - 1)">Previous</button>
-  <span>Page <span id="currentPage">1</span></span>
-  <button onclick="loadReservations(currentPage + 1)">Next</button>
-  <!-- Add more buttons or logic for jumping to specific pages if necessary -->
-</div>
-
-<!-- ... existing code ... -->
-
+              <h4><em>Your</em>  Reservations</h4>
+            </div>
+            <div id="items-container">
                 <!-- This part should be added by javascript-->
-                
-                
+            </div>
+            <div id="pagination">
+              <button onclick="loadReservations(1)">First</button>
+              <button id="prevButton">Previous</button>
+              <span>Page <span id="currentPage">1</span></span>
+              <button id="nextButton">Next</button>
+              <!-- Add more buttons or logic for jumping to specific pages if necessary -->
+            </div>
+                <!-- ... existing code ... -->
                 <!--
                 <div class="item">
                   <ul>
@@ -100,9 +93,7 @@
                 </div>
                 -->
                 <!-- This part should be added by javascript-->
-
             </div>
-
         </div>
       <div class="col proile-points">
         <div class="col align-self-center">
