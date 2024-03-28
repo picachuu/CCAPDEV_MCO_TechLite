@@ -986,6 +986,10 @@ section {
   font-weight: bold;
 }
 
+.highlighted {
+  border: 2px solid red; 
+}
+
 .tier-selection {
   display: flex;
   color:  white;
