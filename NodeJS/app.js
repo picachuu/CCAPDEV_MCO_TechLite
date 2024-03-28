@@ -17,27 +17,18 @@ server.engine('hbs', handlebars.engine({
 
 server.use(express.static('public'));
 
-//bcrypt is a library that will help us hash passwords
-const bcrypt = require('bcrypt');
-const saltRounds = 10;  // keep this at 10
-// end bcrypt
+//Use this function to turn the status of an day into
+//a class that is consistent with the naming convention the
+//css file use.
 
 
 
 //This part of the code will load the controllers that will interact
 //with the rest of the system.
-const controllers = ['routes','dbquery','dbaccounts'];
+const controllers = ['routes','dbquery'];
 for(var i=0; i<controllers.length; i++){
   const ctrl = require('./controllers/'+controllers[i]);
-
-  switch (controllers[i]) {
-    case 'dbaccounts':
-      ctrl.add(server, bcrypt, saltRounds);
-      break;
-    default:
-      ctrl.add(server);
-      break;
-  }
+  ctrl.add(server);
 }
 
 
