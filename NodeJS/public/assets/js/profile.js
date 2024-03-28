@@ -38,13 +38,13 @@ function addReservationsPerTier(tier, page) {
                     image.alt = "";
                     switch(Number(tier)) {
                         case 1:
-                            image.src = 'assets/images/tier1.jpg';
+                            image.src = 'assets/images/tier1.png';
                             break;
                         case 2:
-                            image.src = 'assets/images/tier2.jpg';
+                            image.src = 'assets/images/tier2.png';
                             break;
                         case 3:
-                            image.src = 'assets/images/tier3.jpg';
+                            image.src = 'assets/images/tier3.png';
                             break;
                     }
 
