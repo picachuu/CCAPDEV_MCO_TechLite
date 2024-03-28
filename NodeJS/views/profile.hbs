@@ -44,10 +44,25 @@
     <div class="profile-page-content">
       <div class="row">
         <div class="col-lg-10">
-            <div id="items-container" class="profile-reservations">
-                <div class="heading-section">
+          <div class="profile-reservations">
+            <div class="heading-section">
                   <h4><em>Your</em>  Reservations</h4>
                 </div>
+                <div id="items-container">
+                
+                <!-- ... existing code ... -->
+
+
+            </div><div id="pagination">
+  <button onclick="loadReservations(1)">First</button>
+  <button onclick="loadReservations(currentPage - 1)">Previous</button>
+  <span>Page <span id="currentPage">1</span></span>
+  <button onclick="loadReservations(currentPage + 1)">Next</button>
+  <!-- Add more buttons or logic for jumping to specific pages if necessary -->
+</div>
+
+<!-- ... existing code ... -->
+
                 <!-- This part should be added by javascript-->
                 
                 

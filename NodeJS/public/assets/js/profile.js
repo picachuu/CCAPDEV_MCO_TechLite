@@ -4,17 +4,23 @@ if (window.location.pathname === '/profile') {
     });
 }
 
-function addReservationsPerTier(tier) {
+function addReservationsPerTier(tier, page) {
 
     let hadReservation_thisTier = false;
     const reservations_container = document.getElementById('items-container');
+    pageSize = 3;
+    if (page === 1) {
+        reservations_container.innerHTML = '';
+    }
 
     $.ajax({
         url: 'profile-reservations',
         type: 'POST', 
         data: { tier_num: tier, 
             user_name: getUsername(),
-            mode: "reservations"
+            mode: "reservations",
+            page: page,             
+            pageSize: pageSize  
         },
         async: false,  // Make the request synchronous
         success: function(own, status) {
@@ -143,11 +149,36 @@ function addReservationsPerTier(tier) {
     return hadReservation_thisTier ? 1 : 0;
 }
 
-function loadReservations() {
-    let tier_total = 0;
+function loadReservations(page) {
+    
     //determine if there were any reservations made by the user, if none then display "No reservations made, go add one!"
-
+    document.getElementById('items-container').innerHTML = '';
     for (let i = 1; i < 4; i++) {
-        tier_total = tier_total + addReservationsPerTier(i);
+        addReservationsPerTier(i, page);
     }
+    // In the loadReservations function in profile.js
+console.log(`Requesting page ${page} with page size ${pageSize}`); // Debug log
+
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initial load of reservations
+    loadReservations(1);
+
+    // Set up pagination event listeners
+    document.getElementById('nextButton').addEventListener('click', function() {
+        currentPage++; // Increment the current page
+        loadReservations(currentPage); // Load the new page of reservations
+    });
+
+    document.getElementById('prevButton').addEventListener('click', function() {
+        if (currentPage > 1) { // Check to avoid going below page 1
+            currentPage--; // Decrement the current page
+            loadReservations(currentPage); // Load the new page of reservations
+        }
+    });
+
+    // More code to set up your page...
+});
+
+let currentPage = 1; // This variable should be accessible to both event listeners and the loadReservations function

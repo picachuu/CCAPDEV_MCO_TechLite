@@ -95,6 +95,15 @@ function add(server){
   server.post('/profile-reservations', function(req, resp) {  
     console.log('Profile post request received');
 
+    const page = Math.max(1, Number(req.body.page));
+    const pageSize = 3; // Your page size is 3
+    const skip = (page - 1) * pageSize;
+
+    if (skip < 0) {
+      // Return an error response if skip is negative
+      return resp.status(400).json({ error: 'Page must be greater than 0.' });
+    }
+
     let tierModel;
     switch(Number(req.body.tier_num)) {
         case 1: tierModel = tier1_schedModel; break;
@@ -102,24 +111,29 @@ function add(server){
         case 3: tierModel = tier3_schedModel; break;
     }
 
-    //change searchQuery based on mode: "days", "taken_false", "taken_true"
-    let searchQuery;
-    switch(req.body.mode){
-
-      case "reservations": searchQuery = {
+    const searchQuery = {
         assigned_to: String(req.body.user_name)
-      }; break;
-    }
-    
-    console.log("Searching for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
+    };
 
-    tierModel.find(searchQuery).lean().then(function(vals){
-      console.log('List successful');
-      console.log(vals.length);
-      resp.send({reservations: vals});
-    }).catch(errorFn);
-      
-  });
+    console.log("Paginated search for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
+
+    // Find total number of items
+    tierModel.countDocuments(searchQuery).then(total => {
+        // Find paginated items
+        tierModel.find(searchQuery).skip(skip).limit(pageSize).lean().then(reservations => {
+            console.log('Pagination list successful');
+            console.log(`Sending page ${page} with ${reservations.length} reservations`);
+            resp.send({
+                reservations: reservations,
+                page: page,
+                pageSize: pageSize,
+                total: total,
+                totalPages: Math.ceil(total / pageSize)
+            });
+        }).catch(errorFn);
+    }).catch(errorFn);      
+});
+
 
   server.post('/manageable-check', function(req, resp) {
     console.log('Manage post request received');
