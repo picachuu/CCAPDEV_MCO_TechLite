@@ -51,13 +51,36 @@
             <div id="items-container">
                 <!-- This part should be added by javascript-->
             </div>
-            <div id="pagination">
-              <button onclick="loadReservations(1)">First</button>
-              <button id="prevButton">Previous</button>
+            <div id="pagination" class="pagination">
+              <i onclick="updateAndLoadPage(1)" class="fa fa-angles-left"></i>
+              <i id="prevButton" class="fa fa-angle-left"></i>
               <span>Page <span id="currentPage">1</span></span>
-              <button id="nextButton">Next</button>
+              <i id="nextButton" class="fa fa-angle-right"></i>
               <!-- Add more buttons or logic for jumping to specific pages if necessary -->
             </div>
+  <div id = "paginataion-container">
+  <ul class="pagination">
+  {{#if showFirst}}
+  <li><a href="?page=1">««</a></li>
+  {{/if}}
+  {{#if showPrevious}}
+  <li><a href="?page={{previousPage}}">«</a></li>
+  {{/if}}
+  
+  {{#each pages}}
+    <li {{#if isCurrent}}class="active"{{/if}}>
+      <a href="?page={{this}}">{{this}}</a>
+    </li>
+  {{/each}}
+  
+  {{#if showNext}}
+  <li><a href="?page={{nextPage}}">»</a></li>
+  {{/if}}
+  {{#if showLast}}
+  <li><a href="?page={{totalPages}}">»»</a></li>
+  {{/if}}
+</ul>
+</div>
                 <!-- ... existing code ... -->
                 <!--
                 <div class="item">

@@ -1836,6 +1836,30 @@ footer p a:hover {
   margin-bottom: 40px;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  font-size: 25px;
+}
+
+.pagination i {
+  color: #db3636;
+  margin: 5px 5px;
+  background-color: transparent;
+  font-size: 30px;
+  padding: 0px 5px;
+}
+
+.pagination i:hover {
+  color: white;
+}
+
+
+.pagination span {
+  color: white;
+  margin: 0px 5px;
+}
+
 .profile-reservations {
   padding: 30px;
   background-color: #1f2122;
