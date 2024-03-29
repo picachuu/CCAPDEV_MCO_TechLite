@@ -1,11 +1,12 @@
 if (window.location.pathname === '/profile') {
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('Profile page loaded');
         loadReservations(1);
     });
 }
-
-let currentPage = 1; 
-
+let currentPage = 1;
+let totalPages = 0;
+/*
 function addReservationsPerTier(tier, page) {
 
     let hadReservation_thisTier = false;
@@ -21,7 +22,7 @@ function addReservationsPerTier(tier, page) {
             page: page,             
             pageSize: pageSize  
         },
-        async: false,  // Make the request synchronous
+        async: true,  // Make the request synchronous
         success: function(own, status) {
             if (status === 'success') {
                 for (let i = 0; i < own.reservations.length; i++) {
@@ -77,8 +78,8 @@ function addReservationsPerTier(tier, page) {
                                         spani.textContent = 'Ongoing';
                                     }
                                 */
-                                // for now, ongoing
-                                spani.textContent = 'Ongoing';
+                                // for now, ongoing*/
+                                /*spani.textContent = 'Ongoing';
                                 break;
                                 
                                 //TO DO FOR MCO3: Display Time Left
@@ -100,14 +101,14 @@ function addReservationsPerTier(tier, page) {
 
                     var reservation_li6 = document.createElement("li");
                     var div6 = document.createElement('div');
-                    div6.classList.add('main-border-button');
+                    div6.classList.add('main-border-button');*/
 
                     /* if today's date has surpassed the current date, then expired
                         if (current date > date for reservation) {
                                         div6.classList.add('border-no-active');
                                     }
                     */
-
+/*
                     var link6 = document.createElement("a");
                     var url = "/manage" + 
                     
@@ -147,36 +148,166 @@ function addReservationsPerTier(tier, page) {
 
     return hadReservation_thisTier ? 1 : 0;
 }
-
+*/
 function loadReservations(page) {
+    const pageSize = 3; 
     //determine if there were any reservations made by the user, if none then display "No reservations made, go add one!"
-    document.getElementById('items-container').innerHTML = '';
-    for (let i = 1; i < 4; i++) {
-        addReservationsPerTier(i, page);
-    }
-    console.log(`Requesting page ${page} with page size ${pageSize}`);
+    $.ajax({
+        url: 'profile-reservations',
+        type: 'POST', 
+        data: {
+            user_name: getUsername(),
+            page: page,             
+            pageSize: pageSize
+        },
+        async: true,  
+        success: function(own, status) {
+            if (status === 'success') {
+                totalPages = own.totalPages;
+                const reservationsContainer = document.getElementById('items-container');
+                reservationsContainer.innerHTML = ''; // Clear existing reservations
+
+                own.reservations.forEach(reservation => {
+                const reservationElement = createReservationElement(reservation);
+                reservationsContainer.appendChild(reservationElement);
+            });
+
+            document.getElementById('currentPage').textContent = own.page;
+            updatePaginationControls(own.page, own.totalPages);
+                console.log(`Requesting page ${page} with page size ${pageSize}`);
+            }
+        },
+        error: function() {
+            console.error('Failed to load reservations');
+        }
+    });
+    
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    loadReservations(1);
-
     //pagination event listeners
+    document.getElementById('nextButton').addEventListener('click', function() {
+        if (currentPage < totalPages) {
+            currentPage++; 
+            loadReservations(currentPage);
+        }
+    });
+    
     document.getElementById('prevButton').addEventListener('click', function() {
         if (currentPage > 1) {
-            updateAndLoadPage(currentPage - 1);
+            currentPage--; 
+            loadReservations(currentPage);
         }
     });
 
-    document.getElementById('nextButton').addEventListener('click', function() {
-        // Assuming you have a way to determine the maximum number of pages, use it here to prevent going over.
-        // This example doesn't limit the 'Next' button because it's unclear how many pages of data exist.
-        // Ideally, you should disable this button or not perform any action if there are no more pages to show.
-        updateAndLoadPage(currentPage + 1);
+    document.getElementById('firstButton').addEventListener('click', function() {
+        currentPage = 1; 
+        loadReservations(currentPage); 
     });
+
+    document.getElementById('lastButton').addEventListener('click', function() {
+        currentPage = totalPages; // Set the current page to the last page
+        loadReservations(currentPage); // Load the reservations for the last page
+    });
+    
 });
 
-function updateAndLoadPage(newPage) {
-    currentPage = newPage;
-    document.getElementById('currentPage').textContent = newPage;
-    loadReservations(newPage);
+function updatePaginationControls(currentPage, totalPages) {
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    
+    prevButton.disabled = currentPage <= 1;
+    nextButton.disabled = currentPage >= totalPages;
 }
+
+function createReservationElement(reservation) {
+    var reservationDiv = document.createElement('div');
+    reservationDiv.classList.add('item');
+    var reservationUl = document.createElement("ul");
+
+    // Tier image based on reservation.tier
+    var reservationLi1 = document.createElement("li");
+    var image = document.createElement('img');
+    image.alt = "Tier Image";
+    switch(Number(reservation.tier)) {
+        case 1:
+            image.src = 'assets/images/tier1.png';
+            break;
+        case 2:
+            image.src = 'assets/images/tier2.png';
+            break;
+        case 3:
+            image.src = 'assets/images/tier3.png';
+            break;
+        default:
+            image.alt = 'No image available';
+    }
+    reservationLi1.appendChild(image);
+    reservationUl.appendChild(reservationLi1);
+
+    // Room and Seat
+    var roomAndSeatLi = document.createElement("li");
+    var roomHeader = document.createElement('h4');
+    var roomSpan = document.createElement('span');
+    roomHeader.textContent = 'Room';
+    roomSpan.textContent = 'Tier ' + reservation.tier + ' Seat ' + reservation.seats;
+    roomAndSeatLi.appendChild(roomHeader);
+    roomAndSeatLi.appendChild(roomSpan);
+    reservationUl.appendChild(roomAndSeatLi);
+
+    // Date Reserved
+    var dateLi = document.createElement("li");
+    var dateHeader = document.createElement('h4');
+    var dateSpan = document.createElement('span');
+    dateHeader.textContent = 'Date Reserved';
+    dateSpan.textContent = reservation.day + '/' + reservation.month + '/' + reservation.year;
+    dateLi.appendChild(dateHeader);
+    dateLi.appendChild(dateSpan);
+    reservationUl.appendChild(dateLi);
+
+    // Status
+    var statusLi = document.createElement("li");
+    var statusHeader = document.createElement('h4');
+    var statusSpan = document.createElement('span');
+    statusHeader.textContent = 'Status';
+    // Assume logic for determining if expired or ongoing is implemented elsewhere
+    statusSpan.textContent = 'Ongoing'; // Placeholder, implement actual logic
+    statusLi.appendChild(statusHeader);
+    statusLi.appendChild(statusSpan);
+    reservationUl.appendChild(statusLi);
+
+    // Time Start
+    var timeLi = document.createElement("li");
+    var timeHeader = document.createElement('h4');
+    var timeSpan = document.createElement('span');
+    timeHeader.textContent = 'Time Start';
+    timeSpan.textContent = `${Math.floor((reservation.time_start)/100).toString().padStart(2, '0')}:${((reservation.time_start)%100).toString().padStart(2, '0')}` + ' (30 minutes)';
+    timeLi.appendChild(timeHeader);
+    timeLi.appendChild(timeSpan);
+    reservationUl.appendChild(timeLi);
+
+    // Manage Link
+    var manageLi = document.createElement("li");
+    var manageDiv = document.createElement('div');
+    manageDiv.classList.add('main-border-button');
+    var manageLink = document.createElement("a");
+    manageLink.href = "/manage" + 
+        "?tier=" + encodeURIComponent(reservation.tier) + 
+        "&seats=" + encodeURIComponent(reservation.seats) + 
+        "&username=" + encodeURIComponent(reservation.assigned_to) +
+        "&email=" + encodeURIComponent(reservation.email) + 
+        "&reservations=" + encodeURIComponent(1) + 
+        "&time_start1=" + encodeURIComponent(reservation.time_start) + 
+        "&month=" + encodeURIComponent(reservation.month) + 
+        "&day=" + encodeURIComponent(reservation.day) + 
+        "&year=" + encodeURIComponent(reservation.year);
+    manageLink.textContent = 'Manage';
+    manageDiv.appendChild(manageLink);
+    manageLi.appendChild(manageDiv);
+    reservationUl.appendChild(manageLi);
+
+    reservationDiv.appendChild(reservationUl);
+
+    return reservationDiv;
+}
+

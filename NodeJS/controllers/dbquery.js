@@ -91,46 +91,47 @@ function add(server){
     }).catch(errorFn);
 
   });
-
-  server.post('/profile-reservations', function(req, resp) {  
+  server.post('/profile-reservations', async function(req, resp) {  
     console.log('Profile post request received');
 
     const page = Math.max(1, Number(req.body.page));
-    const pageSize = 1;
-    const skip = (page - 1) * pageSize;
+    const pageSize = 3; 
 
-    if (skip < 0) {
-      return resp.status(400).json({ error: 'Page must be greater than 0.' });
+    let combinedReservations = [];
+    let totalReservations = 0;
+
+    const tiers = [tier1_schedModel, tier2_schedModel, tier3_schedModel];
+    let tierCounts = {1: 0, 2: 0, 3: 0};
+
+    for (let tierIndex = 0; tierIndex < tiers.length; tierIndex++) {
+        let tierModel = tiers[tierIndex];
+        const reservations = await tierModel.find({ assigned_to: String(req.body.user_name) }).lean();
+        const reservationsWithTier = reservations.map(reservation => ({
+            ...reservation,
+            tier: tierIndex + 1
+        }));
+        combinedReservations.push(...reservationsWithTier); // Combine without restructuring
+        tierCounts[tierIndex + 1] = reservationsWithTier.length;
+        totalReservations += reservationsWithTier.length;
     }
+    console.log("Tier Counts:", tierCounts);
+    const startIndex = (page - 1) * pageSize;
+    let paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
 
-    let tierModel;
-    switch(Number(req.body.tier_num)) {
-        case 1: tierModel = tier1_schedModel; break;
-        case 2: tierModel = tier2_schedModel; break;
-        case 3: tierModel = tier3_schedModel; break;
-    }
+    resp.send({
+        reservations: paginatedReservations,
+        page: page,
+        pageSize: pageSize,
+        total: totalReservations,
+        totalPages: Math.ceil(totalReservations / pageSize)
+    });
 
-    const searchQuery = {
-        assigned_to: String(req.body.user_name)
-    };
-
-    console.log("Paginated search for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
-
-    tierModel.countDocuments(searchQuery).then(total => {
-        tierModel.find(searchQuery).skip(skip).limit(pageSize).lean().then(reservations => {
-            console.log('Pagination list successful');
-            console.log(`Sending page ${page} with ${reservations.length} reservations`);
-            resp.send({
-                reservations: reservations,
-                page: page,
-                pageSize: pageSize,
-                total: total,
-                totalPages: Math.ceil(total / pageSize)
-            });
-        }).catch(errorFn);
-    }).catch(errorFn);      
+    console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
+    console.log(`Total reservations: ${totalReservations}`);
+    console.log(`Page size: ${pageSize}`);
+    console.log(`Start Index: ${startIndex}`);
+    console.log(`Paginated reservations: ${paginatedReservations.length}`);
 });
-
 
   server.post('/manageable-check', function(req, resp) {
     console.log('Manage post request received');
