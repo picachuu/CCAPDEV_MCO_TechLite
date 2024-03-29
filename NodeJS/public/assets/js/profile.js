@@ -150,39 +150,49 @@ function addReservationsPerTier(tier, page) {
 }
 */
 function loadReservations(page) {
-    const pageSize = 3; 
-    //determine if there were any reservations made by the user, if none then display "No reservations made, go add one!"
+    let data = {
+        user_name: getUsername(),
+        page: page,
+        pageSize: 3, // Assuming this is your desired page size
+        tier_nums: selectedTiers // Send the array of selected tiers
+    };
+
     $.ajax({
         url: 'profile-reservations',
-        type: 'POST', 
-        data: {
-            user_name: getUsername(),
-            page: page,             
-            pageSize: pageSize
-        },
-        async: true,  
+        type: 'POST',
+        data: data,
+        async: true,
         success: function(own, status) {
             if (status === 'success') {
                 totalPages = own.totalPages;
+                currentPage = own.page; // Update current page based on server response
                 const reservationsContainer = document.getElementById('items-container');
                 reservationsContainer.innerHTML = ''; // Clear existing reservations
 
-                own.reservations.forEach(reservation => {
-                const reservationElement = createReservationElement(reservation);
-                reservationsContainer.appendChild(reservationElement);
-            });
+                if (own.reservations.length === 0) {
+                    // No reservations to show
+                    const noReservationsMsg = document.createElement('div');
+                    noReservationsMsg.textContent = 'No reservations to show';
+                    noReservationsMsg.classList.add('no-reservations'); // Add some class for styling if needed
+                    reservationsContainer.appendChild(noReservationsMsg);
+                } else {
+                    own.reservations.forEach(reservation => {
+                        const reservationElement = createReservationElement(reservation);
+                        reservationsContainer.appendChild(reservationElement);
+                    });
+                }
 
-            document.getElementById('currentPage').textContent = own.page;
-            updatePaginationControls(own.page, own.totalPages);
-                console.log(`Requesting page ${page} with page size ${pageSize}`);
+                document.getElementById('currentPage').textContent = own.page;
+                updatePaginationControls(own.page, own.totalPages);
+                console.log(`Requesting page ${page} with page size ${data.pageSize} and tiers ${selectedTiers}`);
             }
         },
         error: function() {
             console.error('Failed to load reservations');
         }
     });
-    
 }
+
 
 document.addEventListener('DOMContentLoaded', function() {
     //pagination event listeners
@@ -206,8 +216,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('lastButton').addEventListener('click', function() {
-        currentPage = totalPages; // Set the current page to the last page
-        loadReservations(currentPage); // Load the reservations for the last page
+        currentPage = totalPages; 
+        loadReservations(currentPage);
     });
     
 });
@@ -219,6 +229,43 @@ function updatePaginationControls(currentPage, totalPages) {
     prevButton.disabled = currentPage <= 1;
     nextButton.disabled = currentPage >= totalPages;
 }
+
+let selectedTiers = [1, 2, 3]; 
+
+function toggleTierSelection(tier) {
+    const index = selectedTiers.indexOf(tier);
+    if (index > -1) {
+        selectedTiers.splice(index, 1);
+    } else {
+        selectedTiers.push(tier);
+    }
+    updateTierButtons(); 
+    loadReservations(1);
+}
+
+
+function updateTierButtons() {
+    for (let tier = 1; tier <= 3; tier++) {
+        const button = document.getElementById(`filterTier${tier}`);
+        if (selectedTiers.includes(tier)) {
+            button.classList.add("selected");
+        } else {
+            button.classList.remove("selected");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateTierButtons();
+    loadReservations(1);
+
+    for (let tier = 1; tier <= 3; tier++) {
+        document.getElementById(`filterTier${tier}`).addEventListener('click', function() {
+            toggleTierSelection(tier);
+        });
+    }
+});
+
 
 function createReservationElement(reservation) {
     var reservationDiv = document.createElement('div');
@@ -271,7 +318,7 @@ function createReservationElement(reservation) {
     var statusSpan = document.createElement('span');
     statusHeader.textContent = 'Status';
     // Assume logic for determining if expired or ongoing is implemented elsewhere
-    statusSpan.textContent = 'Ongoing'; // Placeholder, implement actual logic
+    statusSpan.textContent = 'Ongoing'; // placeholder
     statusLi.appendChild(statusHeader);
     statusLi.appendChild(statusSpan);
     reservationUl.appendChild(statusLi);

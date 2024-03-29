@@ -47,6 +47,11 @@
           <div class="profile-reservations">
             <div class="heading-section">
               <h4><em>Your</em>  Reservations</h4>
+              <div class="tier-filter">
+                <button id="filterTier1">T1</button>
+                <button id="filterTier2">T2</button>
+                <button id="filterTier3">T3</button>
+              </div>
             </div>
             <div id="items-container">
                 <!-- This part should be added by javascript-->
@@ -58,29 +63,6 @@
               <i id="nextButton" class="fa fa-angle-right"></i>
               <i id="lastButton" class="fa fa-angles-right"></i>
             </div>
-  <div id = "paginataion-container">
-  <ul class="pagination">
-  {{#if showFirst}}
-  <li><a href="?page=1">««</a></li>
-  {{/if}}
-  {{#if showPrevious}}
-  <li><a href="?page={{previousPage}}">«</a></li>
-  {{/if}}
-  
-  {{#each pages}}
-    <li {{#if isCurrent}}class="active"{{/if}}>
-      <a href="?page={{this}}">{{this}}</a>
-    </li>
-  {{/each}}
-  
-  {{#if showNext}}
-  <li><a href="?page={{nextPage}}">»</a></li>
-  {{/if}}
-  {{#if showLast}}
-  <li><a href="?page={{totalPages}}">»»</a></li>
-  {{/if}}
-</ul>
-</div>
                 <!-- ... existing code ... -->
                 <!--
                 <div class="item">

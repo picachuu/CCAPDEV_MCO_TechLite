@@ -91,11 +91,14 @@ function add(server){
     }).catch(errorFn);
 
   });
+
   server.post('/profile-reservations', async function(req, resp) {  
     console.log('Profile post request received');
 
     const page = Math.max(1, Number(req.body.page));
-    const pageSize = 3; 
+    const pageSize = 3;
+    // Expect tier_nums to be an array of selected tier numbers. If not provided or empty, select all tiers.
+    const tierFilters = req.body.tier_nums ? req.body.tier_nums.map(Number) : [1, 2, 3];
 
     let combinedReservations = [];
     let totalReservations = 0;
@@ -104,16 +107,20 @@ function add(server){
     let tierCounts = {1: 0, 2: 0, 3: 0};
 
     for (let tierIndex = 0; tierIndex < tiers.length; tierIndex++) {
+        // Include tiers based on the filter
+        if (!tierFilters.includes(tierIndex + 1)) continue;
+
         let tierModel = tiers[tierIndex];
         const reservations = await tierModel.find({ assigned_to: String(req.body.user_name) }).lean();
         const reservationsWithTier = reservations.map(reservation => ({
             ...reservation,
             tier: tierIndex + 1
         }));
-        combinedReservations.push(...reservationsWithTier); // Combine without restructuring
+        combinedReservations.push(...reservationsWithTier);
         tierCounts[tierIndex + 1] = reservationsWithTier.length;
         totalReservations += reservationsWithTier.length;
     }
+
     console.log("Tier Counts:", tierCounts);
     const startIndex = (page - 1) * pageSize;
     let paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
@@ -128,10 +135,9 @@ function add(server){
 
     console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
     console.log(`Total reservations: ${totalReservations}`);
-    console.log(`Page size: ${pageSize}`);
-    console.log(`Start Index: ${startIndex}`);
-    console.log(`Paginated reservations: ${paginatedReservations.length}`);
 });
+
+
 
   server.post('/manageable-check', function(req, resp) {
     console.log('Manage post request received');

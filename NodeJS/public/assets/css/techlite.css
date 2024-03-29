@@ -189,6 +189,31 @@ section {
   margin-top: 120px;
 }
 
+.selected {
+  border-color: #fff !important;
+  background-color: #fff !important;
+  color: #db3636 !important;
+}
+
+.no-reservations {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  border-radius: 5px;
+  margin-top: 20px;
+  font-size: 40px;
+  background-color: #27292a;
+ padding: 120px 0px;
+  margin-bottom: 20px;
+}
+
+
+.heading-section {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+}
+
 .heading-section h4 {
   color: #db3636;
   font-size: 34px;
@@ -200,6 +225,36 @@ section {
   color: #fff;
   font-style: normal;
   text-decoration: underline;
+}
+
+.heading-section button {
+  font-size: 14px;
+  color: #db3636;
+  background-color: transparent;
+  border: 1px solid #db3636;
+  width: 40px;
+  height: 30px;
+  display: inline-block;
+  border-radius: 25px;
+  font-weight: 400;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  transition: all .3s;
+  position: relative;
+  overflow: hidden;
+  margin: 0px 5px;
+}
+
+.tier-filter{
+  margin-top: 40px;
+  margin-right:40px;
+  margin-bottom: 20px;
+}
+
+.heading-section button:hover {
+  border-color: #fff;
+  background-color: #fff;
+  color: #db3636;
 }
 
 /* Pre-loader */
