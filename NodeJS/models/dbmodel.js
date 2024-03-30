@@ -18,6 +18,7 @@ const tier1_schedCollection = "tier1_sched";
 const tier2_schedCollection = "tier2_sched";
 const tier3_schedCollection = "tier3_sched";
 const userInfoCollection = "user_info";
+const userReservationsCollection = "user_reservation";
 const seatCollection = "seat";
 const db_url = "mongodb://127.0.0.1:27017/";
 
@@ -42,18 +43,30 @@ const userSchema = new mongoose.Schema({
 
 const userModel = mongoose.model(userInfoCollection, userSchema);
 
+const userReservationSchema = new mongoose.Schema({
+  reserve_time: { type: Date },
+  tier: { type: BigInt },
+  reserver: { type: mongoose.Schema.Types.ObjectID, ref: userInfoCollection },
+  walk_in: { type: Boolean },
+  slots: { type: BigInt }
+});
+
+const userReservationModel = mongoose.model(userReservationsCollection, userReservationSchema);
+
 // Schema for Schedules of different tier levels
 const scheduleSchema = new mongoose.Schema({
-    seats: { type: BigInt },
-    time_start: { type: BigInt },
-    time_end: { type: BigInt },
-    assigned_to: { type: String },
-    email: { type: String },
-    taken: { type: Boolean },
-    month: { type: BigInt },
-    day: { type: BigInt },
-    year: { type: BigInt }
-  },{ versionKey: false });
+  seats: { type: BigInt },
+  reservation_id: { type: mongoose.Schema.Types.ObjectID, ref: userReservationsCollection }, //objectID type
+  cancelled: { type: Boolean },
+  time_start: { type: BigInt },
+  time_end: { type: BigInt },
+  assigned_to: { type: String },
+  email: { type: String },
+  taken: { type: Boolean },
+  month: { type: BigInt },
+  day: { type: BigInt },
+  year: { type: BigInt }
+},{ versionKey: false });
   
 // tier1_scheds collection (contains schedule for tier 1 seats)
 const tier1_schedModel = mongoose.model(tier1_schedCollection, scheduleSchema);
@@ -61,6 +74,8 @@ const tier1_schedModel = mongoose.model(tier1_schedCollection, scheduleSchema);
 const tier2_schedModel = mongoose.model(tier2_schedCollection, scheduleSchema);
 // tier3_scheds collection (contains schedule for tier 3 seats)
 const tier3_schedModel = mongoose.model(tier3_schedCollection, scheduleSchema);
+
+
 
 // seats collection (contains seat information)
 const seatSchema = new mongoose.Schema({
@@ -83,5 +98,6 @@ module.exports.successFn = successFn;
 module.exports.tier1_schedModel = tier1_schedModel; 
 module.exports.tier2_schedModel = tier2_schedModel; 
 module.exports.tier3_schedModel = tier3_schedModel; 
+module.exports.userReservationModel = userReservationModel;
 module.exports.userModel = userModel; 
 module.exports.seatModel = seatModel; 

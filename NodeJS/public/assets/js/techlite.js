@@ -324,6 +324,13 @@ function getIsManager() {
                 }
             }  
 
+            // Select tier based on image click
+            $('.tier-image-container img').on('click', function() {
+                let tierLabel = $(this).next('.tier-label').text(); // Get the tier label of the clicked image
+                let tierNumber = tierLabel.match(/\d+/)[0]; // Gets tier number from label
+                document.getElementById('tierSelect').value = `tier${tierNumber}`;
+            });
+
             if (is_manager){ // if manager, then allow to edit fields
                 document.querySelector('div.reservation-form-fields-container input[name="name"]').readOnly = false;
                 document.querySelector('div.reservation-form-fields-container input[name="email"]').readOnly = false;
@@ -336,6 +343,7 @@ function getIsManager() {
                 document.querySelector('div.reservation-form-fields-container input[name="email"]').disabled = true;
                 $('.reservation-form-fields-container').hide();
             }
+            
         }
 
         // To execute this code only when user is on the /search page
@@ -420,6 +428,8 @@ function getIsManager() {
                 window.location.href = '/'; // Redirect to home page
             });
         }
+
+        alert("document ready - remove when done");
 
 	}); // $(document).ready end
 
@@ -819,7 +829,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 let childElements = divElement.querySelectorAll('*');
                 let time = "";
                 childElements.forEach(function(childElement) {
-                    if (compareBackgroundColorHex(childElement, "#A12929")) {
+                    if (compareBackgroundColorHex(childElement, "#FFFFFF")) {
                         time = time + childElement.innerText + " ";
                     }
                 });
@@ -845,7 +855,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 let daySelect = document.querySelector('#daySelect');
 
                 // Get the selected values
-                let selectedTier = tierSelect.value;
+                let selectedTier = tierSelect.value.match(/\d+/)[0]; // gets integer part only
                 let selectedDay = daySelect.value;
 
                 console.log('Selected Tier:', selectedTier);
@@ -865,6 +875,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 
                 h4Element.insertAdjacentHTML('afterend', `<p>Username: ${reserveUsername}</p><p>Email: ${reserveEmail}</p><p>Selected Tier: ${selectedTier}</p><p>Selected Day: ${selectedDay}</p><p>Selected Time/s: ${time}</p><p>Selected Seat: ${seat}</p>`);
+                // replace values of the hidden inputs
+                /* <input type="hidden" name="selectedTier" id="selectedTier">
+                <input type="hidden" name="selectedDay" id="selectedDay">
+                <input type="hidden" name="time" id="time">
+                <input type="hidden" name="seat" id="seat"></input> */
+                reservationForm.elements['selectedTier'].value = selectedTier;
+                reservationForm.elements['selectedDay'].value = selectedDay;
+                reservationForm.elements['time'].value = time;
+                reservationForm.elements['seat'].value = seat.match(/\d+/)[0];
+                reservationForm.elements['reserveManager'].value = getIsManager();
+                reservationForm.elements['reserverName'].value = getUsername();
+                reservationForm.elements['reserverEmail'].value = getEmail();
+
                 togglePopup(confirmationPopup);
             } else {
                 togglePopup(loginPopup);

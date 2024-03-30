@@ -4,6 +4,7 @@ const dbmodel = require('../models/dbmodel');
 const tier1_schedModel = dbmodel.tier1_schedModel;
 const tier2_schedModel = dbmodel.tier2_schedModel;
 const tier3_schedModel = dbmodel.tier3_schedModel;
+const userReservationModel = dbmodel.userReservationModel;
 const userModel = dbmodel.userModel;
 const seatModel = dbmodel.seatModel;
 const db_url = dbmodel.db_url;
@@ -162,6 +163,153 @@ function add(server){
     }).catch(errorFn);
 
   });
+
+  // Reservation Form post request (reserving a slot given variables)
+  server.post('/reserve-form', function(req, resp) {
+    console.log('--- Reserve form post request received ---');
+    
+
+    const selectedTier = req.body.selectedTier;
+    const selectedDay = req.body.selectedDay; // in the form of "2024-03-09"
+    const times = req.body.time.trim();  // in the form of "02:00 02:30 08:30"
+    const seat = req.body.seat;
+    const name = req.body.name;
+    const email = req.body.email;
+    const isManager = req.body.reserveManager == 'true';
+    const reserverName = req.body.reserverName;
+    const reserverEmail = req.body.reserverEmail;
+    
+    const year = Number(selectedDay.split('-')[0]);
+    const month = Number(selectedDay.split('-')[1]);
+    const day = Number(selectedDay.split('-')[2]);
+
+    // Get array of time in military time in the form of "0200 0230 0830"
+    const timeArray = times.split(' ').map(time => {
+        const hour = Number(time.split(':')[0]);
+        const minute = Number(time.split(':')[1]);
+        return hour * 100 + minute;
+    });
+
+    if ((timeArray.length > 4 && !isManager) || timeArray.length < 1 ) {
+      let message = 'Invalid Reservation Times';
+      console.log("In server.post('/reserve-form') - " + message);
+      reserve_failed(resp,message);
+    }
+
+    // Get tier model for the respective tier collection
+    let tierModel;
+    switch(Number(selectedTier)) {
+        case 1: tierModel = tier1_schedModel; break;
+        case 2: tierModel = tier2_schedModel; break;
+        case 3: tierModel = tier3_schedModel; break;
+    }
+
+    console.log("CHECKPOINTASOINHTPOIAESWNTPOGAS");
+    //display all constants
+    console.log("Selected Tier: "+selectedTier);
+    console.log("Selected Day: "+selectedDay);
+    console.log("Times: "+times);
+    console.log("Seat: "+seat);
+    console.log("Name: "+name);
+    console.log("Email: "+email);
+    console.log("Is Manager: "+isManager);
+    console.log("Year: "+year);
+    console.log("Month: "+month);
+    console.log("Day: "+day);
+    console.log("Time Array: "+timeArray);
+
+    // step 1: check if user (the reserver) exists (name and email) and obtain the _id of the user document
+    userModel.findOne({ username: reserverName, email: reserverEmail }).lean().then(function(user_data) {
+      if (user_data == null) {
+          let message = 'User not found';
+          console.log("In server.post('/reserve-form') - " + message);
+          reserve_failed(resp,message);
+      } else {
+        console.log('User found');
+        console.log(user_data);
+        let reserver = user_data._id;
+        // step 2: check if the selected slots are available
+        tierModel.find({
+          seats: seat,
+          day: day,
+          year: year,
+          month: month,
+          taken: false,
+          cancelled: false,
+          time_start: { $in: timeArray }
+        }).lean().then(function(reservations) {
+          if (reservations.length != timeArray.length) {
+            let message = 'Selected slots are not available';
+            console.log("In server.post('/reserve-form') - " + message);
+            reserve_failed(resp,message);
+          } else {
+            // step 3: create a user_reservation document (if email is an empty string, then walk_in is TRUE), and get the _id of the user_reservation
+            const walk_in = email == '';
+            let userReservation = {
+                reserve_time: new Date(),
+                tier: selectedTier,
+                reserver: reserver,
+                walk_in: walk_in,
+                slots: timeArray.length
+            };
+
+            userReservationModel.create(userReservation).then(function(user_reservation) {
+              console.log('User reservation created');
+              console.log(user_reservation);
+
+              // step 4: reserve the selected slots (editing the documents)
+              let reservation_id = user_reservation._id;
+
+              let updateQuery = {
+                seats: seat,
+                time_start: { $in: timeArray },
+                month: month,
+                day: day,
+                year: year
+              };
+
+              if (walk_in) {
+                email = 'walk-in';
+              }
+
+              let updateValues = {
+                $set: {
+                  reservation_id: reservation_id,
+                  cancelled: false,
+                  taken: true,
+                  assigned_to: name,
+                  email: email
+                }
+              };
+
+              tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
+                console.log('Reservation successful');
+                reserve_success(resp,reservation_id);
+              }).catch(errorFn);
+
+            }).catch(errorFn);
+          }
+        }).catch(errorFn);
+      }
+    }).catch(errorFn);
+
+  });
+
+  function reserve_failed(resp,message){
+    resp.render('reserve_fail',{
+      layout: 'index',
+      title: 'TechLite - Reservation Failed',
+      message: message
+    });
+  }
+
+  function reserve_success(resp,reservation_id){
+    resp.render('reserve_success',{
+      layout: 'index',
+      title: 'TechLite - Reservation Success',
+      reservation_id: String(reservation_id)
+    });
+  }
 
 }
 
