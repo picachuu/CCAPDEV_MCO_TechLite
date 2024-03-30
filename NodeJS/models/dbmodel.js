@@ -57,7 +57,7 @@ const userReservationModel = mongoose.model(userReservationsCollection, userRese
 const scheduleSchema = new mongoose.Schema({
   seats: { type: BigInt },
   reservation_id: { type: mongoose.Schema.Types.ObjectID, ref: userReservationsCollection }, //objectID type
-  cancelled: { type: Boolean },
+  cancelled_by: { type: mongoose.Schema.Types.ObjectID, ref: userInfoCollection },
   time_start: { type: BigInt },
   time_end: { type: BigInt },
   assigned_to: { type: String },

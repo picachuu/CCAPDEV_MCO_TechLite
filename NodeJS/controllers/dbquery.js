@@ -181,11 +181,22 @@ function add(server){
 
   });
 
-  // Reservation Form post request (reserving a slot given variables)
-  server.post('/reserve-form', function(req, resp) {
-    console.log('--- Reserve form post request received ---');
-    
+  server.post('/test', function(req, resp) {
+    console.log('Test post request received');
+    tier1_schedModel.create({seats: 1,
+      reservation_id: null, //objectID type
+      cancelled_by: null,
+      time_start: 0,
+      time_end: 30,
+      assigned_to: "",
+      email: "walk-in",
+      taken: true,
+      month: 1,
+      day: 1,
+      year: 2020});
+  });
 
+  function deleteReservation(req,resp) {
     const selectedTier = req.body.selectedTier;
     const selectedDay = req.body.selectedDay; // in the form of "2024-03-09"
     const times = req.body.time.trim();  // in the form of "02:00 02:30 08:30"
@@ -207,12 +218,6 @@ function add(server){
         return hour * 100 + minute;
     });
 
-    if ((timeArray.length > 4 && !isManager) || timeArray.length < 1 ) {
-      let message = 'Invalid Reservation Times';
-      console.log("In server.post('/reserve-form') - " + message);
-      reserve_failed(resp,message);
-    }
-
     // Get tier model for the respective tier collection
     let tierModel;
     switch(Number(selectedTier)) {
@@ -221,7 +226,6 @@ function add(server){
         case 3: tierModel = tier3_schedModel; break;
     }
 
-    console.log("CHECKPOINTASOINHTPOIAESWNTPOGAS");
     //display all constants
     console.log("Selected Tier: "+selectedTier);
     console.log("Selected Day: "+selectedDay);
@@ -239,92 +243,229 @@ function add(server){
     userModel.findOne({ username: reserverName, email: reserverEmail }).lean().then(function(user_data) {
       if (user_data == null) {
           let message = 'User not found';
-          console.log("In server.post('/reserve-form') - " + message);
-          reserve_failed(resp,message);
+          console.log("In deleteReservation - " + message);
+          reserve_failed(resp,"Deletion Failed",message);
       } else {
         console.log('User found');
         console.log(user_data);
         let reserver = user_data._id;
-        // step 2: check if the selected slots are available
+        // step 2: check if the selected slots are unavailable
         tierModel.find({
           seats: seat,
           day: day,
           year: year,
           month: month,
-          taken: false,
-          cancelled: false,
+          taken: true,
+          cancelled_by: null,
           time_start: { $in: timeArray }
         }).lean().then(function(reservations) {
           if (reservations.length != timeArray.length) {
-            let message = 'Selected slots are not available';
-            console.log("In server.post('/reserve-form') - " + message);
-            reserve_failed(resp,message);
+            let message = 'Selected slots are not unavailable';
+            console.log("In deleteReservation - " + message + " - " + reservations.length + " != " + timeArray.length);
+            reserve_failed(resp,"Deletion Failed",message);
           } else {
-            // step 3: create a user_reservation document (if email is an empty string, then walk_in is TRUE), and get the _id of the user_reservation
-            const walk_in = email == '';
-            let userReservation = {
-                reserve_time: new Date(),
-                tier: selectedTier,
-                reserver: reserver,
-                walk_in: walk_in,
-                slots: timeArray.length
+            // step 3: cancel reservation document
+
+            let updateQuery = {
+              seats: seat,
+              day: day,
+              year: year,
+              month: month,
+              taken: true,
+              cancelled_by: null,
+              time_start: { $in: timeArray }
             };
 
-            userReservationModel.create(userReservation).then(function(user_reservation) {
-              console.log('User reservation created');
-              console.log(user_reservation);
-
-              // step 4: reserve the selected slots (editing the documents)
-              let reservation_id = user_reservation._id;
-
-              let updateQuery = {
-                seats: seat,
-                time_start: { $in: timeArray },
-                month: month,
-                day: day,
-                year: year
-              };
-
-              if (walk_in) {
-                email = 'walk-in';
+            let updateValues = {
+              $set: {
+                cancelled_by: reserver,
               }
+            };
 
-              let updateValues = {
-                $set: {
-                  reservation_id: reservation_id,
-                  cancelled: false,
-                  taken: true,
-                  assigned_to: name,
-                  email: email
-                }
-              };
-
-              tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
-                console.log('Reservation successful');
-                reserve_success(resp,reservation_id);
+            tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
+              //create new document
+              //let endTimeArray = timeArray.map(time_start => time_start % 100 === 0 ? time_start + 30 : time_start + 100);
+              let newReserveInstances = timeArray.map(time_start => {
+              let endTime = time_start % 100 === 0 ? time_start + 30 : time_start + 100;
+              return {
+                  seats: seat,
+                  reservation_id: null, //objectID type
+                  cancelled_by: null,
+                  time_start: time_start,
+                  time_end: endTime,
+                  assigned_to: null,
+                  email: null,
+                  taken: false,
+                  month: month,
+                  day: day,
+                  year: year
+                  };
+              });
+              
+              tierModel.insertMany(newReserveInstances).then(() => {
+                  console.log('New reservations created successfully');
+                  reserve_success(resp,"Deletion Successful","");
               }).catch(errorFn);
-
+              
             }).catch(errorFn);
           }
         }).catch(errorFn);
       }
     }).catch(errorFn);
+  
+  }
+
+  // Reservation Form post request (reserving a slot given variables)
+  server.post('/reserve-form', function(req, resp) {
+    console.log('--- Reserve form post request received ---');
+
+    const isDelete = req.body.submitType == 'delete';
+
+    if (isDelete) {
+      deleteReservation(req,resp);
+    } else {
+      const selectedTier = req.body.selectedTier;
+      const selectedDay = req.body.selectedDay; // in the form of "2024-03-09"
+      const times = req.body.time.trim();  // in the form of "02:00 02:30 08:30"
+      const seat = req.body.seat;
+      const name = req.body.name;
+      const email = req.body.email;
+      const isManager = req.body.reserveManager == 'true';
+      const reserverName = req.body.reserverName;
+      const reserverEmail = req.body.reserverEmail;
+      
+      const year = Number(selectedDay.split('-')[0]);
+      const month = Number(selectedDay.split('-')[1]);
+      const day = Number(selectedDay.split('-')[2]);
+
+      // Get array of time in military time in the form of "0200 0230 0830"
+      const timeArray = times.split(' ').map(time => {
+          const hour = Number(time.split(':')[0]);
+          const minute = Number(time.split(':')[1]);
+          return hour * 100 + minute;
+      });
+
+      if ((timeArray.length > 4 && !isManager) || timeArray.length < 1 ) {
+        let message = 'Invalid Reservation Times';
+        console.log("In server.post('/reserve-form') - " + message);
+        reserve_failed(resp,"Reservation Failed",message);
+      }
+
+      // Get tier model for the respective tier collection
+      let tierModel;
+      switch(Number(selectedTier)) {
+          case 1: tierModel = tier1_schedModel; break;
+          case 2: tierModel = tier2_schedModel; break;
+          case 3: tierModel = tier3_schedModel; break;
+      }
+
+      console.log("CHECKPOINTASOINHTPOIAESWNTPOGAS");
+      //display all constants
+      console.log("Selected Tier: "+selectedTier);
+      console.log("Selected Day: "+selectedDay);
+      console.log("Times: "+times);
+      console.log("Seat: "+seat);
+      console.log("Name: "+name);
+      console.log("Email: "+email);
+      console.log("Is Manager: "+isManager);
+      console.log("Year: "+year);
+      console.log("Month: "+month);
+      console.log("Day: "+day);
+      console.log("Time Array: "+timeArray);
+
+      // step 1: check if user (the reserver) exists (name and email) and obtain the _id of the user document
+      userModel.findOne({ username: reserverName, email: reserverEmail }).lean().then(function(user_data) {
+        if (user_data == null) {
+            let message = 'User not found';
+            console.log("In server.post('/reserve-form') - " + message);
+            reserve_failed(resp,"Reservation Failed",message);
+        } else {
+          console.log('User found');
+          console.log(user_data);
+          let reserver = user_data._id;
+          // step 2: check if the selected slots are available
+          tierModel.find({
+            seats: seat,
+            day: day,
+            year: year,
+            month: month,
+            taken: false,
+            cancelled_by: null,
+            time_start: { $in: timeArray }
+          }).lean().then(function(reservations) {
+            if (reservations.length != timeArray.length) {
+              let message = 'Selected slots are not available';
+              console.log("In server.post('/reserve-form') - " + message);
+              reserve_failed(resp,"Reservation Failed",message);
+            } else {
+              // step 3: create a user_reservation document (if email is an empty string, then walk_in is TRUE), and get the _id of the user_reservation
+              const walk_in = email == '';
+              let userReservation = {
+                  reserve_time: new Date(),
+                  tier: selectedTier,
+                  reserver: reserver,
+                  walk_in: walk_in,
+                  slots: timeArray.length
+              };
+
+              userReservationModel.create(userReservation).then(function(user_reservation) {
+                console.log('User reservation created');
+                console.log(user_reservation);
+
+                // step 4: reserve the selected slots (editing the documents)
+                let reservation_id = user_reservation._id;
+
+                let updateQuery = {
+                  seats: seat,
+                  time_start: { $in: timeArray },
+                  month: month,
+                  day: day,
+                  year: year
+                };
+
+                if (walk_in) {
+                  email = 'walk-in';
+                }
+
+                let updateValues = {
+                  $set: {
+                    reservation_id: reservation_id,
+                    cancelled_by: null,
+                    taken: true,
+                    assigned_to: name,
+                    email: email
+                  }
+                };
+
+                tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
+                  console.log('Reservation successful');
+                  reserve_success(resp,"Reservation Successful","Your reservation ID is: " + String(message));
+                }).catch(errorFn);
+
+              }).catch(errorFn);
+            }
+          }).catch(errorFn);
+        }
+      }).catch(errorFn);
+    }
 
   });
 
-  function reserve_failed(resp,message){
+  function reserve_failed(resp,failed,message){
     resp.render('reserve_fail',{
       layout: 'index',
-      title: 'TechLite - Reservation Failed',
+      title: 'TechLite - '+failed,
+      failed: failed,
       message: message
     });
   }
 
-  function reserve_success(resp,reservation_id){
+  function reserve_success(resp,success,message){
     resp.render('reserve_success',{
       layout: 'index',
-      title: 'TechLite - Reservation Success',
-      reservation_id: String(reservation_id)
+      title: 'TechLite - '+ success,
+      success: success,
+      message: message
     });
   }
 

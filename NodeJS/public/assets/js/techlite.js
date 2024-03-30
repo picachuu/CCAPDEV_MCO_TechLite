@@ -267,6 +267,12 @@ function getIsManager() {
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
 
+        //call test post
+        /* $.ajax({
+            url: 'test',
+            type: 'POST'
+        }); */
+
         // if create account success, alert and toggle login popup
         let urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('create_account') === 'success') {
@@ -928,7 +934,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Add an event listener for the delete button's click event
         deleteButton.addEventListener('click', function(event) {
+            
+
             if (logged) {
+
+
                 // Show the confirmation popup
 
                 // Replace the HTML of the h4 element
@@ -972,7 +982,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 let daySelect = document.querySelector('#daySelect');
 
                 // Get the selected values
-                let selectedTier = tierSelect.value;
+                let selectedTier = tierSelect.value.match(/\d+/)[0];
                 let selectedDay = daySelect.value;
 
                 console.log('Selected Tier:', selectedTier);
@@ -985,6 +995,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 const delEmail = details.email;
                 
                 h4Element.insertAdjacentHTML('afterend', `<p>Username: ${delUsername}</p><p>Email: ${delEmail}</p><p>Selected Tier: ${selectedTier}</p><p>Selected Day: ${selectedDay}</p><p>Selected Time: ${time}</p><p>Selected Seat: ${seat}</p>`);
+
+                
+                reservationForm.elements["submitType"].value = "delete";
+                reservationForm.elements['selectedTier'].value = selectedTier;
+                reservationForm.elements['selectedDay'].value = selectedDay;
+                reservationForm.elements['time'].value = time;
+                reservationForm.elements['seat'].value = seat.match(/\d+/)[0];
+                reservationForm.elements['reserveManager'].value = getIsManager();
+                reservationForm.elements['reserverName'].value = getUsername();
+                reservationForm.elements['reserverEmail'].value = getEmail();
                 togglePopup(confirmationPopup);
             } else {
                 // Show the login popup
@@ -1004,7 +1024,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 submitBool = false;
                 reservationForm.submit();   
             } else {
-                window.location.href = '/reserve?delete=true';
+                reservationForm.submit();   
+               // window.location.href = '/reserve?delete=true';
                 // for delete popup function
             }
         });
