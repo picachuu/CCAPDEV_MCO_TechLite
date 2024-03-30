@@ -1854,6 +1854,7 @@ footer p a:hover {
   display: block;
   hyphens: auto;
   word-wrap: break-word;
+  margin-top:5px;
 }
 
 .editable {

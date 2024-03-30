@@ -86,7 +86,7 @@ function add(server){
   });
 
   server.post('/profile-reservations', async function(req, resp) {  
-    console.log('Profile post request received');
+    console.log('Profile reservations request received');
 
     const page = Math.max(1, Number(req.body.page));
     const pageSize = 3;
@@ -127,6 +127,27 @@ function add(server){
     console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
     console.log(`Total reservations: ${totalReservations}`);
   });
+
+  server.post('/update-profile', async (req, res) => {
+    console.log('Update profile post request received');
+    
+    const { username, displayName, bio } = req.body;
+
+    console.log(`Attempting to update: username = ${username}, display = ${displayName}, bio_msg = ${bio}`);
+    try {
+        const doc = await userModel.findOneAndUpdate(
+            { username: username },
+            { $set: { display: displayName, bio_msg: bio } },
+            { new: true }
+        ).exec();
+        
+        
+        res.send({ message: 'Profile updated successfully', user: doc });
+    } catch (err) {
+        console.error("Something wrong when updating data!", err);
+        res.status(500).send({ message: 'Error updating profile' });
+    }
+});
 
   server.post('/manageable-check', function(req, resp) {
     console.log('Manage post request received');
