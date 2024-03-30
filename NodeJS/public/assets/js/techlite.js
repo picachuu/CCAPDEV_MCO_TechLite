@@ -372,9 +372,30 @@ function getIsManager() {
             if (img_url !== ""){
                 document.getElementById('profileImage').src = img_url;
             }
+                 // Conditional rendering based on 'display'
+            const usernameContainer = document.querySelector('.username-container');
+            const mainProfile = document.querySelector('.main-profile'); // Select the .main-profile element
+
+            if (display === undefined || display === null || display === '') {
+                // When 'display' is undefined or null, adjust HTML structure, flex-direction, and .main-profile margin
+                usernameContainer.innerHTML = `
+                    <h4>@</h4>
+                    <h4 id="userName" contenteditable="false">${username}</h4>
+                `;
+                usernameContainer.style.flexDirection = 'row';
+                if (mainProfile) {
+                    mainProfile.style.marginTop = '-120px'; // Adjust margin when displayName is not present
+                }
+            } else {
+                // If 'display' is not null/undefined, set its value and reset flex-direction and .main-profile margin
+                document.getElementById('displayName').innerText = display;
+                document.getElementById('userName').innerText = username;
+                usernameContainer.style.flexDirection = 'column'; // Assuming default flex-direction is column
+                if (mainProfile) {
+                    mainProfile.style.marginTop = '-95px'; // Reset margin when displayName is present
+                }
+            }
             
-            document.getElementById('displayName').innerText = display;
-            document.getElementById('userName').innerText = username;
             document.getElementById('userBio').innerText = bio_msg;
             let role = "Member";
             if (is_manager) {
