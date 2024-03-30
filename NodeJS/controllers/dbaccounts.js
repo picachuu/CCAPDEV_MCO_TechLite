@@ -271,56 +271,56 @@ function add(server,bcrypt,saltRounds){
     }
 
     //test (not used)
-  async function createdUserDB(data) {
-    let username = data.username;
-    let email = data.email;
-    let display = data.display;
-    let password = data.password;
-    let is_manager = data.is_manager;
-    let reason = "Account creation error";
+//   async function createdUserDB(data) {
+//     let username = data.username;
+//     let email = data.email;
+//     let display = data.display;
+//     let password = data.password;
+//     let is_manager = data.is_manager;
+//     let reason = "Account creation error";
     
-    // check if username already exists
-    await userModel.findOne({username:username}).lean().then(async function(user_data){
-      if (user_data != null){
-        console.log('Create Account------Username already exists');
-        reason = "Username already exists";
-      } else {
-        // check if email already exists
+//     // check if username already exists
+//     await userModel.findOne({username:username}).lean().then(async function(user_data){
+//       if (user_data != null){
+//         console.log('Create Account------Username already exists');
+//         reason = "Username already exists";
+//       } else {
+//         // check if email already exists
 
-        await userModel.findOne({email:email}).lean().then(async function(user_data){
-          if (user_data != null){
-            reason = "Email already exists";
-          } else {
+//         await userModel.findOne({email:email}).lean().then(async function(user_data){
+//           if (user_data != null){
+//             reason = "Email already exists";
+//           } else {
             
 
-            let encrypted_pass = "";
+//             let encrypted_pass = "";
 
-            await bcrypt.hash(password, saltRounds, async function(err, hash) {
-                encrypted_pass = hash;
-                console.log("Password: "+ password);
-                console.log("Encrypted pass: "+encrypted_pass);
+//             await bcrypt.hash(password, saltRounds, async function(err, hash) {
+//                 encrypted_pass = hash;
+//                 console.log("Password: "+ password);
+//                 console.log("Encrypted pass: "+encrypted_pass);
             
-                // create new user
-                let newUser = new userModel({
-                    username: username,
-                    email: email,
-                    display: display,
-                    password: encrypted_pass,
-                    is_manager: is_manager
-                });
+//                 // create new user
+//                 let newUser = new userModel({
+//                     username: username,
+//                     email: email,
+//                     display: display,
+//                     password: encrypted_pass,
+//                     is_manager: is_manager
+//                 });
 
-                console.log('New User: ' + newUser);
+//                 console.log('New User: ' + newUser);
 
-                await newUser.save().catch(errorFn);
-                reason = null;
-            });
-          }
-        }).catch(errorFn);
-      }
-    }).catch(errorFn);
+//                 await newUser.save().catch(errorFn);
+//                 reason = null;
+//             });
+//           }
+//         }).catch(errorFn);
+//       }
+//     }).catch(errorFn);
 
-    return reason;
-  }// not used
+//     return reason;
+//   }// not used
 
   /* let data = {
     username: username,
