@@ -44,13 +44,26 @@
     <div class="profile-page-content">
       <div class="row">
         <div class="col-lg-10">
-            <div id="items-container" class="profile-reservations">
-                <div class="heading-section">
-                  <h4><em>Your</em>  Reservations</h4>
-                </div>
+          <div class="profile-reservations">
+            <div class="heading-section">
+              <h4><em>Your</em>  Reservations</h4>
+              <div class="tier-filter">
+                <button id="filterTier1">T1</button>
+                <button id="filterTier2">T2</button>
+                <button id="filterTier3">T3</button>
+              </div>
+            </div>
+            <div id="items-container">
                 <!-- This part should be added by javascript-->
-                
-                
+            </div>
+            <div id="pagination" class="pagination">
+              <i id="firstButton" class="fa fa-angles-left"></i>
+              <i id="prevButton" class="fa fa-angle-left"></i>
+              <span>Page <span id="currentPage">1</span></span>
+              <i id="nextButton" class="fa fa-angle-right"></i>
+              <i id="lastButton" class="fa fa-angles-right"></i>
+            </div>
+                <!-- ... existing code ... -->
                 <!--
                 <div class="item">
                   <ul>
@@ -85,9 +98,7 @@
                 </div>
                 -->
                 <!-- This part should be added by javascript-->
-
             </div>
-
         </div>
       <div class="col proile-points">
         <div class="col align-self-center">

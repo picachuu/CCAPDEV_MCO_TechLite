@@ -260,12 +260,6 @@ function getIsManager() {
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
 
-        // if create account success, alert and toggle login popup
-        let urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('create_account') === 'success') {
-            togglePopup(document.getElementById('loginPopup'));
-        }
-
 
         // Check if the user is not logged in
         if (!logged) {
@@ -282,10 +276,7 @@ function getIsManager() {
         // Check if the navbarProfileImage exists, and replace with user image accordingly
         let navbarProfileImage = document.getElementById('navbarProfileImage');
         if (navbarProfileImage) {   
-            // check if url is empty, if so keep default
-            if (img_url !== "") {
-                navbarProfileImage.src = img_url;
-            }
+            navbarProfileImage.src = img_url;
         }
 
         // Change behavior based on user role
@@ -357,15 +348,8 @@ function getIsManager() {
             }
 
             document.getElementById('navbarProfile').classList.add('active');
-
-            // check if URL is empty, if so, don't change the images
-            if (banner_url !== ""){
-                document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
-            }
-            if (img_url !== ""){
-                document.getElementById('profileImage').src = img_url;
-            }
-            
+            document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
+            document.getElementById('profileImage').src = img_url;
             document.getElementById('userName').innerText = username;
             document.getElementById('userBio').innerText = bio_msg;
             let role = "Member";
@@ -1302,87 +1286,4 @@ async function checkLogin() {
     window.alert(valid ? "Login successful" : 'Login failed');
 
     return valid;
-}
-
-// client-side validation for creating an account
-function validateCreateUser() {
-    // Get form values
-    let form = $('form[name="createUser"]');
-    let username = form.find('input[name="newUsername"]').val();
-    let email = form.find('input[name="email"]').val();
-    let password = form.find('input[name="newPassword"]').val();
-    let confirmPassword = form.find('input[name="confirmPassword"]').val();
-
-    // Validate form values
-    if (username == "" || email == "" || password == "" || confirmPassword == "") {
-        alert("All fields must be filled out");
-        return false;
-    }
-
-    // Username validation
-    let usernameRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-    if (!usernameRegex.test(username)) {
-        alert("Username must only contain letters, numbers, and underscores, and must start with a letter or underscore.");
-        return false;
-    }
-
-    if (password != confirmPassword) {
-        alert("Passwords do not match");
-        return false;
-    }
-
-    // Password validation
-    let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-        alert("Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric, and 1 special character.");
-        return false;
-    }
-
-    // If all validation passes, return true to allow the form to continue submitting
-    return true;
-}
-
-async function checkCreateUser(){
-    let form = $('form[name="createUser"]'); // Selects the form with the name 'createUser'
-    let username = form.find('input[name="newUsername"]').val(); // Gets the value of the input with the name 'newUsername'
-    let email = form.find('input[name="email"]').val(); // Gets the value of the input with the name 'email'
-    let displayname = form.find('input[name="displayName"]').val(); // Gets the value of the input with the name 'displayName'
-    //let displayname = "";
-    let password = form.find('input[name="newPassword"]').val(); // Gets the value of the input with the name 'newPassword'
-    let confirmPassword = form.find('input[name="confirmPassword"]').val(); // Gets the value of the input with the name 'password
-    let is_manager = false;
-
-    let data = {
-        username: username,
-        email: email,
-        display: displayname,
-        password: password,
-        confirmPassword: confirmPassword,
-        is_manager: is_manager
-    };
-
-    return await checkCreateAccount(data);
-}
-
-
-async function checkCreateAccount(data) {
-    let valid = false;
-    let reason = "Account Creation Failed";
-
-    // will String and valid boolean; the String is used in window.alert
-    try {  
-        // uses await to wait for the response from the server instead of forcing synchronousity
-        let response = await $.ajax({   // returns a JSON with user element object
-            url: '/create-account',
-            type: 'POST',
-            data: data
-        });
-
-        valid = response.valid;
-        reason = response.reason;
-        window.alert(reason);
-        return valid;
-    } catch (error) {
-        window.alert('Error:', error);
-    }
 }

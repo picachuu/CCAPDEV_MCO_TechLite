@@ -1,22 +1,28 @@
 if (window.location.pathname === '/profile') {
     document.addEventListener('DOMContentLoaded', function() {
-        loadReservations();
+        console.log('Profile page loaded');
+        loadReservations(1);
     });
 }
-
-function addReservationsPerTier(tier) {
+let currentPage = 1;
+let totalPages = 0;
+/*
+function addReservationsPerTier(tier, page) {
 
     let hadReservation_thisTier = false;
     const reservations_container = document.getElementById('items-container');
+    pageSize = 1; // Number of reservations per tier per page
 
     $.ajax({
         url: 'profile-reservations',
         type: 'POST', 
         data: { tier_num: tier, 
             user_name: getUsername(),
-            mode: "reservations"
+            mode: "reservations",
+            page: page,             
+            pageSize: pageSize  
         },
-        async: false,  // Make the request synchronous
+        async: true,  // Make the request synchronous
         success: function(own, status) {
             if (status === 'success') {
                 for (let i = 0; i < own.reservations.length; i++) {
@@ -33,13 +39,13 @@ function addReservationsPerTier(tier) {
                     image.alt = "";
                     switch(Number(tier)) {
                         case 1:
-                            image.src = 'assets/images/tier1.jpg';
+                            image.src = 'assets/images/tier1.png';
                             break;
                         case 2:
-                            image.src = 'assets/images/tier2.jpg';
+                            image.src = 'assets/images/tier2.png';
                             break;
                         case 3:
-                            image.src = 'assets/images/tier3.jpg';
+                            image.src = 'assets/images/tier3.png';
                             break;
                     }
 
@@ -72,8 +78,8 @@ function addReservationsPerTier(tier) {
                                         spani.textContent = 'Ongoing';
                                     }
                                 */
-                                // for now, ongoing
-                                spani.textContent = 'Ongoing';
+                                // for now, ongoing*/
+                                /*spani.textContent = 'Ongoing';
                                 break;
                                 
                                 //TO DO FOR MCO3: Display Time Left
@@ -95,14 +101,14 @@ function addReservationsPerTier(tier) {
 
                     var reservation_li6 = document.createElement("li");
                     var div6 = document.createElement('div');
-                    div6.classList.add('main-border-button');
+                    div6.classList.add('main-border-button');*/
 
                     /* if today's date has surpassed the current date, then expired
                         if (current date > date for reservation) {
                                         div6.classList.add('border-no-active');
                                     }
                     */
-
+/*
                     var link6 = document.createElement("a");
                     var url = "/manage" + 
                     
@@ -142,12 +148,213 @@ function addReservationsPerTier(tier) {
 
     return hadReservation_thisTier ? 1 : 0;
 }
+*/
+function loadReservations(page) {
+    let data = {
+        user_name: getUsername(),
+        page: page,
+        pageSize: 3, // Assuming this is your desired page size
+        tier_nums: selectedTiers // Send the array of selected tiers
+    };
 
-function loadReservations() {
-    let tier_total = 0;
-    //determine if there were any reservations made by the user, if none then display "No reservations made, go add one!"
+    $.ajax({
+        url: 'profile-reservations',
+        type: 'POST',
+        data: data,
+        async: true,
+        success: function(own, status) {
+            if (status === 'success') {
+                totalPages = own.totalPages;
+                currentPage = own.page; // Update current page based on server response
+                const reservationsContainer = document.getElementById('items-container');
+                reservationsContainer.innerHTML = ''; // Clear existing reservations
 
-    for (let i = 1; i < 4; i++) {
-        tier_total = tier_total + addReservationsPerTier(i);
+                if (own.reservations.length === 0) {
+                    // No reservations to show
+                    const noReservationsMsg = document.createElement('div');
+                    noReservationsMsg.textContent = 'No reservations to show';
+                    noReservationsMsg.classList.add('no-reservations'); // Add some class for styling if needed
+                    reservationsContainer.appendChild(noReservationsMsg);
+                } else {
+                    own.reservations.forEach(reservation => {
+                        const reservationElement = createReservationElement(reservation);
+                        reservationsContainer.appendChild(reservationElement);
+                    });
+                }
+
+                document.getElementById('currentPage').textContent = own.page;
+                updatePaginationControls(own.page, own.totalPages);
+                console.log(`Requesting page ${page} with page size ${data.pageSize} and tiers ${selectedTiers}`);
+            }
+        },
+        error: function() {
+            console.error('Failed to load reservations');
+        }
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    //pagination event listeners
+    document.getElementById('nextButton').addEventListener('click', function() {
+        if (currentPage < totalPages) {
+            currentPage++; 
+            loadReservations(currentPage);
+        }
+    });
+    
+    document.getElementById('prevButton').addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--; 
+            loadReservations(currentPage);
+        }
+    });
+
+    document.getElementById('firstButton').addEventListener('click', function() {
+        currentPage = 1; 
+        loadReservations(currentPage); 
+    });
+
+    document.getElementById('lastButton').addEventListener('click', function() {
+        currentPage = totalPages; 
+        loadReservations(currentPage);
+    });
+    
+});
+
+function updatePaginationControls(currentPage, totalPages) {
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    
+    prevButton.disabled = currentPage <= 1;
+    nextButton.disabled = currentPage >= totalPages;
+}
+
+let selectedTiers = [1, 2, 3]; 
+
+function toggleTierSelection(tier) {
+    const index = selectedTiers.indexOf(tier);
+    if (index > -1) {
+        selectedTiers.splice(index, 1);
+    } else {
+        selectedTiers.push(tier);
+    }
+    updateTierButtons(); 
+    loadReservations(1);
+}
+
+
+function updateTierButtons() {
+    for (let tier = 1; tier <= 3; tier++) {
+        const button = document.getElementById(`filterTier${tier}`);
+        if (selectedTiers.includes(tier)) {
+            button.classList.add("selected");
+        } else {
+            button.classList.remove("selected");
+        }
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateTierButtons();
+    loadReservations(1);
+
+    for (let tier = 1; tier <= 3; tier++) {
+        document.getElementById(`filterTier${tier}`).addEventListener('click', function() {
+            toggleTierSelection(tier);
+        });
+    }
+});
+
+
+function createReservationElement(reservation) {
+    var reservationDiv = document.createElement('div');
+    reservationDiv.classList.add('item');
+    var reservationUl = document.createElement("ul");
+
+    // Tier image based on reservation.tier
+    var reservationLi1 = document.createElement("li");
+    var image = document.createElement('img');
+    image.alt = "Tier Image";
+    switch(Number(reservation.tier)) {
+        case 1:
+            image.src = 'assets/images/tier1.png';
+            break;
+        case 2:
+            image.src = 'assets/images/tier2.png';
+            break;
+        case 3:
+            image.src = 'assets/images/tier3.png';
+            break;
+        default:
+            image.alt = 'No image available';
+    }
+    reservationLi1.appendChild(image);
+    reservationUl.appendChild(reservationLi1);
+
+    // Room and Seat
+    var roomAndSeatLi = document.createElement("li");
+    var roomHeader = document.createElement('h4');
+    var roomSpan = document.createElement('span');
+    roomHeader.textContent = 'Room';
+    roomSpan.textContent = 'Tier ' + reservation.tier + ' Seat ' + reservation.seats;
+    roomAndSeatLi.appendChild(roomHeader);
+    roomAndSeatLi.appendChild(roomSpan);
+    reservationUl.appendChild(roomAndSeatLi);
+
+    // Date Reserved
+    var dateLi = document.createElement("li");
+    var dateHeader = document.createElement('h4');
+    var dateSpan = document.createElement('span');
+    dateHeader.textContent = 'Date Reserved';
+    dateSpan.textContent = reservation.day + '/' + reservation.month + '/' + reservation.year;
+    dateLi.appendChild(dateHeader);
+    dateLi.appendChild(dateSpan);
+    reservationUl.appendChild(dateLi);
+
+    // Status
+    var statusLi = document.createElement("li");
+    var statusHeader = document.createElement('h4');
+    var statusSpan = document.createElement('span');
+    statusHeader.textContent = 'Status';
+    // Assume logic for determining if expired or ongoing is implemented elsewhere
+    statusSpan.textContent = 'Ongoing'; // placeholder
+    statusLi.appendChild(statusHeader);
+    statusLi.appendChild(statusSpan);
+    reservationUl.appendChild(statusLi);
+
+    // Time Start
+    var timeLi = document.createElement("li");
+    var timeHeader = document.createElement('h4');
+    var timeSpan = document.createElement('span');
+    timeHeader.textContent = 'Time Start';
+    timeSpan.textContent = `${Math.floor((reservation.time_start)/100).toString().padStart(2, '0')}:${((reservation.time_start)%100).toString().padStart(2, '0')}` + ' (30 minutes)';
+    timeLi.appendChild(timeHeader);
+    timeLi.appendChild(timeSpan);
+    reservationUl.appendChild(timeLi);
+
+    // Manage Link
+    var manageLi = document.createElement("li");
+    var manageDiv = document.createElement('div');
+    manageDiv.classList.add('main-border-button');
+    var manageLink = document.createElement("a");
+    manageLink.href = "/manage" + 
+        "?tier=" + encodeURIComponent(reservation.tier) + 
+        "&seats=" + encodeURIComponent(reservation.seats) + 
+        "&username=" + encodeURIComponent(reservation.assigned_to) +
+        "&email=" + encodeURIComponent(reservation.email) + 
+        "&reservations=" + encodeURIComponent(1) + 
+        "&time_start1=" + encodeURIComponent(reservation.time_start) + 
+        "&month=" + encodeURIComponent(reservation.month) + 
+        "&day=" + encodeURIComponent(reservation.day) + 
+        "&year=" + encodeURIComponent(reservation.year);
+    manageLink.textContent = 'Manage';
+    manageDiv.appendChild(manageLink);
+    manageLi.appendChild(manageDiv);
+    reservationUl.appendChild(manageLi);
+
+    reservationDiv.appendChild(reservationUl);
+
+    return reservationDiv;
+}
+
