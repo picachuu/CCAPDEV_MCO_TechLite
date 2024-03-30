@@ -32,11 +32,12 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     username: { type: String },
     email: { type: String },
+    display: { type: String, default: ""},
     password: { type: String },
     is_manager: { type: Boolean },
-    img_url: { type: String },
-    banner_url: { type: String },
-    bio_msg: { type: String }
+    img_url: { type: String, default: ""},
+    banner_url: { type: String, default: ""},
+    bio_msg: { type: String, default: ""}
   },{ versionKey: false });
 
 const userModel = mongoose.model(userInfoCollection, userSchema);
