@@ -1761,7 +1761,7 @@ footer p a:hover {
 
 .main-profile {
   display: flex;
-  margin-top: -110px;
+  margin-top: -95px;
   align-items: center;
   padding: 0px 400px;
   position: relative;
@@ -1823,7 +1823,7 @@ footer p a:hover {
   min-height: 320px;
 }
 
-.main-profile span {
+.main-profile .role {
   font-size: 17px;
   color: #fff;
   background-color: #db3636;
@@ -1833,12 +1833,19 @@ footer p a:hover {
   font-weight: 400;
   text-transform: capitalize;
   letter-spacing: 0.5px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .main-profile h4 {
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   font-size: 40px;
+}
+
+.main-profile h2 {
+  font-size: 25px;
+  margin-bottom: 20px;
+  font-weight:normal;
+  font-style: italic;
 }
 
 .main-profile p {
@@ -1870,6 +1877,7 @@ footer p a:hover {
 
 .username-container {
   display: flex;
+  flex-direction: column;
 }
 
 .main-profile .profile-details i {

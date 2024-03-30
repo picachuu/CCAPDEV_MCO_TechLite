@@ -4,8 +4,148 @@ if (window.location.pathname === '/profile') {
         loadReservations(1);
     });
 }
+
 let currentPage = 1;
 let totalPages = 0;
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    var editBtn = document.getElementById('editProfileBtn');
+    var displayName = document.getElementById('displayName');
+    var userBio = document.getElementById('userBio');
+    var profileImageContainer = document.getElementById('profileImageContainer');
+    var coverImageContainer = document.getElementById('coverBannerContainer');
+    var imageOverlay = document.getElementById('imageOverlay');
+    var coverOverlay = document.getElementById('coverOverlay');
+    var profileImageInput = document.getElementById('profileImageInput');
+    var coverImageInput = document.getElementById('coverImageInput');
+    var editIcon = document.getElementById('editIcon');
+    var mainProfile = document.getElementById('main-profile');
+
+    var editing = false;
+
+    function toggleEditMode() {
+        editing = !editing;
+        displayName.contentEditable = editing;
+        userBio.contentEditable = editing;
+    
+        if (editing) {
+            displayName.classList.add('editable');
+            userBio.classList.add('editable');
+            editIcon.className = 'fa fa-check';
+            imageOverlay.classList.add('cursor-pointer'); 
+            coverOverlay.classList.add('cursor-pointer'); 
+            focusAtEnd(displayName);
+        } else {
+            displayName.classList.remove('editable');
+            userBio.classList.remove('editable');
+            editIcon.className = 'fa fa-pencil';
+            imageOverlay.classList.remove('cursor-pointer'); 
+            coverOverlay.classList.remove('cursor-pointer'); 
+        }
+    
+        profileImageContainer.classList.toggle('with-overlay', editing);
+        coverImageContainer.classList.toggle('with-overlay', editing);
+    }
+
+    var displayNameMaxLength = 25;
+    var userBioMaxLength = 160;
+    
+
+    displayName.addEventListener('keypress', function(e) {
+        if (displayName.textContent.length >= displayNameMaxLength) {
+            e.preventDefault();
+        }
+    });
+
+    userBio.addEventListener('keypress', function(e) {
+        if (userBio.textContent.length >= userBioMaxLength) {
+            e.preventDefault();
+        }
+    });
+
+    /*
+    userName.addEventListener('input', function() {
+        this.textContent = this.textContent.replace(/\s/g, '');
+    });
+    
+    userName.addEventListener('keydown', function(e) {
+        if (e.key === ' ') {
+            e.preventDefault();
+        }
+    });
+    */
+
+    editBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleEditMode();
+    });
+
+    function handleProfileImageUpload(e) {
+        e.stopPropagation(); // Prevent triggering edit mode toggle
+        if (editing) {
+            profileImageInput.click();
+        }
+    }
+
+    function handleCoverImageUpload(e) {
+        e.stopPropagation(); // Prevent triggering edit mode toggle
+        if (editing) {
+            coverImageInput.click();
+        }
+    }
+
+    imageOverlay.addEventListener('click', handleProfileImageUpload);
+    coverOverlay.addEventListener('click', handleCoverImageUpload);
+
+    profileImageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profileImage').src = e.target.result;
+                document.getElementById('navbarProfileImage').src = e.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    coverImageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                coverImageContainer.style.backgroundImage = 'url(' + e.target.result + ')';
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Define the focusAtEnd function if it's not already defined
+    function focusAtEnd(element) {
+        var range = document.createRange();
+        var sel = window.getSelection();
+        range.selectNodeContents(element);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        element.focus();
+    }
+});
+
+function saveProfileChanges() {
+    // Example logic to send updated profile information and images to the server
+    // You need to implement AJAX request here according to your server API
+
+    var displayName = document.getElementById('displayName').innerText;
+    var userBio = document.getElementById('userBio').innerText;
+
+    console.log('Saving profile changes:', displayName, userBio);
+    // Here, add your AJAX call to send the displayName, userBio, and image files to the server
+
+    // Reset editing state
+    editing = false;
+    // Update UI to reflect the non-editing state
+}
+
 /*
 function addReservationsPerTier(tier, page) {
 
