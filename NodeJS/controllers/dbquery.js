@@ -779,7 +779,270 @@ function add(server){
 
   });
 
+  function manageResponse(resp,heading,message){
+    resp.render('manage_response',{
+      layout: 'index',
+      title: 'TechLite - '+ heading,
+      heading: heading,
+      message: message
+    });
+  }
 
+  // manage and editing the reservations (update)
+  server.post('/update-reservation', function(req, resp) {
+    const reservation_id = req.body.reservationId;
+    const selectedTier = Number(req.body.tier);
+    const selectedDay = req.body.date; // in the form of "MM/DD/YYYY"
+    const times = req.body.userSelectedTime.trim();  // in the form of "02:00 02:30 08:30"
+    const newTimes = req.body.userNewTime.trim();  // in the form of "02:00 02:30 08:30"
+    const seat = req.body.seat;
+    const name = req.body.userName;
+    const email = req.body.userEmail;
+    const isManager = req.body.manager == 'true';
+    const reserverName = req.body.canceller;
+    const reserverEmail = req.body.cancellerEmail;
+    
+    const year = Number(selectedDay.split('/')[2]);
+    const month = Number(selectedDay.split('/')[0]);
+    const day = Number(selectedDay.split('/')[1]);
+
+    // Get array of time in military time in the form of "0200 0230 0830"
+    const timeArray = times.split(' ').map(time => {
+        const hour = Number(time.split(':')[0]);
+        const minute = Number(time.split(':')[1]);
+        return hour * 100 + minute;
+    });
+
+    const newTimeArray = newTimes.split(' ').map(time => {
+        const hour = Number(time.split(':')[0]);
+        const minute = Number(time.split(':')[1]);
+        return hour * 100 + minute;
+    });
+
+    // Get tier model for the respective tier collection
+    let tierModel;
+    switch(Number(selectedTier)) {
+        case 1: tierModel = tier1_schedModel; break;
+        case 2: tierModel = tier2_schedModel; break;
+        case 3: tierModel = tier3_schedModel; break;
+    }
+
+    //display all constants
+    console.log("Selected Tier: "+selectedTier);
+    console.log("Selected Day: "+selectedDay);
+    console.log("Times: "+times);
+    console.log("Seat: "+seat);
+    console.log("Name: "+name);
+    console.log("Email: "+email);
+    console.log("Is Manager: "+isManager);
+    console.log("Year: "+year);
+    console.log("Month: "+month);
+    console.log("Day: "+day);
+    console.log("Time Array: "+timeArray);
+
+    // step 1: check if user (the reserver) exists (name and email) and obtain the _id of the user document
+    // step 1: check if the new selected slots are available
+    tierModel.find({
+      seats: seat,
+      day: day,
+      year: year,
+      month: month,
+      taken: false,
+      cancelled_by: null,
+      time_start: { $in: newTimeArray }
+    }).lean().then(function(reservations) {
+      if (reservations.length != newTimeArray.length) {
+        let message = 'New selected slots are not available';
+        console.log("In update-reservation - " + message);
+        manageResponse(resp,"Update Failed",message);
+      } else {
+        console.log('New reservations found available');
+        console.log(reservations);
+
+        // step 2: check if the selected slots are unavailable
+        tierModel.find({
+          seats: seat,
+          day: day,
+          year: year,
+          month: month,
+          taken: true,
+          cancelled_by: null,
+          time_start: { $in: timeArray }
+        }).lean().then(function(reservations) {
+          if (reservations.length != timeArray.length) {
+            let message = 'Selected slots are not unavailable';
+            console.log("In update-reservation - " + message);
+            manageResponse(resp,"Update Failed",message);
+          } else {
+            // step 3-4: update both reservations documents
+            let updateQueryNew = {
+              seats: seat,
+              day: day,
+              year: year,
+              month: month,
+              taken: false,
+              cancelled_by: null,
+              time_start: { $in: newTimeArray }
+            };
+            let updateValuesNew = {
+              $set: {
+                reservation_id: reservation_id,
+                assigned_to: name,
+                email: email,
+                taken: true,
+              }
+            };
+
+
+            let updateQuery = {
+              seats: seat,
+              day: day,
+              year: year,
+              month: month,
+              taken: true,
+              cancelled_by: null,
+              time_start: { $in: timeArray }
+            };
+
+            let updateValues = {
+              $set: {
+                reservation_id: null,
+                assigned_to: null,
+                email: null,
+                taken: false,
+              }
+            };
+
+            tierModel.updateMany(updateQueryNew, updateValuesNew).then(function(reservations) {
+              console.log('New reservations updated successfully');
+              tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
+                console.log('Old reservations updated successfully');
+                manageResponse(resp,"Update Successful","");
+              }).catch(errorFn);
+            }).catch(errorFn);
+          }
+        }).catch(errorFn);
+      }
+    }).catch(errorFn);
+  });
+
+  // manage and editing the reservations (delete/cancel)
+  server.post('/delete-reservation', function(req, resp) {
+    const selectedTier = Number(req.body.tier);
+    const selectedDay = req.body.date; // in the form of "MM/DD/YYYY"
+    const times = req.body.userSelectedTime.trim();  // in the form of "02:00 02:30 08:30"
+    const seat = req.body.seat;
+    const name = req.body.userName;
+    const email = req.body.userEmail;
+    const isManager = req.body.manager == 'true';
+    const reserverName = req.body.canceller;
+    const reserverEmail = req.body.cancellerEmail;
+    
+    const year = Number(selectedDay.split('/')[2]);
+    const month = Number(selectedDay.split('/')[0]);
+    const day = Number(selectedDay.split('/')[1]);
+
+    // Get array of time in military time in the form of "0200 0230 0830"
+    const timeArray = times.split(' ').map(time => {
+        const hour = Number(time.split(':')[0]);
+        const minute = Number(time.split(':')[1]);
+        return hour * 100 + minute;
+    });
+
+    // Get tier model for the respective tier collection
+    let tierModel;
+    switch(Number(selectedTier)) {
+        case 1: tierModel = tier1_schedModel; break;
+        case 2: tierModel = tier2_schedModel; break;
+        case 3: tierModel = tier3_schedModel; break;
+    }
+
+    //display all constants
+    console.log("Selected Tier: "+selectedTier);
+    console.log("Selected Day: "+selectedDay);
+    console.log("Times: "+times);
+    console.log("Seat: "+seat);
+    console.log("Name: "+name);
+    console.log("Email: "+email);
+    console.log("Is Manager: "+isManager);
+    console.log("Year: "+year);
+    console.log("Month: "+month);
+    console.log("Day: "+day);
+    console.log("Time Array: "+timeArray);
+
+    // step 1: check if user (the reserver) exists (name and email) and obtain the _id of the user document
+    userModel.findOne({ username: reserverName, email: reserverEmail }).lean().then(function(user_data) {
+      if (user_data == null) {
+          let message = 'User not found';
+          console.log("In deleteReservation - " + message);
+          manageResponse(resp,"Deletion Failed",message);
+      } else {
+        console.log('User found');
+        console.log(user_data);
+        let reserver = user_data._id;
+        // step 2: check if the selected slots are unavailable
+        tierModel.find({
+          seats: seat,
+          day: day,
+          year: year,
+          month: month,
+          taken: true,
+          cancelled_by: null,
+          time_start: { $in: timeArray }
+        }).lean().then(function(reservations) {
+          if (reservations.length != timeArray.length) {
+            let message = 'Selected slots are not unavailable';
+            console.log("In deleteReservation - " + message + " - " + reservations.length + " != " + timeArray.length);
+            manageResponse(resp,"Deletion Failed",message);
+          } else {
+            // step 3: cancel reservation document
+
+            let updateQuery = {
+              seats: seat,
+              day: day,
+              year: year,
+              month: month,
+              taken: true,
+              cancelled_by: null,
+              time_start: { $in: timeArray }
+            };
+
+            let updateValues = {
+              $set: {
+                cancelled_by: reserver,
+              }
+            };
+
+            tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
+              //create new documents for the cancelled slots
+              let newReserveInstances = timeArray.map(time_start => {
+              let endTime = time_start % 100 === 0 ? time_start + 30 : time_start + 70;
+              return {
+                  seats: seat,
+                  reservation_id: null, //objectID type
+                  cancelled_by: null,
+                  time_start: time_start,
+                  time_end: endTime,
+                  assigned_to: null,
+                  email: null,
+                  taken: false,
+                  month: month,
+                  day: day,
+                  year: year
+                  };
+              });
+              
+              tierModel.insertMany(newReserveInstances).then(() => {
+                  console.log('New reservations created successfully');
+                  manageResponse(resp,"Deletion Successful","");
+              }).catch(errorFn);
+              
+            }).catch(errorFn);
+          }
+        }).catch(errorFn);
+      }
+    }).catch(errorFn);
+  });
 }
 
 

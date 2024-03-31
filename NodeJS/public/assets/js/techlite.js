@@ -278,6 +278,10 @@ function getIsManager() {
         bio_msg = data.bio_msg;
         is_manager = data.is_manager;
 
+        if (img_url !== ""){
+            document.getElementById('navbarProfileImage').src = img_url;
+        }
+
         //call test post
         /* $.ajax({
             url: 'test',

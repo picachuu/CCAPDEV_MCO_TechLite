@@ -313,8 +313,9 @@ function populateTimeBlocksManage(seat_number, tier_number, day_number) {
 
     const updateBtn = document.getElementById('updateBtn');
     const delBtn = document.getElementById('delBtn');
-    updateBtn.style.display = 'none';
-    delBtn.style.display = 'none';
+    updateBtn.style.display = 'block';
+    delBtn.style.display = 'block';
+    
 
 
     let selectedBlocks = 0;
@@ -371,8 +372,12 @@ function populateTimeBlocksManage(seat_number, tier_number, day_number) {
                                     countSelected++;
                                 }
                             });
+
+                            
                             
                             let selectionLimit = countSelected;
+
+                            
                             
                             if (selectedBlocks < selectionLimit) { 
                                 block.classList.toggle('selected');
@@ -382,16 +387,16 @@ function populateTimeBlocksManage(seat_number, tier_number, day_number) {
                         
                                 let hasSelectedBlocks = selectedBlocks > 0;
 
-                                updateBtn.style.display = hasSelectedBlocks ? 'block' : 'none';
-                                delBtn.style.display = hasSelectedBlocks ? 'block' : 'none';
+                                // updateBtn.style.display = hasSelectedBlocks ? 'block' : 'none';
+                                // delBtn.style.display = !hasSelectedBlocks ? 'block' : 'none';
                             }
                             else if (selectedBlocks == selectionLimit && block.classList.contains('selected')) {
                                 block.classList.toggle('selected');
                                 selectedBlocks = selectedBlocks - 1;
-                                if (selectedBlocks == 0) {
-                                    updateBtn.style.display = 'none';
-                                    delBtn.style.display = 'none';
-                                }
+                                // if (selectedBlocks == 0) {
+                                //     updateBtn.style.display = 'none';
+                                //     delBtn.style.display = 'block';
+                                // }
                             }
                         }
                     }

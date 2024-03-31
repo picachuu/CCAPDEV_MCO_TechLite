@@ -8,7 +8,7 @@
 
 <div class="reservation-management">
     <h2>Manage Reservation</h2>
-    <form name="manageForm" action="" method="post" onsubmit="return submitManageReservation()">
+    <form name="manageForm" action="main" method="get" onsubmit="return submitManageReservation()">
         <div class="form-group">
             <label for="userName">Reservation ID</label>
             <input type="text" id="reservationId" name="reservationId" value="{{reservation_id}}" required readonly>
@@ -34,14 +34,14 @@
         <!-- Tier -->
         <div class="form-group">
             <label for="tierSelect">Tier:</label>
-            <select id="tierSelect" class="tier-select" disabled>
+            <select id="tierSelect" name="tier" class="tier-select">
                 <option value="{{tier}}">Tier {{tier}}</option>
             </select>
         </div>     
         <!-- Date -->
         <div class="form-group">
             <label for="daySelect">Date:</label>
-            <select id="daySelect" class="day-select" disabled>
+            <select id="daySelect" name="date" class="day-select">
                 <option value = "{{date}}">{{date}}</option>
             </select>
         </div>
@@ -60,9 +60,16 @@
         <div id="timeBlocksContainer" class="time-blocks-container" style="display:none;">
             <!-- JavaScript will populate this area with time block buttons -->
         </div>
+{{!-- hidden inputs --}}
+        <input type="hidden" name="userSelectedTime">
+        <input type="hidden" name="userNewTime">
+        <input type="hidden" name="canceller">
+        <input type="hidden" name="cancellerEmail">
+        <input type="hidden" name="manager">
+        <input type="hidden" name="seat">
 
-        <button id="updateBtn" type="button" class="submit-btn" style="display:none;">Update Reservation</button>
-        <button id="delBtn" type="button" class="submit-btn" style="display:none;">Delete Reservation</button>
+        <button id="updateBtn" type="button" class="submit-btn" style="display:block;">Update Reservation</button>
+        <button id="delBtn" type="button" class="submit-btn" style="display:block;">Delete Reservation</button>
     </form>
 </div>
 
