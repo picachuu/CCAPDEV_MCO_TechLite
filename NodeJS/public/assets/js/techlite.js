@@ -1461,3 +1461,24 @@ function saveProfileChanges() {
         console.error('Error updating profile:', error);
     });
 }
+
+// Manager Tools
+document.addEventListener('DOMContentLoaded', function () {
+    var createBtn = document.getElementById('managerCreate');
+    var popup = document.getElementById('managerCreatePopup');
+    var closeBtn = popup.querySelector('.close');
+  
+    if (createBtn) {
+      createBtn.addEventListener('click', function() {
+        popup.style.display = 'block';
+      });
+    }
+  
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        popup.style.display = 'none';
+      });
+    }
+  });
+  

@@ -9,6 +9,24 @@
 <input type="file" id="profileImageInput" style="display: none;" accept="image/*">
 <input type="file" id="coverImageInput" style="display: none;" accept="image/*">
 
+<div id="managerCreatePopup" class="create-account-popup" style="display: none;">
+  <a href="#" class="close">&times;</a>
+  <h4>Create a User Account</h4>
+  <form name="createUserM" action="" method="post" onsubmit="">
+    <input type="text" name="newUsername" class="form-control" placeholder="Username" required/>
+    <input type="email" name="email" class="form-control" placeholder="Email" required/>
+    <input type="text" name="displayName" class="form-control" placeholder="Display Name (Optional)"/>
+    <input type="password" name="newPassword" class="form-control" placeholder="Password" required/>
+    <input type="password" name="confirmPassword" class="form-control" placeholder="Confirm Password" required/>
+    <select name="accountType" class="form-control">
+      <option value="member">Member</option>
+      <option value="manager">Manager</option>
+    </select>
+    <input class="btn create-account" type="submit" value="Create" />
+  </form>
+</div>
+
+
 <!-- Cover Start -->
 <div class="cover-container" id="coverContainer">
   <div class="cover-overlay" id="coverOverlay"></div>
@@ -96,11 +114,17 @@
                 <!-- This part should be added by javascript-->
             </div>
         </div>
-      <div class="col proile-points">
-        <div class="col align-self-center">
+      <div class="col profile-points">
+        <div class="row align-self-center">
           <ul>
             <li>Lite Coins <span>3</span></li>
           </ul>
+        </div>
+        <div class="row align-self-center manager-tools-section">
+          <h3>Manager Tools</h3>
+          <button id="managerCreate">
+            <i class="fa fa-user-plus"></i>Create User Account
+            </button>
         </div>
       </div>
     </div>
