@@ -31,6 +31,7 @@ function add(server){
     let searchQuery;
     switch(req.body.mode) {
       case "all": searchQuery = {
+        cancelled_by: null,
         seats: Number(req.body.seat_num),
         day: Number(req.body.day_num)
       }; break;
@@ -38,6 +39,7 @@ function add(server){
       case "taken_false": searchQuery = {
         seats: Number(req.body.seat_num),
         taken: false,
+        cancelled_by: null,
         day: Number(req.body.day_num)
       }; break;
 
@@ -45,6 +47,7 @@ function add(server){
       case "taken_true": searchQuery = {
         seats: Number(req.body.seat_num),
         taken: true,
+        cancelled_by: null,
         day: Number(req.body.day_num)
       }; break;
     }
@@ -54,6 +57,8 @@ function add(server){
     tierModel.find(searchQuery).lean().then(function(vals){
         console.log('List successful');
         console.log(vals.length);
+        // sorts the array by time_start
+        vals.sort((a, b) => a.time_start - b.time_start);
         resp.send({seats: vals});
     }).catch(errorFn);
 
@@ -283,10 +288,9 @@ function add(server){
             };
 
             tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
-              //create new document
-              //let endTimeArray = timeArray.map(time_start => time_start % 100 === 0 ? time_start + 30 : time_start + 100);
+              //create new documents for the cancelled slots
               let newReserveInstances = timeArray.map(time_start => {
-              let endTime = time_start % 100 === 0 ? time_start + 30 : time_start + 100;
+              let endTime = time_start % 100 === 0 ? time_start + 30 : time_start + 70;
               return {
                   seats: seat,
                   reservation_id: null, //objectID type
@@ -328,8 +332,8 @@ function add(server){
       const selectedDay = req.body.selectedDay; // in the form of "2024-03-09"
       const times = req.body.time.trim();  // in the form of "02:00 02:30 08:30"
       const seat = req.body.seat;
-      const name = req.body.name;
-      const email = req.body.email;
+      let name = req.body.name;
+      let email = req.body.email;
       const isManager = req.body.reserveManager == 'true';
       const reserverName = req.body.reserverName;
       const reserverEmail = req.body.reserverEmail;
@@ -392,7 +396,7 @@ function add(server){
             taken: false,
             cancelled_by: null,
             time_start: { $in: timeArray }
-          }).lean().then(function(reservations) {
+          }).lean().then(async function(reservations) {
             if (reservations.length != timeArray.length) {
               let message = 'Selected slots are not available';
               console.log("In server.post('/reserve-form') - " + message);
@@ -400,6 +404,7 @@ function add(server){
             } else {
               // step 3: create a user_reservation document (if email is an empty string, then walk_in is TRUE), and get the _id of the user_reservation
               const walk_in = email == '';
+              
               let userReservation = {
                   reserve_time: new Date(),
                   tier: selectedTier,
@@ -408,41 +413,58 @@ function add(server){
                   slots: timeArray.length
               };
 
-              userReservationModel.create(userReservation).then(function(user_reservation) {
-                console.log('User reservation created');
-                console.log(user_reservation);
-
-                // step 4: reserve the selected slots (editing the documents)
-                let reservation_id = user_reservation._id;
-
-                let updateQuery = {
-                  seats: seat,
-                  time_start: { $in: timeArray },
-                  month: month,
-                  day: day,
-                  year: year
-                };
-
-                if (walk_in) {
-                  email = 'walk-in';
+              // step 4: if not walk-in, check if the reservation user exists (name and email)
+              let user_data;
+              if (!walk_in) {
+                user_data = await userModel.findOne({ username: name, email: email }).lean();
+                if (user_data == null) {
+                    let message = 'Reservation user not found';
+                    console.log("In server.post('/reserve-form') - " + message);
+                    reserve_failed(resp,"Reservation Failed",message);
+                } else {
+                    console.log('Reservation user found');
+                    console.log(user_data);
                 }
+              }
 
-                let updateValues = {
-                  $set: {
-                    reservation_id: reservation_id,
+              if ((user_data == null && walk_in) || (user_data != null && !walk_in)) {
+                userReservationModel.create(userReservation).then(function(user_reservation) {
+                  console.log('User reservation created');
+                  console.log(user_reservation);
+
+                  // step 5: reserve the selected slots (editing the documents)
+                  let reservation_id = user_reservation._id;
+
+                  let updateQuery = {
+                    seats: seat,
+                    time_start: { $in: timeArray },
                     cancelled_by: null,
-                    taken: true,
-                    assigned_to: name,
-                    email: email
+                    month: month,
+                    day: day,
+                    year: year
+                  };
+
+                  if (walk_in) {
+                    name = 'walk-in';
+                    email = 'walk-in';
                   }
-                };
 
-                tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
-                  console.log('Reservation successful');
-                  reserve_success(resp,"Reservation Successful","Your reservation ID is: " + String(message));
+                  let updateValues = {
+                    $set: {
+                      reservation_id: reservation_id,
+                      taken: true,
+                      assigned_to: name,
+                      email: email
+                    }
+                  };
+
+                  tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
+                    console.log('Reservation successful');
+                    reserve_success(resp,"Reservation Successful","Your reservation ID is: " + String(reservation_id));
+                  }).catch(errorFn);
+
                 }).catch(errorFn);
-
-              }).catch(errorFn);
+              }
             }
           }).catch(errorFn);
         }
