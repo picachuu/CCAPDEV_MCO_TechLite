@@ -490,6 +490,10 @@ section {
   display: none;
 }
 
+.logli, .profileli{
+  display: none;
+}
+
 .header-area .main-nav .nav li .login-button {
   margin-top: 3px;
   padding: 10px 20px;
@@ -497,6 +501,7 @@ section {
   border-radius: 25px;
   transition: background-color 0.3s ease;
   color: white;
+  margin-right:0px;
 }
 
 .header-area .main-nav .nav li .login-button:hover {
@@ -1980,13 +1985,13 @@ footer p a:hover {
   margin-bottom: -53px;
 }
 
-.proile-points ul {
+.profile-points ul {
   border-radius: 23px;
   padding: 30px;
   background-color: #1f2122;
 }
 
-.proile-points ul li {
+.profile-points ul li {
   width: 100%;
   font-size: 14px;
   color: #666;
@@ -1995,16 +2000,58 @@ footer p a:hover {
   border-bottom: 1px solid #666;
 }
 
-.proile-points ul li span {
+.profile-points ul li span {
   float: right;
   font-weight: 500;
   color: #db3636;
 }
 
-.proile-points ul li:last-child {
+.profile-points ul li:last-child {
   border-bottom: none;
   padding-bottom: 0;
   margin-bottom: 0;
+}
+
+.manager-tools-section{
+  display:none;
+  margin-top:15px;
+  border-radius: 23px;
+  padding: 10px;
+  background-color: #1f2122;
+}
+
+.manager-tools-section h3{
+  font-size: 18px;
+  margin: 10px 0px;
+
+}
+
+.manager-tools-section button i{
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+.manager-tools-section button{
+  font-size: 15px;
+  color: #ffffff;
+  background-color: rgba(219, 54, 54, 0.2);
+  border: 1px solid #db3636;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 400;
+  transition: all .3s;
+  position: relative;
+  overflow: hidden;
+  margin: 8px 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.manager-tools-section button:hover {
+  border-color: #fff;
+  background-color: #fff;
+  color: #db3636;
 }
 
 .logout-container {
@@ -2069,6 +2116,17 @@ footer p a:hover {
 .login-popup a, .create-account-popup a, .confirmation-popup a{
   font-weight: normal;
   color: #5791fc;
+}
+
+.login-popup input[type="text"],
+.login-popup input[type="email"],
+.login-popup input[type="password"],
+.login-popup select.form-control,
+.create-account-popup input[type="text"],
+.create-account-popup input[type="email"],
+.create-account-popup input[type="password"],
+.create-account-popup select.form-control {
+  width: 100%;
 }
 
 .form-control {

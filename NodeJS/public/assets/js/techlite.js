@@ -291,26 +291,23 @@ function getIsManager() {
         }
 
 
-        // Check if the user is not logged in
-        if (!logged) {
-            // hide navigation bar profile image and button, id = navbarProfileImage, navbarProfile
-            document.getElementById('navbarProfileImage').style.display = 'none';
-            document.getElementById('navbarProfile').style.display = 'none';
-        }
-        // Check if the user is logged in
-        if (logged) {
-            // hide login button, id = loginBtn
-            document.getElementById('loginBtn').style.display = 'none';
-        }
 
-        // Check if the navbarProfileImage exists, and replace with user image accordingly
-        let navbarProfileImage = document.getElementById('navbarProfileImage');
-        if (navbarProfileImage) {   
-            // check if url is empty, if so keep default
-            if (img_url !== "") {
-                navbarProfileImage.src = img_url;
+            if (logged) {
+                document.querySelectorAll('.profileli').forEach(function(elem) {
+                    elem.style.display = 'block';
+                });
+                document.querySelectorAll('.logli').forEach(function(elem) {
+                    elem.style.display = 'none';
+                });
+            } else {
+                document.querySelectorAll('.profileli').forEach(function(elem) {
+                    elem.style.display = 'none';
+                });
+                document.querySelectorAll('.logli').forEach(function(elem) {
+                    elem.style.display = 'block';
+                });
             }
-        }
+        
 
         // Change behavior based on user role
         if (is_manager) {
@@ -425,6 +422,7 @@ function getIsManager() {
             let role = "Member";
             if (is_manager) {
                 role = "Manager";
+                document.querySelector('.manager-tools-section').style.display = 'block';
             } 
             document.getElementById('roleTag').innerText = role;
         }
@@ -1558,3 +1556,24 @@ function saveProfileChanges() {
         console.error('Error updating profile:', error);
     });
 }
+
+// Manager Tools
+document.addEventListener('DOMContentLoaded', function () {
+    var createBtn = document.getElementById('managerCreate');
+    var popup = document.getElementById('managerCreatePopup');
+    var closeBtn = popup.querySelector('.close');
+  
+    if (createBtn) {
+      createBtn.addEventListener('click', function() {
+        popup.style.display = 'block';
+      });
+    }
+  
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        popup.style.display = 'none';
+      });
+    }
+  });
+  
