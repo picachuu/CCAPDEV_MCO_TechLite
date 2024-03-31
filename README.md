@@ -16,7 +16,7 @@ git clone https://github.com/picachuu/CCAPDEV_MCO_TechLite.git
 Install the dependencies:
 
 ```bash
-npm i express express-handlebars body-parser mongoose
+npm i express express-handlebars body-parser mongoose multer
 ```
 
 Load the database:

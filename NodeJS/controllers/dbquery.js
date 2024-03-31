@@ -12,6 +12,22 @@ const databaseName = dbmodel.databaseName;
 const errorFn = dbmodel.errorFn;
 const successFn = dbmodel.successFn;
 
+const multer = require('multer');
+const path = require('path');
+
+// Set up storage engine
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'public/uploads');
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
+
+
 mongoose.connect(db_url+databaseName);
 
 function add(server){
@@ -209,24 +225,112 @@ function add(server){
     console.log(`Total reservations: ${totalReservations}`);
   });
 
-  server.post('/update-profile', async (req, res) => {
-    console.log('Update profile post request received');
+  // Profile reservations post request based on reservation_id
+  server.post('/profile-reservations', async function(req, resp) {  
+    console.log('Profile reservations request received');
+
+    const page = Math.max(1, Number(req.body.page));
+    const pageSize = 3;
+    const tierFilters = req.body.tier_nums ? req.body.tier_nums.map(Number) : [1, 2, 3];
+
+    let combinedReservations = [];
+    let totalReservations = 0;
+
+    const tiers = [tier1_schedModel, tier2_schedModel, tier3_schedModel];
+    let tierCounts = {1: 0, 2: 0, 3: 0};
+
+    // assuming user exists since logged in
+    // (1) find the user_reservation document given the username
+    // (1.1) find the _id of the user in the user_info collection (Model: userModel)
+    const user = await userModel.findOne({ username: req.body.user_name }).lean();
+    const user_id = user._id;
     
+
+    for (let tierIndex = 0; tierIndex < tiers.length; tierIndex++) {
+      if (!tierFilters.includes(tierIndex + 1)) continue;
+
+      let tierModel = tiers[tierIndex];
+      // (1.2) find all the reservations given user_id and tier in the user_reservation collection (Model: userReservationModel)
+      // the user is the reserver in this case
+      let user_reservation = await userReservationModel.find({ reserver: user_id, tier: tierIndex + 1 }).lean();
+      // (2) create an array of reservations (tierModel) from the user_reservation document using reservation._id
+      // (2.1) find all the reservations given reservation_id in the tier collection
+      // create an array element to the user_reservation structure being the reservations given reservation_id
+      /* let reservations = await Promise.all(user_reservation.map(async reservation => {
+          const reservation_id = reservation._id;
+          let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+          // sort the reservations by time_start
+          tempfind.sort((a, b) => a.time_start - b.time_start);
+          return tempfind;
+      })); */
+      let reservations = [];
+      for (let i = 0; i < user_reservation.length; i++) {
+          const reservation_id = user_reservation[i]._id;
+          let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+          tempfind.sort((a, b) => a.time_start - b.time_start);
+          reservations.push(tempfind);
+      }
+
+      // sort reservations by time_start of the first reservation (not yet implemented(unsure))
+
+
+      const reservationsWithTier = reservations.map(reservation => ({
+          ...reservation,
+          tier: tierIndex + 1
+      }));
+      combinedReservations.push(...reservationsWithTier);
+      tierCounts[tierIndex + 1] = reservationsWithTier.length;
+      totalReservations += reservationsWithTier.length;
+    }
+
+    
+
+    console.log("Tier Counts:", tierCounts);
+    const startIndex = (page - 1) * pageSize;
+    let paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
+
+    resp.send({
+        reservations: paginatedReservations,
+        page: page,
+        pageSize: pageSize,
+        total: totalReservations,
+        totalPages: Math.ceil(totalReservations / pageSize)
+    });
+
+    console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
+    console.log(`Total reservations: ${totalReservations}`);
+  });
+
+  server.post('/update-profile', upload.fields([{ name: 'profileImage' }, { name: 'coverImage' }]), async (req, res) => {
     const { username, displayName, bio } = req.body;
 
-    console.log(`Attempting to update: username = ${username}, display = ${displayName}, bio_msg = ${bio}`);
+    let updateData = {
+        display: displayName,
+        bio_msg: bio
+    };
+
+    if (req.files['profileImage'] && req.files['profileImage'][0]) {
+        updateData.img_url = '/uploads/' + req.files['profileImage'][0].filename;
+    }
+    if (req.files['coverImage'] && req.files['coverImage'][0]) {
+        updateData.banner_url = '/uploads/' + req.files['coverImage'][0].filename;
+    }
+
     try {
         const doc = await userModel.findOneAndUpdate(
             { username: username },
-            { $set: { display: displayName, bio_msg: bio } },
+            { $set: updateData },
             { new: true }
-        ).exec();
-        
-        
-        res.send({ message: 'Profile updated successfully', user: doc });
+        );
+
+        if (doc) {
+            res.send({ message: 'Profile updated successfully', user: doc });
+        } else {
+            res.status(404).send({ message: 'User not found' });
+        }
     } catch (err) {
-        console.error("Something wrong when updating data!", err);
-        res.status(500).send({ message: 'Error updating profile' });
+        console.error("Error updating profile", err);
+        res.status(500).send({ message: 'Error updating profile', error: err });
     }
 });
 

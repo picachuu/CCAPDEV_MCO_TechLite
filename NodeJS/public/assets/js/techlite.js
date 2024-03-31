@@ -311,6 +311,14 @@ function getIsManager() {
                     elem.style.display = 'block';
                 });
             }
+
+            let navbarProfileImage = document.getElementById('navbarProfileImage');
+            if (navbarProfileImage) {   
+                // check if url is empty, if so keep default
+                if (img_url !== "") {
+                    navbarProfileImage.src = img_url;
+                }
+            }
         
 
         // Change behavior based on user role
@@ -383,7 +391,6 @@ function getIsManager() {
 
         // To execute this code only when user is on the /profile page
         if (window.location.pathname === '/profile') {
-            // if the user is not logged and visits /profile, redirect to home page
             if (!getLogged()) {
                 window.location.href = '/';
                 return;
@@ -391,34 +398,31 @@ function getIsManager() {
 
             document.getElementById('navbarProfile').classList.add('active');
 
-            // check if URL is empty, if so, don't change the images
             if (getBannerUrl() !== ""){
                 document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
             }
             if (getImgUrl() !== ""){
                 document.getElementById('profileImage').src = img_url;
             }
-                 // Conditional rendering based on 'display'
+
             const usernameContainer = document.querySelector('.username-container');
             const mainProfile = document.querySelector('.main-profile'); // Select the .main-profile element
 
             if (getDisplay() === undefined || getDisplay() === null || getDisplay() === '') {
-                // When 'display' is undefined or null, adjust HTML structure, flex-direction, and .main-profile margin
                 usernameContainer.innerHTML = `
                     <h4>@</h4>
                     <h4 id="userName" contenteditable="false">${username}</h4>
                 `;
                 usernameContainer.style.flexDirection = 'row';
                 if (mainProfile) {
-                    mainProfile.style.marginTop = '-120px'; // Adjust margin when displayName is not present
+                    mainProfile.style.marginTop = '-120px';
                 }
             } else {
-                // If 'display' is not null/undefined, set its value and reset flex-direction and .main-profile margin
                 document.getElementById('displayName').innerText = getDisplay();
                 document.getElementById('userName').innerText = getUsername();
-                usernameContainer.style.flexDirection = 'column'; // Assuming default flex-direction is column
+                usernameContainer.style.flexDirection = 'column';
                 if (mainProfile) {
-                    mainProfile.style.marginTop = '-95px'; // Reset margin when displayName is present
+                    mainProfile.style.marginTop = '-95px';
                 }
             }
             
@@ -1540,25 +1544,22 @@ function saveProfileChanges() {
     var displayName = document.getElementById('displayName').innerText;
     var userBio = document.getElementById('userBio').innerText;
     var username = getUsername(); 
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('displayName', displayName);
+    formData.append('bio', userBio);
+    formData.append('profileImage', document.getElementById('profileImageInput').files[0]);
+    formData.append('coverImage', document.getElementById('coverImageInput').files[0]);
 
-    fetch('/update-profile', { 
+
+    
+    fetch('/update-profile', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username: username,
-            displayName: displayName,
-            bio: userBio
-        }),
+        body: formData,
     })
     .then(response => response.json())
-    .then(data => {
-        console.log('Profile updated successfully', data);
-    })
-    .catch((error) => {
-        console.error('Error updating profile:', error);
-    });
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
 }
 
 // Manager Tools

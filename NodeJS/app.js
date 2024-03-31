@@ -1,6 +1,6 @@
 // Installation Procedure
 // npm init
-// npm i express express-handlebars body-parser
+// npm i express express-handlebars body-parser multer
 
 const express = require('express');
 const server = express();
@@ -21,7 +21,6 @@ server.use(express.static('public'));
 const bcrypt = require('bcrypt');
 const saltRounds = 10;  // keep this at 10
 // end bcrypt
-
 
 
 //This part of the code will load the controllers that will interact
