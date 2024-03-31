@@ -2021,18 +2021,25 @@ footer p a:hover {
   background-color: #1f2122;
 }
 
-.manager-tools-section h3{
+.account-settings-section{
+  margin-top:15px;
+  border-radius: 23px;
+  padding: 10px;
+  background-color: #1f2122;
+}
+
+.manager-tools-section h3, .account-settings-section h3{
   font-size: 18px;
   margin: 10px 0px;
 
 }
 
-.manager-tools-section button i{
+.manager-tools-section button i, .account-settings-section button i{
   margin-right: 8px;
   font-size: 20px;
 }
 
-.manager-tools-section button{
+.manager-tools-section button, .account-settings-section button{
   font-size: 15px;
   color: #ffffff;
   background-color: rgba(219, 54, 54, 0.2);
