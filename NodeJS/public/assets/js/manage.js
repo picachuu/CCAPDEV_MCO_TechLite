@@ -1,7 +1,9 @@
 //This file is here for future reference if needed. Remnants of LV's stupidity e_e
 
 // //to avoid conflict with reserve.js 
-if (window.location.pathname === '/manage') {
+if (false) {
+    alert("displayManageablecontent() called");
+    
     document.addEventListener('DOMContentLoaded', function() {
         //document.forms["reservationForm"]["tierSelect"].value = 'tier0';
         //document.forms["reservationForm"]["tierSelect"].disabled = false;
@@ -9,11 +11,136 @@ if (window.location.pathname === '/manage') {
         //document.getElementById('tierSelect').value = 'tier0';
         //document.forms["reservationForm"]["userName"].value = getUsername();
         //document.forms["reservationForm"]["userEmail"].value = getEmail();
+        alert("displayManageablecontent() called");
         displayManageablecontent();
     });
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.forms["manageForm"]) {
+        displayManageablecontent();
+    }
+});
+
 function displayManageablecontent() {
+    // Get manageForm
+    let manageForm = document.forms["manageForm"];
+
+    // Get all values
+    const reservation_id = manageForm.elements["reservationId"].value;
+    const isManager = getIsManager();
+    let reserverName = null;
+    let reserverEmail = null;
+    if (isManager) {
+        reserverName = manageForm.elements["reserver"].value;
+        reserverEmail = manageForm.elements["reserverEmail"].value;
+    }
+
+    const username = manageForm.elements["userName"].value;
+    const email = manageForm.elements["userEmail"].value;
+
+    const tier = Number(document.getElementById('tierSelect').value);
+
+    const date = document.getElementById('daySelect').value; // in the form of "MM/DD/YYYY"
+    const year = Number(date.split('/')[2]);
+    const month = Number(date.split('/')[0]);
+    const day = Number(date.split('/')[1]);
+
+
+    
+    /* $.ajax({
+        url: 'obtain-reservations',
+        type: 'POST',
+        data: { reservation_id: reservation_id, tier: tier },
+        async: false,  // Make the request synchronous
+        success: function(reserves, status) {
+            if (status === 'success') {
+                
+                reservations = reserves.reservations;    // assumed to be sorted by time_start
+            }
+        }
+    }); */
+    let response = $.ajax({
+        url: 'obtain-reservations',
+        type: 'POST',
+        data: { reservation_id: reservation_id, tier: tier },
+        async: false  // Make the AJAX request synchronous
+    }).responseJSON;
+    let reservations = response.reservations;
+
+
+    // Access individual parameters by name
+    const seats = reservations[0].seats;
+    
+    //add the seat
+    const seat = document.createElement('button');
+    seat.classList.add('seat');
+    seat.textContent = `Seat ${seats}`;
+    seat.classList.add('unavailable');
+    // make seat not hoverable
+    seat.style.pointerEvents = 'none';
+    const seatsContainer = document.getElementById('seatsContainer');
+    seatsContainer.appendChild(seat);
+
+    //clear the timeblocks container
+    const container = document.getElementById('userTimeBlocksContainer');
+    container.innerHTML = ''; // Clear previous blocks
+    container.style.display = 'block';
+    
+
+    for (let i = 0; i < reservations.length; i++) {
+        const time_start = reservations[i].time_start;
+        addTimeblock(seats, tier, day, time_start, username);
+    }
+    
+   
+}
+
+function addTimeblock(seatNumber, tierNumber, daySelected, time_start, assigned_to) {
+
+    $.ajax({
+        url: 'manageable-check',
+        type: 'POST',
+        data: { 
+            tier_num: tierNumber, 
+            seat_num: Number(seatNumber), 
+            user_name: assigned_to,
+            time_start: time_start,
+            day_num: daySelected, 
+            mode: "find_timeslot"
+        },
+        
+        async: false,  // Make the request synchronous
+        success: function(reserved, status) {
+            if (status === 'success') {
+                const timeBlocksContainer = document.getElementById('userTimeBlocksContainer');
+                const block = document.createElement('button');
+                block.classList.add('time-slot');
+                block.textContent = `${Math.floor((reserved.seat.time_start)/100).toString().padStart(2, '0')}:${((reserved.seat.time_start)%100).toString().padStart(2, '0')}`;
+                block.onclick = null;
+                block.onclick = () =>  {
+                    event.preventDefault();
+                    block.classList.toggle('selected');
+                    let element = document.getElementById('userTimeBlocksContainer');
+
+                    if (element.querySelector('.selected.time-slot')) {
+                        populateTimeBlocksManage(seatNumber, tierNumber, daySelected); // in reserve.js
+                    } else {
+                        document.getElementById('timeBlocksContainer').innerHTML = "";
+                    }
+                }
+                
+                timeBlocksContainer.appendChild(block);
+            }
+        },
+        error: function() {
+            //no errors :)
+        }
+    });
+    
+}
+
+function olddisplayManageablecontent() {
     // Get the current URL
     const url = new URL(window.location.href);
 
@@ -62,55 +189,11 @@ function displayManageablecontent() {
     container.innerHTML = ''; // Clear previous blocks
     container.style.display = 'block';
 
-    for (let i = 1; i <= reservations; i++) {
+    for (let i = 1; i <= reservations.length; i++) {
         const time_start = searchParams.get('time_start' + i);
         addTimeblock(seats, tier, day, time_start, username);
     }
    
-}
-
-function addTimeblock(seatNumber, tierNumber, daySelected, time_start, assigned_to) {
-
-    $.ajax({
-        url: 'manageable-check',
-        type: 'POST',
-        data: { 
-            tier_num: tierNumber, 
-            seat_num: Number(seatNumber), 
-            user_name: assigned_to,
-            time_start: time_start,
-            day_num: daySelected, 
-            mode: "find_timeslot"
-        },
-        
-        async: false,  // Make the request synchronous
-        success: function(reserved, status) {
-            if (status === 'success') {
-                const timeBlocksContainer = document.getElementById('userTimeBlocksContainer');
-                const block = document.createElement('button');
-                block.classList.add('time-slot');
-                block.textContent = `${Math.floor((reserved.seat.time_start)/100).toString().padStart(2, '0')}:${((reserved.seat.time_start)%100).toString().padStart(2, '0')}`;
-
-                block.onclick = () =>  {
-                    block.classList.toggle('selected');
-                    let element = document.getElementById('userTimeBlocksContainer');
-
-                    if (element.querySelector('.selected.time-slot')) {
-                        populateTimeBlocksManage(seatNumber, tierNumber, daySelected)
-                    } else {
-                        document.getElementById('timeBlocksContainer').innerHTML = "";
-                    }
-                    
-                }
-                
-                timeBlocksContainer.appendChild(block);
-            }
-        },
-        error: function() {
-            //no errors :)
-        }
-    });
-    
 }
 // //added 2 to every function name to avoid conflict with the reserve.js functions
 // // Why? Cause element 'reservationForm' should not be hidden in manage.hbs

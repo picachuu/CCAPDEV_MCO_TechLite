@@ -107,7 +107,7 @@ function add(server){
 
   });
 
-  server.post('/profile-reservations', async function(req, resp) {  
+  server.post('/oldprofile-reservations', async function(req, resp) {  
     console.log('Profile reservations request received');
 
     const page = Math.max(1, Number(req.body.page));
@@ -133,6 +133,158 @@ function add(server){
         tierCounts[tierIndex + 1] = reservationsWithTier.length;
         totalReservations += reservationsWithTier.length;
     }
+
+    console.log("Tier Counts:", tierCounts);
+    const startIndex = (page - 1) * pageSize;
+    let paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
+
+    resp.send({
+        reservations: paginatedReservations,
+        page: page,
+        pageSize: pageSize,
+        total: totalReservations,
+        totalPages: Math.ceil(totalReservations / pageSize)
+    });
+
+    console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
+    console.log(`Total reservations: ${totalReservations}`);
+  });
+
+  // Profile reservations post request based on reservation_id
+  server.post('/profile-reservations', async function(req, resp) {  
+    console.log('Profile reservations request received');
+
+    const page = Math.max(1, Number(req.body.page));
+    const pageSize = 3;
+    const tierFilters = req.body.tier_nums ? req.body.tier_nums.map(Number) : [1, 2, 3];
+
+    let combinedReservations = [];
+    let totalReservations = 0;
+
+    const tiers = [tier1_schedModel, tier2_schedModel, tier3_schedModel];
+    let tierCounts = {1: 0, 2: 0, 3: 0};
+
+    // assuming user exists since logged in
+    // (1) find the user_reservation document given the username
+    // (1.1) find the _id of the user in the user_info collection (Model: userModel)
+    const user = await userModel.findOne({ username: req.body.user_name }).lean();
+    const user_id = user._id;
+    
+
+    for (let tierIndex = 0; tierIndex < tiers.length; tierIndex++) {
+      if (!tierFilters.includes(tierIndex + 1)) continue;
+
+      let tierModel = tiers[tierIndex];
+      // (1.2) find all the reservations given user_id and tier in the user_reservation collection (Model: userReservationModel)
+      // the user is the reserver in this case
+      let user_reservation = await userReservationModel.find({ reserver: user_id, tier: tierIndex + 1 }).lean();
+      // (2) create an array of reservations (tierModel) from the user_reservation document using reservation._id
+      // (2.1) find all the reservations given reservation_id in the tier collection
+      // create an array element to the user_reservation structure being the reservations given reservation_id
+      /* let reservations = await Promise.all(user_reservation.map(async reservation => {
+          const reservation_id = reservation._id;
+          let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+          // sort the reservations by time_start
+          tempfind.sort((a, b) => a.time_start - b.time_start);
+          return tempfind;
+      })); */
+      let reservations = [];
+      for (let i = 0; i < user_reservation.length; i++) {
+          const reservation_id = user_reservation[i]._id;
+          let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+          tempfind.sort((a, b) => a.time_start - b.time_start);
+          reservations.push(tempfind);
+      }
+
+      // sort reservations by time_start of the first reservation (not yet implemented(unsure))
+
+
+      const reservationsWithTier = reservations.map(reservation => ({
+          ...reservation,
+          tier: tierIndex + 1
+      }));
+      combinedReservations.push(...reservationsWithTier);
+      tierCounts[tierIndex + 1] = reservationsWithTier.length;
+      totalReservations += reservationsWithTier.length;
+    }
+
+    
+
+    console.log("Tier Counts:", tierCounts);
+    const startIndex = (page - 1) * pageSize;
+    let paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
+
+    resp.send({
+        reservations: paginatedReservations,
+        page: page,
+        pageSize: pageSize,
+        total: totalReservations,
+        totalPages: Math.ceil(totalReservations / pageSize)
+    });
+
+    console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
+    console.log(`Total reservations: ${totalReservations}`);
+  });
+
+  // Profile reservations post request based on reservation_id
+  server.post('/profile-reservations', async function(req, resp) {  
+    console.log('Profile reservations request received');
+
+    const page = Math.max(1, Number(req.body.page));
+    const pageSize = 3;
+    const tierFilters = req.body.tier_nums ? req.body.tier_nums.map(Number) : [1, 2, 3];
+
+    let combinedReservations = [];
+    let totalReservations = 0;
+
+    const tiers = [tier1_schedModel, tier2_schedModel, tier3_schedModel];
+    let tierCounts = {1: 0, 2: 0, 3: 0};
+
+    // assuming user exists since logged in
+    // (1) find the user_reservation document given the username
+    // (1.1) find the _id of the user in the user_info collection (Model: userModel)
+    const user = await userModel.findOne({ username: req.body.user_name }).lean();
+    const user_id = user._id;
+    
+
+    for (let tierIndex = 0; tierIndex < tiers.length; tierIndex++) {
+      if (!tierFilters.includes(tierIndex + 1)) continue;
+
+      let tierModel = tiers[tierIndex];
+      // (1.2) find all the reservations given user_id and tier in the user_reservation collection (Model: userReservationModel)
+      // the user is the reserver in this case
+      let user_reservation = await userReservationModel.find({ reserver: user_id, tier: tierIndex + 1 }).lean();
+      // (2) create an array of reservations (tierModel) from the user_reservation document using reservation._id
+      // (2.1) find all the reservations given reservation_id in the tier collection
+      // create an array element to the user_reservation structure being the reservations given reservation_id
+      /* let reservations = await Promise.all(user_reservation.map(async reservation => {
+          const reservation_id = reservation._id;
+          let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+          // sort the reservations by time_start
+          tempfind.sort((a, b) => a.time_start - b.time_start);
+          return tempfind;
+      })); */
+      let reservations = [];
+      for (let i = 0; i < user_reservation.length; i++) {
+          const reservation_id = user_reservation[i]._id;
+          let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+          tempfind.sort((a, b) => a.time_start - b.time_start);
+          reservations.push(tempfind);
+      }
+
+      // sort reservations by time_start of the first reservation (not yet implemented(unsure))
+
+
+      const reservationsWithTier = reservations.map(reservation => ({
+          ...reservation,
+          tier: tierIndex + 1
+      }));
+      combinedReservations.push(...reservationsWithTier);
+      tierCounts[tierIndex + 1] = reservationsWithTier.length;
+      totalReservations += reservationsWithTier.length;
+    }
+
+    
 
     console.log("Tier Counts:", tierCounts);
     const startIndex = (page - 1) * pageSize;
@@ -345,15 +497,94 @@ function add(server){
         }).catch(errorFn);
       }
     }).catch(errorFn);
-  
   }
+
+  function editReservation(req,resp) {
+    const selectedTier = req.body.selectedTier;
+    const selectedDay = req.body.selectedDay; // in the form of "2024-03-09"
+    let time = req.body.time.trim();  // in the form of "02:00 02:30 08:30"
+    const seat = req.body.seat;
+    let name = req.body.name;
+    let email = req.body.email;
+    const isManager = req.body.reserveManager == 'true';
+    const reserverName = req.body.reserverName; //not needed
+    const reserverEmail = req.body.reserverEmail; // not needed
+
+    if (!isManager) { // bad request resp
+      let message = 'Invalid Request';
+      console.log("In editReservation() - " + message);
+      reserve_failed(resp,"Edit Failed",message);
+    }
+
+    const hour = Number(time.split(':')[0]);
+    const minute = Number(time.split(':')[1]);
+    time = hour * 100 + minute;
+
+    // show all variables
+    console.log("Selected Tier: "+selectedTier);
+    console.log("Selected Day: "+selectedDay);
+    // day month year
+    console.log("day: " + Number(selectedDay.split('-')[2]));
+    console.log("month: " + Number(selectedDay.split('-')[1]));
+    console.log("year: " + Number(selectedDay.split('-')[0]));
+    console.log("Time: "+time);
+    console.log("Seat: "+seat);
+    console.log("Name: "+name);
+    console.log("Email: "+email);
+    console.log("Is Manager: "+isManager);
+
+
+    let searchQuery = {
+      seats: seat,
+      day: Number(selectedDay.split('-')[2]),
+      year: Number(selectedDay.split('-')[0]),
+      month: Number(selectedDay.split('-')[1]),
+      taken: true,
+      cancelled_by: null,
+      time_start: time,
+      assigned_to: name,
+      email: email
+    }
+
+    // select tier model
+    let tierModel;
+    switch(Number(selectedTier)) {
+      case 1: tierModel = tier1_schedModel; break;
+      case 2: tierModel = tier2_schedModel; break;
+      case 3: tierModel = tier3_schedModel; break;
+    }
+
+    // getting reservation_id
+    tierModel.findOne(searchQuery).lean().then(function(reservation) {
+      if (reservation == null) {
+        let message = 'Reservation not found';
+        console.log("In editReservation() - " + message);
+        reserve_failed(resp,"Edit Failed",message);
+      } else {
+        let reservation_id = reservation.reservation_id;
+        console.log('Reservation found');
+        console.log(reservation);
+        // find reservation_id given the information
+        manageReservation(reservation_id,resp);
+      }
+    }).catch(errorFn);
+
+    
+  }
+
+  // server post request for manage
+  server.post('/edit-reservation', function(req, resp) {
+    const isEdit = req.body.submitType == 'edit';
+    if (isEdit) {
+      editReservation(req,resp);
+    }
+  });
 
   // Reservation Form post request (reserving a slot given variables)
   server.post('/reserve-form', function(req, resp) {
     console.log('--- Reserve form post request received ---');
-
     const isDelete = req.body.submitType == 'delete';
-
+    
     if (isDelete) {
       deleteReservation(req,resp);
     } else {
@@ -392,7 +623,6 @@ function add(server){
           case 3: tierModel = tier3_schedModel; break;
       }
 
-      console.log("CHECKPOINTASOINHTPOIAESWNTPOGAS");
       //display all constants
       console.log("Selected Tier: "+selectedTier);
       console.log("Selected Day: "+selectedDay);
@@ -474,7 +704,6 @@ function add(server){
                   };
 
                   if (walk_in) {
-                    name = 'walk-in';
                     email = 'walk-in';
                   }
 
@@ -519,6 +748,142 @@ function add(server){
       message: message
     });
   }
+
+  function manageReservation(reservation_id,resp) {
+    console.log('Manage reservation post request received');
+    console.log("reservation_id: " + reservation_id);
+
+    // step 1(1): find the user_reservation document given the reservation_id (Model: userReservationModel)
+    let user_reservation = userReservationModel.findOne({ _id: reservation_id }).lean().then(function(user_reservation) {
+      console.log('User reservation found');
+      console.log(user_reservation);
+      let tier = user_reservation.tier;
+
+      // step 1(2): get user information from the user_info collection (Model: userModel)
+      userModel.findOne({ _id: user_reservation.reserver }).lean().then(function(user) {
+        console.log('User found');
+        console.log(user);
+        let isManager = user.is_manager;
+        let reserver = user.username;
+        let reserver_email = user.email;
+
+        // step 2: find all the reservations given reservation_id in the tier collection (Model: tier1_schedModel, tier2_schedModel, tier3_schedModel)
+        let tierModel;
+        switch(tier) {
+          case 1: tierModel = tier1_schedModel; break;
+          case 2: tierModel = tier2_schedModel; break;
+          case 3: tierModel = tier3_schedModel; break;
+        }
+
+        tierModel.find({ reservation_id: reservation_id }).lean().then(function(reservations) {
+          console.log('Reservations found');
+          console.log(reservations);
+          let date = reservations[0].month + '/' + reservations[0].day + '/' + reservations[0].year;
+          resp.render('manage',{
+            layout: 'index',
+            title: 'TechLite - Manage Reservations',
+            reservation_id: reservation_id,
+            reserver: reserver,
+            reserver_email: reserver_email,
+            username: reservations[0].assigned_to,
+            email: reservations[0].email,
+            isManager: isManager,
+            date: date,
+            tier: tier,
+          });
+        }).catch(errorFn);
+      }).catch(errorFn);
+    }).catch(errorFn);
+  }
+
+  // Manage reservation post request based on reservation_id
+  server.post('/manage-reservation', function(req, resp) {
+    manageReservation(req.body.reservation_id,resp);
+  });
+
+  server.post('/manage-prompt', function(req, resp) {
+    
+    console.log('Manage reservation post request received');
+    reservation_id = req.body.reservation_id;
+    console.log("reservation_id: " + reservation_id);
+
+    // step 1(1): find the user_reservation document given the reservation_id (Model: userReservationModel)
+    let user_reservation = userReservationModel.findOne({ _id: reservation_id }).lean().then(function(user_reservation) {
+      console.log('User reservation found');
+      console.log(user_reservation);
+      let tier = user_reservation.tier;
+
+      // step 1(2): get user information from the user_info collection (Model: userModel)
+      userModel.findOne({ _id: user_reservation.reserver }).lean().then(function(user) {
+        console.log('User found');
+        console.log(user);
+        let reserver = user.username;
+        let reserver_email = user.email;
+
+        // step 2: find all the reservations given reservation_id in the tier collection (Model: tier1_schedModel, tier2_schedModel, tier3_schedModel)
+        let tierModel;
+        switch(tier) {
+          case 1: tierModel = tier1_schedModel; break;
+          case 2: tierModel = tier2_schedModel; break;
+          case 3: tierModel = tier3_schedModel; break;
+        }
+
+        tierModel.find({ reservation_id: reservation_id }).lean().then(function(reservations) {
+          console.log('Reservations found');
+          console.log(reservations);
+          resp.send({ user_reservation: user_reservation, reserver: reserver, reserver_email: reserver_email, reservations: reservations });
+          resp.render('manage',{
+            layout: 'index',
+            title: 'TechLite - Manage Reservations',
+            
+          });
+        }).catch(errorFn);
+
+      }).catch(errorFn);
+    }).catch(errorFn);
+
+    // step 1(2): get user information from the user_info collection (Model: userModel)
+    // step 2: find all the reservations given reservation_id in the tier collection (Model: tier1_schedModel, tier2_schedModel, tier3_schedModel)
+    
+  });
+
+  // ajax post request of obtain-reservations given reservation_id
+  server.post('/obtain-reservations', function(req, resp) {
+    console.log('Obtain reservations post request received');
+
+    const reservation_id = req.body.reservation_id;
+    console.log("reservation_id: " + reservation_id);
+
+    // get tier model
+    const tier = Number(req.body.tier);
+    console.log("tier: " + tier);
+    let tierModel;
+    switch(tier) {
+      case 1: tierModel = tier1_schedModel; break;
+      case 2: tierModel = tier2_schedModel; break;
+      case 3: tierModel = tier3_schedModel; break;
+    }
+
+    // find all reservation instance in the tier model given the reservation_id
+    tierModel.find({ reservation_id: reservation_id }).lean().then(function(reservations) {
+      if (reservations.length == 0) {
+        console.log('No reservations found');
+        resp.send({ reservations: [] });
+      } else {
+        console.log('Reservations found');
+        // sort reservations in ascending order of time_start
+        reservations.sort((a, b) => a.time_start - b.time_start);
+
+        console.log(reservations);
+
+        resp.send({ reservations: reservations });
+      }
+    }).catch(errorFn);
+
+
+
+  });
+
 
 }
 

@@ -9,15 +9,15 @@
 // var is_manager = true;
 
 // whether user is logged
-var logged = getLogged();
+var logged = getUserData().logged;
 // user information
-var display = getDisplay();
-var username = getUsername();
-var email = getEmail();
-var img_url = getImgUrl();
-var banner_url = getBannerUrl();
-var bio_msg = getBioMsg();
-var is_manager = getIsManager();
+var display = getUserData().display;
+var username = getUserData().username;
+var email = getUserData().email;
+var img_url = getUserData().img_url;
+var banner_url = getUserData().banner_url;
+var bio_msg = getUserData().bio_msg;
+var is_manager = getUserData().is_manager;
 
 // don't know how to make it asynchronous yet, should not even need these when cookies and sessions are introduced
 function getUserData() {
@@ -267,6 +267,17 @@ function getIsManager() {
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
 
+        let data = getUserData();
+        logged = data.logged;
+        // user information
+        display = data.display;
+        username = data.username;
+        email = data.email;
+        img_url = data.img_url;
+        banner_url = data.banner_url;
+        bio_msg = data.bio_msg;
+        is_manager = data.is_manager;
+
         //call test post
         /* $.ajax({
             url: 'test',
@@ -377,25 +388,25 @@ function getIsManager() {
         // To execute this code only when user is on the /profile page
         if (window.location.pathname === '/profile') {
             // if the user is not logged and visits /profile, redirect to home page
-            if (!logged) {
+            if (!getLogged()) {
                 window.location.href = '/';
                 return;
             }
 
             document.getElementById('navbarProfile').classList.add('active');
 
-            // check if URL is empty, if so, don't change the images 
-            if (banner_url !== ""){
+            // check if URL is empty, if so, don't change the images
+            if (getBannerUrl() !== ""){
                 document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
             }
-            if (img_url !== ""){
+            if (getImgUrl() !== ""){
                 document.getElementById('profileImage').src = img_url;
             }
                  // Conditional rendering based on 'display'
             const usernameContainer = document.querySelector('.username-container');
             const mainProfile = document.querySelector('.main-profile'); // Select the .main-profile element
 
-            if (display === undefined || display === null || display === '') {
+            if (getDisplay() === undefined || getDisplay() === null || getDisplay() === '') {
                 // When 'display' is undefined or null, adjust HTML structure, flex-direction, and .main-profile margin
                 usernameContainer.innerHTML = `
                     <h4>@</h4>
@@ -407,15 +418,15 @@ function getIsManager() {
                 }
             } else {
                 // If 'display' is not null/undefined, set its value and reset flex-direction and .main-profile margin
-                document.getElementById('displayName').innerText = display;
-                document.getElementById('userName').innerText = username;
+                document.getElementById('displayName').innerText = getDisplay();
+                document.getElementById('userName').innerText = getUsername();
                 usernameContainer.style.flexDirection = 'column'; // Assuming default flex-direction is column
                 if (mainProfile) {
                     mainProfile.style.marginTop = '-95px'; // Reset margin when displayName is present
                 }
             }
             
-            document.getElementById('userBio').innerText = bio_msg;
+            document.getElementById('userBio').innerText = getBioMsg();
             let role = "Member";
             if (is_manager) {
                 role = "Manager";
@@ -856,82 +867,168 @@ document.addEventListener("DOMContentLoaded", function() {
             // Prevent the form from being submitted
             event.preventDefault();
 
-            submitBool = true;
+            // Get the submit button
+            let submitBtn = reservationForm.elements['submitBtn'];
 
-            if (logged) {// Show the popup confirmation
-                // Replace the HTML of the h4 element
-                h4Element.innerHTML = 'Confirm Reservation';
-                // Show the confirmation popup
+            let submitValue = submitBtn.value;
 
-                // Select the #timeBlocksContainer div
-                let divElement = document.querySelector('#timeBlocksContainer');
+            if (submitValue == 'Edit') {
+                if (logged) {// Show the popup confirmation
+                    // Replace the HTML of the h4 element
+                    h4Element.innerHTML = 'Proceed to Edit Reservation';
+                    // Show the confirmation popup
+    
+                    // Select the #timeBlocksContainer div
+                    
+                    let divElement = document.querySelector('#timeBlocksContainer');
 
-                // Select all child elements within the div
-                let childElements = divElement.querySelectorAll('*');
-                let time = "";
-                childElements.forEach(function(childElement) {
-                    if (compareBackgroundColorHex(childElement, "#FFFFFF")) {
-                        time = time + childElement.innerText + " ";
-                    }
-                });
-
-
-                // seats
-                divElement = document.querySelector('#seatsContainer');
-                // Select all child elements within the div
-                childElements = divElement.querySelectorAll('*');
-                let seat = null;
-                childElements.forEach(function(childElement) {
-                    let blockElements = childElement.querySelectorAll('button');
-                    blockElements.forEach(function(blockElement) {
-                        if (compareBackgroundColorHex(blockElement, "#FFFFFF")) { // rgb(76, 175, 80) is the RGB equivalent of #4CAF50
-                            seat = blockElement.innerText;
-                        }
+                    // Select all child elements within the div
+                    let childElements = divElement.querySelectorAll('*');
+                    let time = null;
+                    // Loop through the child elements and check their color
+                    childElements.forEach(function(childElement) {
+                        let blockElements = childElement.querySelectorAll('button');
+                        blockElements.forEach(function(blockElement) {
+                            if (compareBackgroundColorHex(blockElement, "#4CAF50")) { // rgb(76, 175, 80) is the RGB equivalent of #4CAF50
+                                time = blockElement.innerText;
+                            }
+                        });
                     });
                     
-                });
-
-                // Select the dropdowns
-                let tierSelect = document.querySelector('#tierSelect');
-                let daySelect = document.querySelector('#daySelect');
-
-                // Get the selected values
-                let selectedTier = tierSelect.value.match(/\d+/)[0]; // gets integer part only
-                let selectedDay = daySelect.value;
-
-                console.log('Selected Tier:', selectedTier);
-                console.log('Selected Day:', selectedDay);
-
-                // Get the input values
-                let reserveUsername = reservationForm.elements['name'].value;
-                let reserveEmail = reservationForm.elements['email'].value;
-
-                if (getIsManager()){
-                    if (reserveUsername == "") {
-                        reserveUsername = "Walk-in";
+    
+    
+                    // seats
+                    divElement = document.querySelector('#seatsContainer');
+                    // Select all child elements within the div
+                    childElements = divElement.querySelectorAll('*');
+                    let seat = null;
+                    childElements.forEach(function(childElement) {
+                        let blockElements = childElement.querySelectorAll('button');
+                        blockElements.forEach(function(blockElement) {
+                            if (compareBackgroundColorHex(blockElement, "#FFFFFF")) { // rgb(76, 175, 80) is the RGB equivalent of #4CAF50
+                                seat = blockElement.innerText;
+                            }
+                        });
+                        
+                    });
+    
+                    // Select the dropdowns
+                    let tierSelect = document.querySelector('#tierSelect');
+                    let daySelect = document.querySelector('#daySelect');
+    
+                    // Get the selected values
+                    let selectedTier = tierSelect.value.match(/\d+/)[0]; // gets integer part only
+                    let selectedDay = daySelect.value;
+    
+                    console.log('Selected Tier:', selectedTier);
+                    console.log('Selected Day:', selectedDay);
+    
+                    // Get the input values
+                    let reserveUsername = reservationForm.elements['name'].value;
+                    let reserveEmail = reservationForm.elements['email'].value;
+    
+                    if (getIsManager()){
+                        if (reserveUsername == "") {
+                            reserveUsername = "Walk-in";
+                        }
+                        if ( reserveEmail == "") {
+                            reserveEmail = "Walk-in";
+                        }
                     }
-                    if ( reserveEmail == "") {
-                        reserveEmail = "Walk-in";
-                    }
+                    
+                    h4Element.insertAdjacentHTML('afterend', `<p>Username: ${reserveUsername}</p><p>Email: ${reserveEmail}</p><p>Selected Tier: ${selectedTier}</p><p>Selected Day: ${selectedDay}</p><p>Selected Time/s: ${time}</p><p>Selected Seat: ${seat}</p>`);
+                    // replace values of the hidden inputs
+                    reservationForm.elements["submitType"].value = "edit";
+                    reservationForm.elements['selectedTier'].value = selectedTier;
+                    reservationForm.elements['selectedDay'].value = selectedDay;
+                    reservationForm.elements['time'].value = time;
+                    reservationForm.elements['seat'].value = seat.match(/\d+/)[0];
+                    reservationForm.elements['reserveManager'].value = getIsManager();
+                    reservationForm.elements['reserverName'].value = getUsername(); // not needed
+                    reservationForm.elements['reserverEmail'].value = getEmail();   // not needed
+                    reservationForm.action = 'edit-reservation';
+
+                    togglePopup(confirmationPopup);
                 }
-                
-                h4Element.insertAdjacentHTML('afterend', `<p>Username: ${reserveUsername}</p><p>Email: ${reserveEmail}</p><p>Selected Tier: ${selectedTier}</p><p>Selected Day: ${selectedDay}</p><p>Selected Time/s: ${time}</p><p>Selected Seat: ${seat}</p>`);
-                // replace values of the hidden inputs
-                /* <input type="hidden" name="selectedTier" id="selectedTier">
-                <input type="hidden" name="selectedDay" id="selectedDay">
-                <input type="hidden" name="time" id="time">
-                <input type="hidden" name="seat" id="seat"></input> */
-                reservationForm.elements['selectedTier'].value = selectedTier;
-                reservationForm.elements['selectedDay'].value = selectedDay;
-                reservationForm.elements['time'].value = time;
-                reservationForm.elements['seat'].value = seat.match(/\d+/)[0];
-                reservationForm.elements['reserveManager'].value = getIsManager();
-                reservationForm.elements['reserverName'].value = getUsername();
-                reservationForm.elements['reserverEmail'].value = getEmail();
-
-                togglePopup(confirmationPopup);
             } else {
-                togglePopup(loginPopup);
+
+                submitBool = true;
+
+                if (logged) {// Show the popup confirmation
+                    // Replace the HTML of the h4 element
+                    h4Element.innerHTML = 'Confirm Reservation';
+                    // Show the confirmation popup
+
+                    // Select the #timeBlocksContainer div
+                    let divElement = document.querySelector('#timeBlocksContainer');
+
+                    // Select all child elements within the div
+                    let childElements = divElement.querySelectorAll('*');
+                    let time = "";
+                    childElements.forEach(function(childElement) {
+                        if (compareBackgroundColorHex(childElement, "#FFFFFF")) {
+                            time = time + childElement.innerText + " ";
+                        }
+                    });
+
+
+                    // seats
+                    divElement = document.querySelector('#seatsContainer');
+                    // Select all child elements within the div
+                    childElements = divElement.querySelectorAll('*');
+                    let seat = null;
+                    childElements.forEach(function(childElement) {
+                        let blockElements = childElement.querySelectorAll('button');
+                        blockElements.forEach(function(blockElement) {
+                            if (compareBackgroundColorHex(blockElement, "#FFFFFF")) { // rgb(76, 175, 80) is the RGB equivalent of #4CAF50
+                                seat = blockElement.innerText;
+                            }
+                        });
+                        
+                    });
+
+                    // Select the dropdowns
+                    let tierSelect = document.querySelector('#tierSelect');
+                    let daySelect = document.querySelector('#daySelect');
+
+                    // Get the selected values
+                    let selectedTier = tierSelect.value.match(/\d+/)[0]; // gets integer part only
+                    let selectedDay = daySelect.value;
+
+                    console.log('Selected Tier:', selectedTier);
+                    console.log('Selected Day:', selectedDay);
+
+                    // Get the input values
+                    let reserveUsername = reservationForm.elements['name'].value;
+                    let reserveEmail = reservationForm.elements['email'].value;
+
+                    if (getIsManager()){
+                        if (reserveUsername == "") {
+                            reserveUsername = "Walk-in";
+                        }
+                        if ( reserveEmail == "") {
+                            reserveEmail = "Walk-in";
+                        }
+                    }
+                    
+                    h4Element.insertAdjacentHTML('afterend', `<p>Username: ${reserveUsername}</p><p>Email: ${reserveEmail}</p><p>Selected Tier: ${selectedTier}</p><p>Selected Day: ${selectedDay}</p><p>Selected Time/s: ${time}</p><p>Selected Seat: ${seat}</p>`);
+                    // replace values of the hidden inputs
+                    /* <input type="hidden" name="selectedTier" id="selectedTier">
+                    <input type="hidden" name="selectedDay" id="selectedDay">
+                    <input type="hidden" name="time" id="time">
+                    <input type="hidden" name="seat" id="seat"></input> */
+                    reservationForm.elements['selectedTier'].value = selectedTier;
+                    reservationForm.elements['selectedDay'].value = selectedDay;
+                    reservationForm.elements['time'].value = time;
+                    reservationForm.elements['seat'].value = seat.match(/\d+/)[0];
+                    reservationForm.elements['reserveManager'].value = getIsManager();
+                    reservationForm.elements['reserverName'].value = getUsername();
+                    reservationForm.elements['reserverEmail'].value = getEmail();
+
+                    togglePopup(confirmationPopup);
+                } else {
+                    togglePopup(loginPopup);
+                }
             }
         });
 
@@ -1106,7 +1203,7 @@ const reservationDetails = {
 document.addEventListener('DOMContentLoaded', () => {
     // To execute this code only when user is not on the /manage page
     if (!(window.location.pathname === '/manage')) {
-        loadReservationDetails();
+        //loadReservationDetails();
         lockSelections();
     }
     

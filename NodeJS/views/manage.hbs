@@ -8,29 +8,41 @@
 
 <div class="reservation-management">
     <h2>Manage Reservation</h2>
-    <form id="reservationForm">
+    <form name="manageForm" action="" method="post" onsubmit="return submitManageReservation()">
+        <div class="form-group">
+            <label for="userName">Reservation ID</label>
+            <input type="text" id="reservationId" name="reservationId" value="{{reservation_id}}" required readonly>
+        </div>
+        {{#if isManager}}
+        <div class="form-group">
+            <label for="userName">Reserver</label>
+            <input type="text" id="reserver" name="reserver" value="{{reserver}}" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="userName">Reserver Email</label>
+            <input type="text" id="reserverEmail" name="reserverEmail" value="{{reserver_email}}" required readonly>
+        </div>
+        {{/if}}
         <div class="form-group">
             <label for="userName">Name of User</label>
-            <input type="text" id="userName" name="userName" required>
+            <input type="text" id="userName" name="userName" value="{{username}}" required readonly>
         </div>
         <div class="form-group">
             <label for="userEmail">Email</label>
-            <input type="email" id="userEmail" name="userEmail" required>
+            <input type="email" id="userEmail" name="userEmail" value="{{email}}" required readonly>
         </div>
-        <!-- Tier Selector -->
+        <!-- Tier -->
         <div class="form-group">
-            <label for="tierSelect">Tier Selected:</label>
+            <label for="tierSelect">Tier:</label>
             <select id="tierSelect" class="tier-select" disabled>
-                <option value="tier1">Tier 1</option>
-                <option value="tier2">Tier 2</option>
-                <option value="tier3">Tier 3</option>
+                <option value="{{tier}}">Tier {{tier}}</option>
             </select>
         </div>     
-        <!-- Date Selector -->
+        <!-- Date -->
         <div class="form-group">
-            <label for="daySelect">Choose a Date:</label>
-            <select id="daySelect" class="day-select">
-                <!-- Options will be populated by JavaScript -->
+            <label for="daySelect">Date:</label>
+            <select id="daySelect" class="day-select" disabled>
+                <option value = "{{date}}">{{date}}</option>
             </select>
         </div>
 
@@ -49,8 +61,8 @@
             <!-- JavaScript will populate this area with time block buttons -->
         </div>
 
-        <button type="button" class="submit-btn">Update Reservation</button>
-        <button type="button" class="submit-btn">Delete Reservation</button>
+        <button id="updateBtn" type="button" class="submit-btn" style="display:none;">Update Reservation</button>
+        <button id="delBtn" type="button" class="submit-btn" style="display:none;">Delete Reservation</button>
     </form>
 </div>
 
