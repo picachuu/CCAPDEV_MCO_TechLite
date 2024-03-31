@@ -490,6 +490,10 @@ section {
   display: none;
 }
 
+.logli, .profileli{
+  display: none;
+}
+
 .header-area .main-nav .nav li .login-button {
   margin-top: 3px;
   padding: 10px 20px;
@@ -497,6 +501,7 @@ section {
   border-radius: 25px;
   transition: background-color 0.3s ease;
   color: white;
+  margin-right:0px;
 }
 
 .header-area .main-nav .nav li .login-button:hover {
