@@ -387,7 +387,6 @@ function getIsManager() {
 
         // To execute this code only when user is on the /profile page
         if (window.location.pathname === '/profile') {
-            // if the user is not logged and visits /profile, redirect to home page
             if (!getLogged()) {
                 window.location.href = '/';
                 return;
@@ -395,34 +394,31 @@ function getIsManager() {
 
             document.getElementById('navbarProfile').classList.add('active');
 
-            // check if URL is empty, if so, don't change the images
             if (getBannerUrl() !== ""){
                 document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
             }
             if (getImgUrl() !== ""){
                 document.getElementById('profileImage').src = img_url;
             }
-                 // Conditional rendering based on 'display'
+
             const usernameContainer = document.querySelector('.username-container');
             const mainProfile = document.querySelector('.main-profile'); // Select the .main-profile element
 
             if (getDisplay() === undefined || getDisplay() === null || getDisplay() === '') {
-                // When 'display' is undefined or null, adjust HTML structure, flex-direction, and .main-profile margin
                 usernameContainer.innerHTML = `
                     <h4>@</h4>
                     <h4 id="userName" contenteditable="false">${username}</h4>
                 `;
                 usernameContainer.style.flexDirection = 'row';
                 if (mainProfile) {
-                    mainProfile.style.marginTop = '-120px'; // Adjust margin when displayName is not present
+                    mainProfile.style.marginTop = '-120px';
                 }
             } else {
-                // If 'display' is not null/undefined, set its value and reset flex-direction and .main-profile margin
                 document.getElementById('displayName').innerText = getDisplay();
                 document.getElementById('userName').innerText = getUsername();
-                usernameContainer.style.flexDirection = 'column'; // Assuming default flex-direction is column
+                usernameContainer.style.flexDirection = 'column';
                 if (mainProfile) {
-                    mainProfile.style.marginTop = '-95px'; // Reset margin when displayName is present
+                    mainProfile.style.marginTop = '-95px';
                 }
             }
             

@@ -18,10 +18,9 @@ const path = require('path');
 // Set up storage engine
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'public/uploads'); // Path relative to the root of your project
+        cb(null, 'public/uploads');
     },
     filename: function(req, file, cb) {
-        // Use the original file name or generate a new one
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
