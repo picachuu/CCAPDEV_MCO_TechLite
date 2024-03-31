@@ -296,6 +296,14 @@ function getIsManager() {
                     elem.style.display = 'block';
                 });
             }
+
+            let navbarProfileImage = document.getElementById('navbarProfileImage');
+            if (navbarProfileImage) {   
+                // check if url is empty, if so keep default
+                if (img_url !== "") {
+                    navbarProfileImage.src = img_url;
+                }
+            }
         
 
         // Change behavior based on user role
@@ -376,7 +384,7 @@ function getIsManager() {
 
             document.getElementById('navbarProfile').classList.add('active');
 
-            // check if URL is empty, if so, don't change the images
+            // check if URL is empty, if so, don't change the images 
             if (banner_url !== ""){
                 document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
             }
@@ -1439,25 +1447,22 @@ function saveProfileChanges() {
     var displayName = document.getElementById('displayName').innerText;
     var userBio = document.getElementById('userBio').innerText;
     var username = getUsername(); 
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('displayName', displayName);
+    formData.append('bio', userBio);
+    formData.append('profileImage', document.getElementById('profileImageInput').files[0]);
+    formData.append('coverImage', document.getElementById('coverImageInput').files[0]);
 
-    fetch('/update-profile', { 
+
+    
+    fetch('/update-profile', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username: username,
-            displayName: displayName,
-            bio: userBio
-        }),
+        body: formData,
     })
     .then(response => response.json())
-    .then(data => {
-        console.log('Profile updated successfully', data);
-    })
-    .catch((error) => {
-        console.error('Error updating profile:', error);
-    });
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
 }
 
 // Manager Tools

@@ -12,6 +12,23 @@ const databaseName = dbmodel.databaseName;
 const errorFn = dbmodel.errorFn;
 const successFn = dbmodel.successFn;
 
+const multer = require('multer');
+const path = require('path');
+
+// Set up storage engine
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'public/uploads'); // Path relative to the root of your project
+    },
+    filename: function(req, file, cb) {
+        // Use the original file name or generate a new one
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
+
+
 mongoose.connect(db_url+databaseName);
 
 function add(server){
@@ -133,24 +150,36 @@ function add(server){
     console.log(`Total reservations: ${totalReservations}`);
   });
 
-  server.post('/update-profile', async (req, res) => {
-    console.log('Update profile post request received');
-    
+  server.post('/update-profile', upload.fields([{ name: 'profileImage' }, { name: 'coverImage' }]), async (req, res) => {
     const { username, displayName, bio } = req.body;
 
-    console.log(`Attempting to update: username = ${username}, display = ${displayName}, bio_msg = ${bio}`);
+    let updateData = {
+        display: displayName,
+        bio_msg: bio
+    };
+
+    if (req.files['profileImage'] && req.files['profileImage'][0]) {
+        updateData.img_url = '/uploads/' + req.files['profileImage'][0].filename;
+    }
+    if (req.files['coverImage'] && req.files['coverImage'][0]) {
+        updateData.banner_url = '/uploads/' + req.files['coverImage'][0].filename;
+    }
+
     try {
         const doc = await userModel.findOneAndUpdate(
             { username: username },
-            { $set: { display: displayName, bio_msg: bio } },
+            { $set: updateData },
             { new: true }
-        ).exec();
-        
-        
-        res.send({ message: 'Profile updated successfully', user: doc });
+        );
+
+        if (doc) {
+            res.send({ message: 'Profile updated successfully', user: doc });
+        } else {
+            res.status(404).send({ message: 'User not found' });
+        }
     } catch (err) {
-        console.error("Something wrong when updating data!", err);
-        res.status(500).send({ message: 'Error updating profile' });
+        console.error("Error updating profile", err);
+        res.status(500).send({ message: 'Error updating profile', error: err });
     }
 });
 
