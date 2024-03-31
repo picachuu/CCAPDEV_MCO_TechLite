@@ -2008,6 +2008,7 @@ footer p a:hover {
 }
 
 .manager-tools-section{
+  display:none;
   margin-top:15px;
   border-radius: 23px;
   padding: 10px;
