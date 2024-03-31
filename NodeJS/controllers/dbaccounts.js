@@ -82,8 +82,38 @@ function add(server,bcrypt,saltRounds){
     resp.send({valid: valid});
   });
 
+  async function refreshCredentials() {
+    const searchQuery = { //searchQuery for username based log-in
+      username: username,
+      email: email
+    };
+
+    let user = await userModel.findOne(searchQuery).lean(); // wait for the function to finish before proceeding
+
+    if (user != null){
+      console.log('Obtained Username: ' + user.username);
+    } else {
+      console.log('No User Found');
+    }
+
+    if (user) {
+      logged_status = true;
+      username = user.username;
+      email = user.email;
+      display = user.display;
+      is_manager = user.is_manager;
+      img_url = user.img_url;
+      banner_url = user.banner_url;
+      bio_msg = user.bio_msg;
+    } else {
+      logged_status = false;
+    }
+  }
+
   server.post('/obtain-credentials', async function(req, resp){  //async function for asynchronous operations
     let user = null;
+    
+    if (logged_status) refreshCredentials();
 
     console.log("Obtaining credentials...");
     console.log("Logged Status: " + logged_status);

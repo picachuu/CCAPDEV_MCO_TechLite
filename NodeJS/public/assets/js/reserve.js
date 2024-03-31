@@ -311,6 +311,12 @@ function populateTimeBlocksManage(seat_number, tier_number, day_number) {
     container.innerHTML = ''; // Clear previous blocks
     container.style.display = 'block';
 
+    const updateBtn = document.getElementById('updateBtn');
+    const delBtn = document.getElementById('delBtn');
+    updateBtn.style.display = 'none';
+    delBtn.style.display = 'none';
+
+
     let selectedBlocks = 0;
 
     // Fetch time blocks from server based on seat number, tier number, and day number
@@ -346,90 +352,47 @@ function populateTimeBlocksManage(seat_number, tier_number, day_number) {
                     if(all.seats[i].taken == true) { 
                         block.classList.add('unavailable');
                         unavailableTimeSlots[time] = { name: all.seats[i].assigned_to, email: all.seats[i].email };
-                        //better we modify na rin the unavailableTimeSlots[]
+
+                        block.onclick = () =>  {event.preventDefault();}
                         
-                        // only allow managers to click on unavailable time slots
-                        if (getIsManager()) {
-                            block.onclick = () => showDetails(time,block);
-                        }
                     } else {
                         block.onclick = () =>  {
-                            let selectionLimit = 4;
-                            const formDiv = $('#reservationForm');
+                            event.preventDefault();
 
-                            // manually changing instead of toggle to esnure robustness
-                            if (prevUnavailBlock) {
-                                prevUnavailBlock.style.backgroundColor = "#182e19";
-                                prevUnavailBlock = null;
-                                prevUnavailBlock_InnerHTML = null;
-                            }
+                            // Count selected blocks
+                            // Select the #timeBlocksContainer div
+                            let divElement = document.querySelector('#userTimeBlocksContainer');
 
-                            if (!getLogged()){ // guards against hardcoded values
-                                $('form[name="reservationForm"] :submit').val('Login to Reserve');
-                            } else if (getIsManager()) {   // manager to revert UI to reserve
-
-                                if (!is_prev_timeBlock_taken) {
-                                    previousNameField = formDiv.find('input[name="name"]').val();
-                                    previousEmailField = formDiv.find('input[name="email"]').val();
+                            // Select all child elements within the div
+                            let childElements = divElement.querySelectorAll('*');
+                            let countSelected = 0;
+                            childElements.forEach(function(childElement) {
+                                if (compareBackgroundColorHex(childElement, "#FFFFFF")) {
+                                    countSelected++;
                                 }
-
-                                if (previousNameField || is_prev_timeBlock_taken) {
-                                    document.forms["reservationForm"].reset(); // always reset form for robustness
-                                    formDiv.find('input[name="name"]').val(previousNameField);
-                                    formDiv.find('input[name="email"]').val(previousEmailField);
-                                }
-                                
-                                selectionLimit = 48; // manager gets full selection limit
-                                let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
-                                submitButton.value = "Reserve"
-                                submitButton.style.width = "100%";
-                                let deleteButtonRes = document.getElementById('deleteButtonRes');
-                                deleteButtonRes.style.display = "none";
-                                deleteButtonRes.style.width = "100%";
-                            } else { // if not manager, automatically fill fields with user info
-                                document.querySelector('div.reservation-form-fields-container input[name="name"]').value = getUsername();
-                                document.querySelector('div.reservation-form-fields-container input[name="email"]').value = getEmail();
-                            }
-
+                            });
                             
-
+                            let selectionLimit = countSelected;
+                            
                             if (selectedBlocks < selectionLimit) { 
                                 block.classList.toggle('selected');
                                 const isSelected = block.classList.contains('selected');
                                 selectedBlocks = isSelected ? selectedBlocks + 1 : selectedBlocks - 1;
+                           
                         
-                                const form = document.getElementById('reservationForm');
+                                let hasSelectedBlocks = selectedBlocks > 0;
 
-                                
-
-                                hasSelectedBlocks = selectedBlocks > 0;
-
-                                /* if (!hasSelectedBlocks) {
-                                    // Clear the 'name' input field
-                                    let nameInput = document.getElementById('reservationName');
-                                    if (nameInput) {
-                                        nameInput.value = '';
-                                    }
-
-                                    // Clear the 'email' input field
-                                    let emailInput = document.getElementById('reservationEmail');
-                                    if (emailInput) {
-                                        emailInput.value = '';
-                                    }
-                                } */
-
-                                form.style.display = hasSelectedBlocks ? 'block' : 'none';  // hides the reservationForm section
-
-                                if (form.style.display === 'none') {
-                                    document.getElementById('deleteButton').style.display = 'none';
-                                    document.getElementById('editButton').style.display = 'none';
-                                }
+                                updateBtn.style.display = hasSelectedBlocks ? 'block' : 'none';
+                                delBtn.style.display = hasSelectedBlocks ? 'block' : 'none';
                             }
-                            else if (selectedBlocks == 4 && block.classList.contains('selected')) {
+                            else if (selectedBlocks == selectionLimit && block.classList.contains('selected')) {
                                 block.classList.toggle('selected');
                                 selectedBlocks = selectedBlocks - 1;
+                                if (selectedBlocks == 0) {
+                                    updateBtn.style.display = 'none';
+                                    delBtn.style.display = 'none';
+                                }
                             }
-                            is_prev_timeBlock_taken = false;
                         }
                     }
                     rows[rowIndex].appendChild(block);
