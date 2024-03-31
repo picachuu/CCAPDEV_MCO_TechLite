@@ -54,20 +54,75 @@
 </div>
   <!-- Cover End -->
 
-  <div class="container">
-    <div class="profile-page-content">
-      <div class="row">
-        <div class="col-lg-10">
-          <div class="profile-reservations">
+<div class="container">
+  <div class="profile-page-content">
+    <div class="row">
+      <div class="col-lg-10">
+        <div class="profile-reservations">
+          <div class="heading-section">
+            <h4><em>Your</em>  Reservations</h4>
+            <div class="tier-filter">
+              <button id="filterTier1">T1</button>
+              <button id="filterTier2">T2</button>
+              <button id="filterTier3">T3</button>
+            </div>
+          </div>
+          <div id="items-container">
+              <!-- This part should be added by javascript-->
+          </div>
+          <div id="pagination" class="pagination">
+            <i id="firstButton" class="fa fa-angles-left"></i>
+            <i id="prevButton" class="fa fa-angle-left"></i>
+            <span>Page <span id="currentPage">1</span></span>
+            <i id="nextButton" class="fa fa-angle-right"></i>
+            <i id="lastButton" class="fa fa-angles-right"></i>
+          </div>
+          <!-- ... existing code ... -->
+          <!--
+          <div class="item">
+            <ul>
+              <li><img src="assets/images/tier1.jpg" alt=""></li>
+              <li><h4>Room</h4><span>Tier 1 Seat 15</span></li>
+              <li><h4>Date Added</h4><span>20/02/2024</span></li>
+              <li><h4>Status</h4><span>Ongoing</span></li>
+              <li><h4>Time Left</h4><span>70 mins</span></li>
+              <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
+            </ul>
+          </div>
+          
+          <div class="item">
+            <ul>
+              <li><img src="assets/images/tier1.jpg" alt=""></li>
+              <li><h4>Room</h4><span>Tier 1 Seat 5</span></li>
+              <li><h4>Date Added</h4><span>31/12/2023</span></li>
+              <li><h4>Status</h4><span>Expired</span></li>
+              <li><h4>Time Left</h4><span>N/A</span></li>
+              <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
+            </ul>
+          </div>
+          <div class="item last-item">
+            <ul>
+              <li><img src="assets/images/tier1.jpg" alt=""></li>
+              <li><h4>Room</h4><span>Tier 1 Seat 2</span></li>
+              <li><h4>Date Added</h4><span>24/11/2023</span></li>
+              <li><h4>Status</h4><span>Expired</span></li>
+              <li><h4>Time Left</h4><span>N/A</span></li>
+              <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
+            </ul>
+          </div>
+          -->
+          <!-- This part should be added by javascript-->
+        </div>
+        <div class="profile-reservations">
             <div class="heading-section">
-              <h4><em>Your</em>  Reservations</h4>
+              <h4><em>Past</em>  Reservations</h4>
               <div class="tier-filter">
                 <button id="filterTier1">T1</button>
                 <button id="filterTier2">T2</button>
                 <button id="filterTier3">T3</button>
               </div>
             </div>
-            <div id="items-container">
+            <div id="items-container"> <!-- replace id for past entries-->
                 <!-- This part should be added by javascript-->
             </div>
             <div id="pagination" class="pagination">
@@ -77,43 +132,8 @@
               <i id="nextButton" class="fa fa-angle-right"></i>
               <i id="lastButton" class="fa fa-angles-right"></i>
             </div>
-                <!-- ... existing code ... -->
-                <!--
-                <div class="item">
-                  <ul>
-                    <li><img src="assets/images/tier1.jpg" alt=""></li>
-                    <li><h4>Room</h4><span>Tier 1 Seat 15</span></li>
-                    <li><h4>Date Added</h4><span>20/02/2024</span></li>
-                    <li><h4>Status</h4><span>Ongoing</span></li>
-                    <li><h4>Time Left</h4><span>70 mins</span></li>
-                    <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
-                  </ul>
-                </div>
-                
-                <div class="item">
-                  <ul>
-                    <li><img src="assets/images/tier1.jpg" alt=""></li>
-                    <li><h4>Room</h4><span>Tier 1 Seat 5</span></li>
-                    <li><h4>Date Added</h4><span>31/12/2023</span></li>
-                    <li><h4>Status</h4><span>Expired</span></li>
-                    <li><h4>Time Left</h4><span>N/A</span></li>
-                    <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
-                  </ul>
-                </div>
-                <div class="item last-item">
-                  <ul>
-                    <li><img src="assets/images/tier1.jpg" alt=""></li>
-                    <li><h4>Room</h4><span>Tier 1 Seat 2</span></li>
-                    <li><h4>Date Added</h4><span>24/11/2023</span></li>
-                    <li><h4>Status</h4><span>Expired</span></li>
-                    <li><h4>Time Left</h4><span>N/A</span></li>
-                    <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
-                  </ul>
-                </div>
-                -->
-                <!-- This part should be added by javascript-->
-            </div>
         </div>
+      </div>
       <div class="col profile-points">
         <div class="row align-self-center">
           <ul>
@@ -128,9 +148,9 @@
         </div>
       </div>
     </div>
-    </div>
   </div>
-  <div class="container">
+</div>
+<div class="container">
   <div class="logout-container">
     <a href="/log-out" id="logoutBtn" class="logout-button">
         <i class="fa fa-sign-out" aria-hidden="true"></i> Log Out

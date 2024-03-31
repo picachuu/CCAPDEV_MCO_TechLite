@@ -155,8 +155,8 @@ function loadReservations(page) {
     let data = {
         user_name: getUsername(),
         page: page,
-        pageSize: 3, // Assuming this is your desired page size
-        tier_nums: selectedTiers // Send the array of selected tiers
+        pageSize: 3,
+        tier_nums: selectedTiers 
     };
 
     $.ajax({
@@ -167,15 +167,14 @@ function loadReservations(page) {
         success: function(own, status) {
             if (status === 'success') {
                 totalPages = own.totalPages;
-                currentPage = own.page; // Update current page based on server response
+                currentPage = own.page; 
                 const reservationsContainer = document.getElementById('items-container');
-                reservationsContainer.innerHTML = ''; // Clear existing reservations
+                reservationsContainer.innerHTML = '';
 
                 if (own.reservations.length === 0) {
-                    // No reservations to show
                     const noReservationsMsg = document.createElement('div');
                     noReservationsMsg.textContent = 'No reservations to show';
-                    noReservationsMsg.classList.add('no-reservations'); // Add some class for styling if needed
+                    noReservationsMsg.classList.add('no-reservations');
                     reservationsContainer.appendChild(noReservationsMsg);
                 } else {
                     own.reservations.forEach(reservation => {
