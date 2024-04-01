@@ -157,8 +157,6 @@ function add(server){
       resp.redirect('/');
     } else {
 
-      const page = Math.max(1, Number(req.body.page));
-      const pageSize = 3;
       const tierFilters = req.body.tier_nums ? req.body.tier_nums.map(Number) : [1, 2, 3];
 
       let combinedReservations = [];
@@ -211,22 +209,12 @@ function add(server){
         totalReservations += reservationsWithTier.length;
       }
 
-      
-
       console.log("Tier Counts:", tierCounts);
-      const startIndex = (page - 1) * pageSize;
-      let paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
 
       resp.send({
-          reservations: paginatedReservations,
-          page: page,
-          pageSize: pageSize,
+          reservations: combinedReservations,
           total: totalReservations,
-          totalPages: Math.ceil(totalReservations / pageSize)
       });
-
-      console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
-      console.log(`Total reservations: ${totalReservations}`);
     }
   });
 
