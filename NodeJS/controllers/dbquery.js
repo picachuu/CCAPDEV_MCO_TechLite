@@ -339,7 +339,7 @@ function add(server){
     }
 });
 
-  server.post('/manageable-check', function(req, resp) {
+  server.post('/manageable-check', function(req, resp) {// need change to real-time
     console.log('Manage post request received');
 
     let tierModel;
@@ -349,6 +349,8 @@ function add(server){
         case 2: tierModel = tier2_schedModel; break;
         case 3: tierModel = tier3_schedModel; break;
     }
+
+    console.log("Searching for Tier"+req.body.tier_num+": "+ JSON.stringify(req.body));
 
     //change searchQuery based on mode: "days", "taken_false", "taken_true"
     let searchQuery;
@@ -360,6 +362,8 @@ function add(server){
         assigned_to: String(req.body.user_name),
         time_start: String(req.body.time_start),
         //taken: true, //this is for customers lang naman
+        year: Number(req.body.year_num),
+        month: Number(req.body.month_num),
         day: Number(req.body.day_num)
       }; findAll = false; break;
     }
@@ -1167,25 +1171,6 @@ function add(server){
       }
     }).catch(errorFn);
   });
-
-  /* let manageForm = document.createElement("form");
-    
-    manageForm.method = "POST";
-    manageForm.action = "/view-reservation";
-    
-    let hiddenField = document.createElement("input");
-    hiddenField.type = "hidden";
-    hiddenField.name = "reservation_id";
-    hiddenField.value = reservation_id;
-    manageForm.appendChild(hiddenField);
-    
-
-    var manageButton = document.createElement("button");
-    manageButton.type = "submit";
-    manageButton.textContent = "View";
-    manageForm.appendChild(manageButton);
-
-    manageDiv.appendChild(manageForm); */
 
   // view server post request of inactive reservations given reservation_id
   server.post('/view-reservation', async function(req, resp) {

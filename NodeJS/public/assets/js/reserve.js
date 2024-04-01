@@ -57,6 +57,7 @@ function validateSelection() {
 function isSeatUnavailable(seatNumber, tierNumber, daySelected) {
     var isUnavailable = false;
     
+    // real-time??
     //if you're worried about 30, 31, and then 1 (of next month), dw. Month doesn't really matter, only the days ;)
     
     $.ajax({
@@ -195,6 +196,8 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                     rows.push(row);
                 }
 
+                
+
                 //add the timeblocks
                 for (let i = 0; i < all.seats.length; i++) {
 
@@ -203,6 +206,8 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                     const block = document.createElement('button');
                     block.classList.add('time-slot');
                     block.textContent = time;
+
+                    const past = isPast(new Date(day_number)); //checkpoint
 
                     const rowIndex = Math.floor(i / 12);
 

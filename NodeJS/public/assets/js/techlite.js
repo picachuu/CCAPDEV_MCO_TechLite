@@ -93,6 +93,17 @@ function isPast(date) { //DO NOT CHANGE
 }
 //alert(isPast(new Date(2024, 4 - 1, 1, 9, 40))); // Example usage of isPast function (month is month - 1)
 
+//helper function to compare date if it's within one hour in the future of the present datetime (assume receives date type)
+// so if current date is 10:00: returns true if date is between 9:00 and 10:00
+function isWithinOneHour(date) {
+    let currentDate = new Date();
+    let oneHourAgo = new Date(currentDate);
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    // return true if date is between one hour ago and current date
+    return date > oneHourAgo && date < currentDate;
+}
+//alert(isWithinOneHour(new Date(2024, 4 - 1, 1, 9, 40))); // Example usage of isWithinOneHour function (month is month - 1)
+
 (function ($) {
 	
 	"use strict";
@@ -275,6 +286,8 @@ function isPast(date) { //DO NOT CHANGE
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
 
+        //alert(isWithinOneHour(new Date(2024, 4 - 1, 1, 16, 20)));
+
         //alert(isPast(new Date(2024, 4 - 1, 1, 9, 40))); // Example usage of isPast function
 
         let data = getUserData();
@@ -306,29 +319,29 @@ function isPast(date) { //DO NOT CHANGE
 
 
 
-            if (logged) {
-                document.querySelectorAll('.profileli').forEach(function(elem) {
-                    elem.style.display = 'block';
-                });
-                document.querySelectorAll('.logli').forEach(function(elem) {
-                    elem.style.display = 'none';
-                });
-            } else {
-                document.querySelectorAll('.profileli').forEach(function(elem) {
-                    elem.style.display = 'none';
-                });
-                document.querySelectorAll('.logli').forEach(function(elem) {
-                    elem.style.display = 'block';
-                });
-            }
+        if (logged) {
+            document.querySelectorAll('.profileli').forEach(function(elem) {
+                elem.style.display = 'block';
+            });
+            document.querySelectorAll('.logli').forEach(function(elem) {
+                elem.style.display = 'none';
+            });
+        } else {
+            document.querySelectorAll('.profileli').forEach(function(elem) {
+                elem.style.display = 'none';
+            });
+            document.querySelectorAll('.logli').forEach(function(elem) {
+                elem.style.display = 'block';
+            });
+        }
 
-            let navbarProfileImage = document.getElementById('navbarProfileImage');
-            if (navbarProfileImage) {   
-                // check if url is empty, if so keep default
-                if (img_url !== "") {
-                    navbarProfileImage.src = img_url;
-                }
+        let navbarProfileImage = document.getElementById('navbarProfileImage');
+        if (navbarProfileImage) {   
+            // check if url is empty, if so keep default
+            if (img_url !== "") {
+                navbarProfileImage.src = img_url;
             }
+        }
         
 
         // Change behavior based on user role
@@ -1358,6 +1371,19 @@ async function checkLogin() {
 function validateCreateUser() {
     // Get form values
     let form = $('form[name="createUser"]');
+    
+    return validateUserCreateCredentials(form);
+}
+
+// client-side validation for creating an account (Manager tools)
+function validateCreateUser() {
+    // Get form values
+    let form = $('form[name="createUserM"]');
+    
+    return validateUserCreateCredentials(form);
+}
+
+function validateUserCreateCredentials(form) {
     let username = form.find('input[name="newUsername"]').val();
     let email = form.find('input[name="email"]').val();
     let password = form.find('input[name="newPassword"]').val();
@@ -1394,13 +1420,25 @@ function validateCreateUser() {
 
 async function checkCreateUser(){
     let form = $('form[name="createUser"]'); // Selects the form with the name 'createUser'
+    let is_manager = false;
+
+    return await checkCreateNewAccount(form, is_manager);
+}
+
+async function checkCreateFromManager(){
+    let form = $('form[name="createUserM"]'); // Selects the form with the name 'createUser'
+    let account_type = form.find('select[name="accountType"]').val(); // Gets the value of the input with the name 'accountType'
+    let is_manager = (account_type == "manager");
+
+    return await checkCreateNewAccount(form, is_manager);
+}
+
+async function checkCreateNewAccount(form, is_manager){
     let username = form.find('input[name="newUsername"]').val(); // Gets the value of the input with the name 'newUsername'
     let email = form.find('input[name="email"]').val(); // Gets the value of the input with the name 'email'
     let displayname = form.find('input[name="displayName"]').val(); // Gets the value of the input with the name 'displayName'
-    //let displayname = "";
     let password = form.find('input[name="newPassword"]').val(); // Gets the value of the input with the name 'newPassword'
     let confirmPassword = form.find('input[name="confirmPassword"]').val(); // Gets the value of the input with the name 'password
-    let is_manager = false;
 
     let data = {
         username: username,
@@ -1413,7 +1451,6 @@ async function checkCreateUser(){
 
     return await checkCreateAccount(data);
 }
-
 
 async function checkCreateAccount(data) {
     let valid = false;
@@ -1574,9 +1611,9 @@ function saveProfileChanges() {
 
 // Manager Tools
 document.addEventListener('DOMContentLoaded', function () {
-    var createBtn = document.getElementById('managerCreate');
-    var popup = document.getElementById('managerCreatePopup');
-    var closeBtn = popup.querySelector('.close');
+    let createBtn = document.getElementById('managerCreate');
+    let popup = document.getElementById('managerCreatePopup');
+    let closeBtn = popup.querySelector('.close');
   
     if (createBtn) {
       createBtn.addEventListener('click', function() {
@@ -1590,5 +1627,5 @@ document.addEventListener('DOMContentLoaded', function () {
         popup.style.display = 'none';
       });
     }
-  });
+});
   

@@ -12,7 +12,7 @@
 <div id="managerCreatePopup" class="create-account-popup" style="display: none;">
   <a href="#" class="close">&times;</a>
   <h4>Create a User Account</h4>
-  <form name="createUserM" action="" method="post" onsubmit="">
+  <form name="createUserM" action="create-account-success-manager" onsubmit="if (validateCreateUser()){event.preventDefault(); checkCreateFromManager().then(valid => { if (valid) this.submit(); })} else return false" method="get">
     <input type="text" name="newUsername" class="form-control" placeholder="Username" required/>
     <input type="email" name="email" class="form-control" placeholder="Email" required/>
     <input type="text" name="displayName" class="form-control" placeholder="Display Name (Optional)"/>

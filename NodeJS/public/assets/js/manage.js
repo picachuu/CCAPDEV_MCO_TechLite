@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let delBtn = document.getElementById('delBtn');
 
         displayManageablecontent();
-        alert('wowwwwwwwwwwwwww');
+        
         document.getElementById('tierSelect').addEventListener('mousedown', function(e) {
             e.preventDefault();
             
@@ -174,12 +174,12 @@ function displayManageablecontent() {
 
     for (let i = 0; i < reservations.length; i++) {
         const time_start = reservations[i].time_start;
-        addTimeblock(seats, tier, day, time_start, username, reservations[i].cancelled_by);
+        addTimeblock(seats, tier, year, month, day, time_start, username, reservations[i].cancelled_by);
     }
 }
 
-function addTimeblock(seatNumber, tierNumber, daySelected, time_start, assigned_to, cancelled_by) {
-
+function addTimeblock(seatNumber, tierNumber, year, month, day, time_start, assigned_to, cancelled_by) {
+    
     $.ajax({
         url: 'manageable-check',
         type: 'POST',
@@ -188,24 +188,36 @@ function addTimeblock(seatNumber, tierNumber, daySelected, time_start, assigned_
             seat_num: Number(seatNumber), 
             user_name: assigned_to,
             time_start: time_start,
-            day_num: daySelected, 
+            year_num: year,
+            month_num: month,
+            day_num: day, 
             mode: "find_timeslot"
         },
         
         async: false,  // Make the request synchronous
         success: function(reserved, status) {
             if (status === 'success') {
+                
+                
+                const past = isPast(new Date(year, month - 1, day, Math.floor(time_start / 100), time_start % 100));
                 const timeBlocksContainer = document.getElementById('userTimeBlocksContainer');
                 const block = document.createElement('button');
                 block.classList.add('time-slot');
                 block.textContent = `${Math.floor((reserved.seat.time_start)/100).toString().padStart(2, '0')}:${((reserved.seat.time_start)%100).toString().padStart(2, '0')}`;
                 block.onclick = null;
-                if (cancelled_by) {
+                
+                if (cancelled_by || (past && isRealtime)) {
                     block.classList.add('unavailable');
                     block.onclick = () => {
                         event.preventDefault();
-                        alert(`This time block was cancelled by ${cancelled_by}.`);
+                        if (cancelled_by) {
+                            block.title = `This time block has expired.`;
+                        } else if (past && isRealtime){
+                            block.title = `This time block was cancelled.`;
+                            //block.title = `This time block was cancelled by ${cancelled_by}.`;
+                        }  
                     }
+                    
                 } else {
                     block.onclick = () =>  {
                         event.preventDefault();
