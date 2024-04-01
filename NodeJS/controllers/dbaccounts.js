@@ -1,16 +1,3 @@
-const mongoose = require('mongoose');
-
-const dbmodel = require('../models/dbmodel');
-// const tier1_schedModel = dbmodel.tier1_schedModel;
-// const tier2_schedModel = dbmodel.tier2_schedModel;
-// const tier3_schedModel = dbmodel.tier3_schedModel;
-const userModel = dbmodel.userModel;
-// const seatModel = dbmodel.seatModel;
-const db_url = dbmodel.db_url;
-const databaseName = dbmodel.databaseName;
-const errorFn = dbmodel.errorFn;
-const successFn = dbmodel.successFn;
-
 let username = null;
 let email = null;
 let logged_status = false;
@@ -20,9 +7,23 @@ let img_url = null;
 let banner_url = null;
 let bio_msg = null;
 
-mongoose.connect(db_url+databaseName);
+function add(server,modules){
+  // establish all module constants
+  const dbmodel = modules.dbmodel;
+  const bcrypt = modules.bcrypt;
+  const saltRounds = modules.saltRounds;
+  const mongoose = modules.mongoose;
 
-function add(server,bcrypt,saltRounds){
+  const tier1_schedModel = dbmodel.tier1_schedModel;
+  const tier2_schedModel = dbmodel.tier2_schedModel;
+  const tier3_schedModel = dbmodel.tier3_schedModel;
+  const userReservationModel = dbmodel.userReservationModel;
+  const userModel = dbmodel.userModel;
+  const seatModel = dbmodel.seatModel;
+  const db_url = dbmodel.db_url;
+  const databaseName = dbmodel.databaseName;
+  const errorFn = dbmodel.errorFn;
+  const successFn = dbmodel.successFn;
 
   // login post request for user log-in, returns user object
   server.post('/login-account', async function(req, resp){  //async function for asynchronous operations
@@ -112,7 +113,7 @@ function add(server,bcrypt,saltRounds){
 
   server.post('/obtain-credentials', async function(req, resp){  //async function for asynchronous operations
     let user = null;
-    
+
     if (logged_status) refreshCredentials();
 
     console.log("Obtaining credentials...");

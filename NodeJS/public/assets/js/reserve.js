@@ -263,6 +263,16 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number, month_numbe
                             let selectionLimit = 4;
                             const formDiv = $('#reservationForm');
 
+                            let usernameInput = document.getElementById('reservationName');
+                            let emailInput = document.getElementById('reservationEmail');
+                            if (emailInput) {
+                                emailInput.type = 'email';
+                                emailInput.readOnly = false;
+                            }
+                            if (usernameInput) {
+                                usernameInput.readOnly = false;
+                            }
+
                             // manually changing instead of toggle to esnure robustness
                             if (prevUnavailBlock) {
                                 prevUnavailBlock.style.backgroundColor = "#182e19";
@@ -506,7 +516,19 @@ function showDetails(time,block) { // should only execute if it's manager
     // manually changing instead of toggle to esnure robustness
     if (prevUnavailBlock) {
         prevUnavailBlock.style.backgroundColor = "#182e19";
-    }    
+    } else {
+        // change this element text type <input type="email" id="reservationEmail" name="email" placeholder="Email">
+        let usernameInput = document.getElementById('reservationName');
+        let emailInput = document.getElementById('reservationEmail');
+        if (emailInput) {
+            emailInput.type = 'text';
+            emailInput.readOnly = true;
+        }
+        if (usernameInput) {
+            usernameInput.readOnly = true;
+        }
+        
+    }
     
     let submitButton = document.querySelector('div.reservation-form-buttons-container input[type="submit"]');
     submitButton.value = "Edit"

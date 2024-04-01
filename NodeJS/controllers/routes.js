@@ -1,5 +1,22 @@
 
-function add(server){
+function add(server, modules){
+  // establish all module constants
+  const dbmodel = modules.dbmodel;
+  const bcrypt = modules.bcrypt;
+  const saltRounds = modules.saltRounds;
+  const mongoose = modules.mongoose;
+
+  const tier1_schedModel = dbmodel.tier1_schedModel;
+  const tier2_schedModel = dbmodel.tier2_schedModel;
+  const tier3_schedModel = dbmodel.tier3_schedModel;
+  const userReservationModel = dbmodel.userReservationModel;
+  const userModel = dbmodel.userModel;
+  const seatModel = dbmodel.seatModel;
+  const db_url = dbmodel.db_url;
+  const databaseName = dbmodel.databaseName;
+  const errorFn = dbmodel.errorFn;
+  const successFn = dbmodel.successFn;
+  
   server.get('/', function(req, resp){
     
     resp.render('main',{
@@ -63,7 +80,3 @@ function add(server){
 }
 
 module.exports.add = add;
-
-//Note: There are other ways to declare routes. Another way is to
-//      use a structure called router. It would look like this:
-//      const router = express.Router()
