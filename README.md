@@ -1,6 +1,6 @@
 ## Project TechLite
 <p align="justify">
-        TechLite is an innovative web-based platform designed to elevate the gaming experience for enthusiasts and casual gamers alike. This project aims to streamline the process of reserving high-performance gaming workstations, accessing a variety of services including food ordering and printing, and enhancing user engagement through rewards and a comprehensive service offering. TechLite bridges the gap between high-end gaming requirements and convenience, ensuring every gamer finds exactly what they need for an unforgettable gaming session.
+TechLite is an innovative web-based platform designed to elevate the gaming experience for enthusiasts and casual gamers alike. This project aims to streamline the process of reserving high-performance gaming workstations, accessing a variety of services including food ordering and printing, and enhancing user engagement through rewards and a comprehensive service offering. TechLite bridges the gap between high-end gaming requirements and convenience, ensuring every gamer finds exactly what they need for an unforgettable gaming session.
 </p>
 
 ## Prerequisites
@@ -27,15 +27,13 @@ Load the database:
 cd NodeJS
 node app.js
 ```
-- Launch node app.js (to create database)
+- Launch node app.js (to create database) and Ctrl + C to end the session
 - Launch MongoDB Compass
 - Import all collections given in the csv files corresponding to the collections in MongoDB Compass
 
 Run the application:
 
 ```bash
-cd CCAPDEV_MCO_TechLite
-cd NodeJS
 node app.js
 ```
 
