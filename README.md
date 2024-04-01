@@ -1,7 +1,7 @@
 ## Project TechLite
-
-TechLite is an innovative web-based platform designed to elevate the gaming experience for enthusiasts and casual gamers alike. This project aims to streamline the process of reserving high-performance gaming workstations, accessing a variety of services including food ordering and printing, and enhancing user engagement through rewards and a comprehensive service offering. TechLite bridges the gap between high-end gaming requirements and convenience, ensuring every gamer finds exactly what they need for an unforgettable gaming session.
-
+<p align="justify">
+        TechLite is an innovative web-based platform designed to elevate the gaming experience for enthusiasts and casual gamers alike. This project aims to streamline the process of reserving high-performance gaming workstations, accessing a variety of services including food ordering and printing, and enhancing user engagement through rewards and a comprehensive service offering. TechLite bridges the gap between high-end gaming requirements and convenience, ensuring every gamer finds exactly what they need for an unforgettable gaming session.
+</p>
 ## Prerequisites
 Node.js and Node Package Manager must be installed. You can download and install the following from https://nodejs.org/.
 
