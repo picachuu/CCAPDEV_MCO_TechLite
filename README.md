@@ -22,13 +22,13 @@ npm i express express-handlebars body-parser mongoose bcrypt multer express-sess
 
 Load the database:
 
+- Launch MongoDB Compass
 - Run app.js to initialize the database:
 ```bash
 cd NodeJS
 node app.js
 ```
 - Launch node app.js (to create database) and Ctrl + C to end the session
-- Launch MongoDB Compass
 - Import all collections given in the csv files corresponding to the collections in MongoDB Compass
 
 Run the application:
