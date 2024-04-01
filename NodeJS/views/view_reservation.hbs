@@ -1,0 +1,77 @@
+<!-- Preload Start-->
+{{> preload}}
+<!-- Preload End-->
+
+<!-- Header Start-->
+{{> header}}
+<!-- Header End -->
+
+<div class="reservation-management">
+    <h2>View Reservation</h2>
+    <form name="manageForm" onsubmit="return submitManageReservation()">
+        <div class="form-group">
+            <label for="userName">Reservation ID</label>
+            <input type="text" id="reservationId" name="reservationId" value="{{reservation_id}}" required readonly>
+        </div>
+        {{#if isManager}}
+        <div class="form-group">
+            <label for="userName">Reserver</label>
+            <input type="text" id="reserver" name="reserver" value="{{reserver}}" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="userName">Reserver Email</label>
+            <input type="text" id="reserverEmail" name="reserverEmail" value="{{reserver_email}}" required readonly>
+        </div>
+        {{/if}}
+        <div class="form-group">
+            <label for="userName">Name of User</label>
+            <input type="text" id="userName" name="userName" value="{{username}}" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="userEmail">Email</label>
+            <input type="email" id="userEmail" name="userEmail" value="{{email}}" required readonly>
+        </div>
+        <!-- Tier -->
+        <div class="form-group">
+            <label for="tierSelect">Tier:</label>
+            <select id="tierSelect" name="tier" class="tier-select">
+                <option value="{{tier}}">Tier {{tier}}</option>
+            </select>
+        </div>     
+        <!-- Date -->
+        <div class="form-group">
+            <label for="daySelect">Date:</label>
+            <select id="daySelect" name="date" class="day-select">
+                <option value = "{{date}}">{{date}}</option>
+            </select>
+        </div>
+
+        <!-- Seats Container -->
+        <div id="seatsContainer" class="seats-container">
+            <!-- JavaScript will populate this area with seat buttons -->
+        </div>
+
+        <!-- User Time Blocks Container -->
+        <div id="userTimeBlocksContainer" class="time-blocks-container" style="display:none;">
+            <!-- JavaScript will populate this area with time block buttons -->
+        </div>
+
+        <!-- Time Blocks Container -->
+        <div id="timeBlocksContainer" class="time-blocks-container" style="display:none;">
+            <!-- JavaScript will populate this area with time block buttons -->
+        </div>
+{{!-- hidden inputs --}}
+        <input type="hidden" name="userSelectedTime">
+        <input type="hidden" name="userNewTime">
+        <input type="hidden" name="canceller">
+        <input type="hidden" name="cancellerEmail">
+        <input type="hidden" name="manager">
+        <input type="hidden" name="seat">
+    </form>
+</div>
+
+
+<!-- Contact Start -->
+{{> contact}}
+<!-- Contact End -->
+{{> footer}}

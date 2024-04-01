@@ -8,6 +8,8 @@
 // var bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
 // var is_manager = true;
 
+var isRealtime = false;// reat-time variable to activate real-time updates for specific functions
+
 // whether user is logged
 var logged = getUserData().logged;
 // user information
@@ -84,6 +86,12 @@ function getBioMsg() {
 function getIsManager() {
     return getUserData().is_manager;
 }
+
+//helper function to compare date with present datetime (assume receives date type)
+function isPast(date) { //DO NOT CHANGE
+    return date < new Date();
+}
+//alert(isPast(new Date(2024, 4 - 1, 1, 9, 40))); // Example usage of isPast function (month is month - 1)
 
 (function ($) {
 	
@@ -266,6 +274,8 @@ function getIsManager() {
 
 	$(document).ready(function () {
 	    $(document).on("scroll", onScroll);
+
+        //alert(isPast(new Date(2024, 4 - 1, 1, 9, 40))); // Example usage of isPast function
 
         let data = getUserData();
         logged = data.logged;

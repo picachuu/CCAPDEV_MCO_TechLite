@@ -153,6 +153,7 @@ function addReservationsPerTier(tier, page) {
 */
 function loadReservations(page) {
     let data = {
+        logged: getLogged(),
         user_name: getUsername(),
         page: page,
         pageSize: 3,
@@ -168,19 +169,45 @@ function loadReservations(page) {
             if (status === 'success') {
                 totalPages = own.totalPages;
                 currentPage = own.page; 
-                const reservationsContainer = document.getElementById('items-container');
+                const reservationsContainer = document.getElementById('active-container');
                 reservationsContainer.innerHTML = '';
-
+                const inactiveReservationsContainer = document.getElementById('inactive-container');
+                inactiveReservationsContainer.innerHTML = '';
+/* 
                 if (own.reservations.length === 0) {
                     const noReservationsMsg = document.createElement('div');
                     noReservationsMsg.textContent = 'No reservations to show';
                     noReservationsMsg.classList.add('no-reservations');
                     reservationsContainer.appendChild(noReservationsMsg);
-                } else {
+                } else  */{
+                    let activeCount = 0;
+                    let inactiveCount = 0;
                     own.reservations.forEach(reservation => {
                         const reservationElement = createReservationElement(reservation);
-                        reservationsContainer.appendChild(reservationElement);
+                        if (reservationElement) { // only add if not null
+                            reservationsContainer.appendChild(reservationElement);
+                            activeCount++;
+                        } else {
+                            const inactiveReservationElement = createInactiveReservationElement(reservation);
+                            if (inactiveReservationElement) { // only add if not null
+                                inactiveReservationsContainer.appendChild(inactiveReservationElement);
+                                inactiveCount++;
+                            }
+                        }
                     });
+                    
+                    if (activeCount === 0) {
+                        const noReservationsMsg = document.createElement('div');
+                    noReservationsMsg.textContent = 'No active reservations to show';
+                    noReservationsMsg.classList.add('no-reservations');
+                        reservationsContainer.appendChild(noReservationsMsg);
+                    }
+                    if (inactiveCount === 0) { 
+                        const noReservationsMsg = document.createElement('div');
+                    noReservationsMsg.textContent = 'No inactive reservations to show';
+                    noReservationsMsg.classList.add('no-reservations');
+                        inactiveReservationsContainer.appendChild(noReservationsMsg);
+                    }
                 }
 
                 document.getElementById('currentPage').textContent = own.page;
@@ -267,9 +294,56 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// function to check when the whole reservation is expired/cancelled
+function expireCancelledRemainSlots(reservation) {
+    let reservationLength = Object.keys(reservation).length - 1; //length -1 due to tier number
 
+    // count number of remaining available slots (i.e. !cancelled_by)
+    let remainingSlots = 0;
+    for (let i = 0; i < reservationLength; i++) {
+        if (reservation[i].cancelled_by == null || reservation[i].cancelled_by == "null") {
+            remainingSlots++;
+        }
+    }
+
+    // check if the reservation is expired (when all available month day year time_start is less than current datetime)
+    let expired = isRealtime;    // change to true to enable CHANGE!! FOR REAL-TIME CHECKING
+    for (let i = 0; i < reservationLength; i++) {
+        if (reservation[i].cancelled_by == null && !isPast(new Date(reservation[i].year, reservation[i].month - 1, reservation[i].day, Math.floor(reservation[i].time_start / 100), reservation[i].time_start % 100))){
+            expired = false;
+            break;
+        }
+    }
+
+    // precedence of status: Cancelled > Expired
+    if (remainingSlots == 0) {
+        return "Cancelled";
+    } else if (expired) {
+        return "Expired";
+    }
+
+    /* if (remainingSlots == 0 && expired) {
+        return "Cancelled/Expired";
+    } else if (remainingSlots == 0) {
+        return "Cancelled";
+    } else if (expired) {
+        return "Expired";
+    } */
+
+    return remainingSlots;
+}
+
+// returns null when all reservations are expired/cancelled
 function createReservationElement(reservation) {
-    let reservationLength = Object.keys(reservation).length - 1;
+
+    let reservationLength = Object.keys(reservation).length - 1; //length -1 due to tier number
+
+    let remainingSlots = expireCancelledRemainSlots(reservation);
+
+    if (remainingSlots == "Cancelled" || remainingSlots == "Expired" || remainingSlots == "Cancelled/Expired") {
+        return null;
+    }
+    
     var reservationDiv = document.createElement('div');
     reservationDiv.classList.add('item');
     var reservationUl = document.createElement("ul");
@@ -335,24 +409,24 @@ function createReservationElement(reservation) {
     timeLi.appendChild(timeHeader);
     var timeSpan = document.createElement('span');
 
-    let timeStart_ = reservation[0].time_start; //earliest time start
-    let remainingSlots_ = Object.keys(reservation).length - 2;
-    if (remainingSlots_ > 1) {
-        timeSpan.textContent = `${Math.floor((timeStart_)/100).toString().padStart(2, '0')}:${((timeStart_)%100).toString().padStart(2, '0')}` + ' (30m + '+ remainingSlots_ +' more) ';
+    // earliest time start that is available (i.e. !cancelled_by)
+    // create array of available time starts
+    let timeStarts = [];
+    for (let i = 0; i < reservationLength; i++) {
+        if (reservation[i].cancelled_by == null || reservation[i].cancelled_by == "null") {
+            timeStarts.push(reservation[i].time_start);
+        }
+    }
+
+    let timeStart_ = Math.min(...timeStarts);
+       
+    if (remainingSlots > 1) {
+        timeSpan.textContent = `${Math.floor((timeStart_)/100).toString().padStart(2, '0')}:${((timeStart_)%100).toString().padStart(2, '0')}` + ' (30m + '+ (remainingSlots - 1) +' more) ';
     } else {
         timeSpan.textContent = `${Math.floor((timeStart_)/100).toString().padStart(2, '0')}:${((timeStart_)%100).toString().padStart(2, '0')}` + ' (30 minutes)';
     }
+    
     timeLi.appendChild(timeSpan);
-    /* for (let i = 0; i < Object.keys(reservation).length - 1; i++) {
-        
-        var timeSpan = document.createElement('span');
-        //timeSpan.textContent = `${Math.floor((reservation.time_start)/100).toString().padStart(2, '0')}:${((reservation.time_start)%100).toString().padStart(2, '0')}` + ' (30 minutes)';
-        timeSpan.textContent = `${Math.floor((reservation[i].time_start)/100).toString().padStart(2, '0')}:${((reservation[i].time_start)%100).toString().padStart(2, '0')}` + ' (30 minutes)';
-        timeLi.appendChild(timeSpan);
-        if (i !== reservation.length - 1) {
-            timeLi.appendChild(document.createElement('br'));
-        }
-    } */
     
     reservationUl.appendChild(timeLi);
 
@@ -360,32 +434,109 @@ function createReservationElement(reservation) {
     var manageLi = document.createElement("li");
     var manageDiv = document.createElement('div');
     manageDiv.classList.add('main-border-button');
-    // var manageLink = document.createElement("a");
-    // manageLink.href = "/manage" + 
-    //     //old
-    //     /* "?tier=" + encodeURIComponent(reservation.tier) + 
-    //     "&seats=" + encodeURIComponent(seatNum) + 
-    //     "&username=" + encodeURIComponent(reservation.assigned_to) +
-    //     "&email=" + encodeURIComponent(reservation.email) + 
-    //     "&reservations=" + encodeURIComponent(1) + 
-    //     "&time_start1=" + encodeURIComponent(reservation.time_start) + 
-    //     "&month=" + encodeURIComponent(reservation.month) + 
-    //     "&day=" + encodeURIComponent(reservation.day) + 
-    //     "&year=" + encodeURIComponent(reservation.year); */
-    //     // new
-    //     "?tier=" + encodeURIComponent(reservation[0].tier) +
-    //     "&seats=" + encodeURIComponent(seatNum) +
-    //     "&username=" + encodeURIComponent(reservation[0].assigned_to) +
-    //     "&email=" + encodeURIComponent(reservation[0].email) +
-    //     "&reservations=" + encodeURIComponent(reservation.length) +
-    //     reservation.map((r, i) => `&time_start${i + 1}=${encodeURIComponent(r.time_start)}`).join('') +
-    //     "&month=" + encodeURIComponent(reservation[0].month) +
-    //     "&day=" + encodeURIComponent(reservation[0].day) +
-    //     "&year=" + encodeURIComponent(reservation[0].year);
-    // manageLink.textContent = 'Manage';
-    // manageDiv.appendChild(manageLink);
     
     addManageBtnForm(manageDiv, reservation[0].reservation_id);
+    
+    
+    manageLi.appendChild(manageDiv);
+    reservationUl.appendChild(manageLi);
+
+    reservationDiv.appendChild(reservationUl);
+
+    return reservationDiv;
+}   // end createReservationElement
+
+function createInactiveReservationElement(reservation) {
+    
+    let reservationLength = Object.keys(reservation).length - 1; //length -1 due to tier number
+
+    let status = expireCancelledRemainSlots(reservation);
+
+    // check if integer type
+    if (typeof status === 'number') {
+        return null;
+    }
+    
+    var reservationDiv = document.createElement('div');
+    reservationDiv.classList.add('item');
+    var reservationUl = document.createElement("ul");
+
+    // Tier image based on reservation.tier
+    var reservationLi1 = document.createElement("li");
+    var image = document.createElement('img');
+    image.alt = "Tier Image";
+    switch(Number(reservation.tier)) {
+        case 1:
+            image.src = 'assets/images/tier1.png';
+            break;
+        case 2:
+            image.src = 'assets/images/tier2.png';
+            break;
+        case 3:
+            image.src = 'assets/images/tier3.png';
+            break;
+        default:
+            image.alt = 'No image available';
+    }
+    reservationLi1.appendChild(image);
+    reservationUl.appendChild(reservationLi1);
+
+    // Room and Seat
+    const seatNum = reservation[0].seats;
+    var roomAndSeatLi = document.createElement("li");
+    var roomHeader = document.createElement('h4');
+    var roomSpan = document.createElement('span');
+    roomHeader.textContent = 'Room';
+    roomSpan.textContent = 'Tier ' + reservation.tier + ' Seat ' + seatNum;
+    roomAndSeatLi.appendChild(roomHeader);
+    roomAndSeatLi.appendChild(roomSpan);
+    reservationUl.appendChild(roomAndSeatLi);
+
+    // Date Reserved
+    const dateReserved = reservation[0].day + '/' + reservation[0].month + '/' + reservation[0].year;
+    var dateLi = document.createElement("li");
+    var dateHeader = document.createElement('h4');
+    var dateSpan = document.createElement('span');
+    dateHeader.textContent = 'Date Reserved';
+    dateSpan.textContent = dateReserved;
+    dateLi.appendChild(dateHeader);
+    dateLi.appendChild(dateSpan);
+    reservationUl.appendChild(dateLi);
+
+    // Status
+    var statusLi = document.createElement("li");
+    var statusHeader = document.createElement('h4');
+    var statusSpan = document.createElement('span');
+    statusHeader.textContent = 'Status';
+    // Assume logic for determining if expired or ongoing is implemented elsewhere
+    statusSpan.textContent = status; // placeholder
+    statusLi.appendChild(statusHeader);
+    statusLi.appendChild(statusSpan);
+    reservationUl.appendChild(statusLi);
+
+    // Slots
+    
+    let slotLi = document.createElement("li");
+    let slotHeader = document.createElement('h4');
+    slotHeader.textContent = 'Slots';
+    slotLi.appendChild(slotHeader);
+    let slotSpan = document.createElement('span');
+    let slotSpanText = reservationLength + " Reservation";// add s if more than 1
+    if (reservationLength > 1) {
+        slotSpanText += "s";
+    } 
+    slotSpan.textContent = slotSpanText;
+    
+    slotLi.appendChild(slotSpan);
+    
+    reservationUl.appendChild(slotLi);
+
+    // Manage Link
+    var manageLi = document.createElement("li");
+    var manageDiv = document.createElement('div');
+    manageDiv.classList.add('main-border-button');
+    
+    addViewBtnForm(manageDiv, reservation[0].reservation_id);
     
     
     manageLi.appendChild(manageDiv);
@@ -417,3 +568,23 @@ function addManageBtnForm(manageDiv,reservation_id) {
     manageDiv.appendChild(manageForm);
 }
 
+function addViewBtnForm(manageDiv,reservation_id) {
+    let manageForm = document.createElement("form");
+    
+    manageForm.method = "POST";
+    manageForm.action = "/view-reservation";
+    
+    let hiddenField = document.createElement("input");
+    hiddenField.type = "hidden";
+    hiddenField.name = "reservation_id";
+    hiddenField.value = reservation_id;
+    manageForm.appendChild(hiddenField);
+    
+
+    var manageButton = document.createElement("button");
+    manageButton.type = "submit";
+    manageButton.textContent = "View";
+    manageForm.appendChild(manageButton);
+
+    manageDiv.appendChild(manageForm);
+}

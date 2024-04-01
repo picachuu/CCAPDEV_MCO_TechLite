@@ -20,7 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const manageForm = document.forms["manageForm"];
     if (manageForm) {
         
+        let updateBtn = document.getElementById('updateBtn');
+        let delBtn = document.getElementById('delBtn');
+
         displayManageablecontent();
+        alert('wowwwwwwwwwwwwww');
         document.getElementById('tierSelect').addEventListener('mousedown', function(e) {
             e.preventDefault();
             
@@ -30,35 +34,41 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
         }, false);
+        
+        
 
         // button onclicks
-        document.getElementById('updateBtn').addEventListener('click', function() {
-            // Update the reservation
-            manageForm.action = 'update-reservation';
-            let userCount = manageFormUserTimeBlocks(manageForm)
-            let count = manageFormTimeBlocks(manageForm);
-            if (userCount != count) {
-                manageForm.elements['userSelectedTime'].value = null;
-                manageForm.elements['userNewTime'].value = null;
-                alert("Please select the same number of time blocks for the original and the new schedule.");
-            } else if (userCount == 0) {
-                alert("Please select at least one time block for the new schedule.");
-            } else {
-                manageFormSubmitFunction(manageForm);
-            }
-        });
-        document.getElementById('delBtn').addEventListener('click', function() {
-            // Update the reservation
-            manageForm.action = 'delete-reservation';
-            if (manageFormUserTimeBlocks(manageForm) == 0) {
-                alert("Please select at least one time block for the schedule to be deleted.");
-            } else {
-                manageForm.elements['canceller'].value = getUsername();
-                manageForm.elements['cancellerEmail'].value = getEmail();
-                manageForm.elements['manager'].value = getIsManager();
-                manageFormSubmitFunction(manageForm);
-            }
-        });
+        if (updateBtn) {
+            updateBtn.addEventListener('click', function() {
+                // Update the reservation
+                manageForm.action = 'update-reservation';
+                let userCount = manageFormUserTimeBlocks(manageForm)
+                let count = manageFormTimeBlocks(manageForm);
+                if (userCount != count) {
+                    manageForm.elements['userSelectedTime'].value = null;
+                    manageForm.elements['userNewTime'].value = null;
+                    alert("Please select the same number of time blocks for the original and the new schedule.");
+                } else if (userCount == 0) {
+                    alert("Please select at least one time block for the new schedule.");
+                } else {
+                    manageFormSubmitFunction(manageForm);
+                }
+            });
+        }
+        if (delBtn) {
+            delBtn.addEventListener('click', function() {
+                // Update the reservation
+                manageForm.action = 'delete-reservation';
+                if (manageFormUserTimeBlocks(manageForm) == 0) {
+                    alert("Please select at least one time block for the schedule to be deleted.");
+                } else {
+                    manageForm.elements['canceller'].value = getUsername();
+                    manageForm.elements['cancellerEmail'].value = getEmail();
+                    manageForm.elements['manager'].value = getIsManager();
+                    manageFormSubmitFunction(manageForm);
+                }
+            });
+        }
 
     }
 });

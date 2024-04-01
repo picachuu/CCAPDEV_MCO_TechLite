@@ -307,14 +307,15 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
 }
 
 function populateTimeBlocksManage(seat_number, tier_number, day_number) {
-    const container = document.getElementById('timeBlocksContainer');
-    container.innerHTML = ''; // Clear previous blocks
-    container.style.display = 'block';
-
     const updateBtn = document.getElementById('updateBtn');
     const delBtn = document.getElementById('delBtn');
     updateBtn.style.display = 'block';
     delBtn.style.display = 'block';
+    const container = document.getElementById('timeBlocksContainer');
+    container.innerHTML = ''; // Clear previous blocks
+    container.style.display = 'block';
+
+    
     
 
 
@@ -393,10 +394,6 @@ function populateTimeBlocksManage(seat_number, tier_number, day_number) {
                             else if (selectedBlocks == selectionLimit && block.classList.contains('selected')) {
                                 block.classList.toggle('selected');
                                 selectedBlocks = selectedBlocks - 1;
-                                // if (selectedBlocks == 0) {
-                                //     updateBtn.style.display = 'none';
-                                //     delBtn.style.display = 'block';
-                                // }
                             }
                         }
                     }

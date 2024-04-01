@@ -150,79 +150,84 @@ function add(server){
   });
 
   // Profile reservations post request based on reservation_id
-  server.post('/profile-reservations', async function(req, resp) {  
+  server.post('/profile-reservations', async function(req, resp) { 
     console.log('Profile reservations request received');
+    console.log(req.body);
+    if (req.body.logged == 'false') {
+      resp.redirect('/');
+    } else {
 
-    const page = Math.max(1, Number(req.body.page));
-    const pageSize = 3;
-    const tierFilters = req.body.tier_nums ? req.body.tier_nums.map(Number) : [1, 2, 3];
+      const page = Math.max(1, Number(req.body.page));
+      const pageSize = 3;
+      const tierFilters = req.body.tier_nums ? req.body.tier_nums.map(Number) : [1, 2, 3];
 
-    let combinedReservations = [];
-    let totalReservations = 0;
+      let combinedReservations = [];
+      let totalReservations = 0;
 
-    const tiers = [tier1_schedModel, tier2_schedModel, tier3_schedModel];
-    let tierCounts = {1: 0, 2: 0, 3: 0};
+      const tiers = [tier1_schedModel, tier2_schedModel, tier3_schedModel];
+      let tierCounts = {1: 0, 2: 0, 3: 0};
 
-    // assuming user exists since logged in
-    // (1) find the user_reservation document given the username
-    // (1.1) find the _id of the user in the user_info collection (Model: userModel)
-    const user = await userModel.findOne({ username: req.body.user_name }).lean();
-    const user_id = user._id;
-    
+      // assuming user exists since logged in
+      // (1) find the user_reservation document given the username
+      // (1.1) find the _id of the user in the user_info collection (Model: userModel)
+      const user = await userModel.findOne({ username: req.body.user_name }).lean();
+      const user_id = user._id;
+      
 
-    for (let tierIndex = 0; tierIndex < tiers.length; tierIndex++) {
-      if (!tierFilters.includes(tierIndex + 1)) continue;
+      for (let tierIndex = 0; tierIndex < tiers.length; tierIndex++) {
+        if (!tierFilters.includes(tierIndex + 1)) continue;
 
-      let tierModel = tiers[tierIndex];
-      // (1.2) find all the reservations given user_id and tier in the user_reservation collection (Model: userReservationModel)
-      // the user is the reserver in this case
-      let user_reservation = await userReservationModel.find({ reserver: user_id, tier: tierIndex + 1 }).lean();
-      // (2) create an array of reservations (tierModel) from the user_reservation document using reservation._id
-      // (2.1) find all the reservations given reservation_id in the tier collection
-      // create an array element to the user_reservation structure being the reservations given reservation_id
-      /* let reservations = await Promise.all(user_reservation.map(async reservation => {
-          const reservation_id = reservation._id;
-          let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
-          // sort the reservations by time_start
-          tempfind.sort((a, b) => a.time_start - b.time_start);
-          return tempfind;
-      })); */
-      let reservations = [];
-      for (let i = 0; i < user_reservation.length; i++) {
-          const reservation_id = user_reservation[i]._id;
-          let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
-          tempfind.sort((a, b) => a.time_start - b.time_start);
-          reservations.push(tempfind);
+        let tierModel = tiers[tierIndex];
+        // (1.2) find all the reservations given user_id and tier in the user_reservation collection (Model: userReservationModel)
+        // the user is the reserver in this case
+        let user_reservation = await userReservationModel.find({ reserver: user_id, tier: tierIndex + 1 }).lean();
+        // (2) create an array of reservations (tierModel) from the user_reservation document using reservation._id
+        // (2.1) find all the reservations given reservation_id in the tier collection
+        // create an array element to the user_reservation structure being the reservations given reservation_id
+        /* let reservations = await Promise.all(user_reservation.map(async reservation => {
+            const reservation_id = reservation._id;
+            let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+            // sort the reservations by time_start
+            tempfind.sort((a, b) => a.time_start - b.time_start);
+            return tempfind;
+        })); */
+        let reservations = [];
+        for (let i = 0; i < user_reservation.length; i++) {
+            const reservation_id = user_reservation[i]._id;
+            let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+            tempfind.sort((a, b) => a.time_start - b.time_start);
+            reservations.push(tempfind);
+        }
+
+        // sort reservations by time_start of the first reservation (not yet implemented(unsure))
+
+
+        const reservationsWithTier = reservations.map(reservation => ({
+            ...reservation,
+            tier: tierIndex + 1
+        }));
+        combinedReservations.push(...reservationsWithTier);
+        tierCounts[tierIndex + 1] = reservationsWithTier.length;
+        totalReservations += reservationsWithTier.length;
       }
 
-      // sort reservations by time_start of the first reservation (not yet implemented(unsure))
+      
 
+      console.log("Tier Counts:", tierCounts);
+      const startIndex = (page - 1) * pageSize;
+      let paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
 
-      const reservationsWithTier = reservations.map(reservation => ({
-          ...reservation,
-          tier: tierIndex + 1
-      }));
-      combinedReservations.push(...reservationsWithTier);
-      tierCounts[tierIndex + 1] = reservationsWithTier.length;
-      totalReservations += reservationsWithTier.length;
+      resp.send({
+          reservations: paginatedReservations,
+          page: page,
+          pageSize: pageSize,
+          total: totalReservations,
+          totalPages: Math.ceil(totalReservations / pageSize)
+      });
+
+      console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
+      console.log(`Total reservations: ${totalReservations}`);
     }
-
-    
-
-    console.log("Tier Counts:", tierCounts);
-    const startIndex = (page - 1) * pageSize;
-    let paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
-
-    resp.send({
-        reservations: paginatedReservations,
-        page: page,
-        pageSize: pageSize,
-        total: totalReservations,
-        totalPages: Math.ceil(totalReservations / pageSize)
-    });
-
-    console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
-    console.log(`Total reservations: ${totalReservations}`);
   });
 
   // Profile reservations post request based on reservation_id
@@ -554,7 +559,7 @@ function add(server){
     }
 
     // getting reservation_id
-    tierModel.findOne(searchQuery).lean().then(function(reservation) {
+    tierModel.findOne(searchQuery).lean().then(async function(reservation) {
       if (reservation == null) {
         let message = 'Reservation not found';
         console.log("In editReservation() - " + message);
@@ -564,7 +569,8 @@ function add(server){
         console.log('Reservation found');
         console.log(reservation);
         // find reservation_id given the information
-        manageReservation(reservation_id,resp);
+        let respdata = await manageReservation(reservation_id,resp);
+        renderManage(resp,respdata);
       }
     }).catch(errorFn);
 
@@ -748,18 +754,19 @@ function add(server){
     });
   }
 
-  function manageReservation(reservation_id,resp) {
+  async function manageReservation(reservation_id,resp) {
     console.log('Manage reservation post request received');
     console.log("reservation_id: " + reservation_id);
+    let respdata = {};
 
     // step 1(1): find the user_reservation document given the reservation_id (Model: userReservationModel)
-    let user_reservation = userReservationModel.findOne({ _id: reservation_id }).lean().then(function(user_reservation) {
+    respdata = await userReservationModel.findOne({ _id: reservation_id }).lean().then(async function(user_reservation) {
       console.log('User reservation found');
       console.log(user_reservation);
       let tier = user_reservation.tier;
 
       // step 1(2): get user information from the user_info collection (Model: userModel)
-      userModel.findOne({ _id: user_reservation.reserver }).lean().then(function(user) {
+      return await userModel.findOne({ _id: user_reservation.reserver }).lean().then(async function(user) {
         console.log('User found');
         console.log(user);
         let isManager = user.is_manager;
@@ -774,13 +781,11 @@ function add(server){
           case 3: tierModel = tier3_schedModel; break;
         }
 
-        tierModel.find({ reservation_id: reservation_id }).lean().then(function(reservations) {
+        return await tierModel.find({ reservation_id: reservation_id }).lean().then(function(reservations) {
           console.log('Reservations found');
           console.log(reservations);
           let date = reservations[0].month + '/' + reservations[0].day + '/' + reservations[0].year;
-          resp.render('manage',{
-            layout: 'index',
-            title: 'TechLite - Manage Reservations',
+          respdata = {
             reservation_id: reservation_id,
             reserver: reserver,
             reserver_email: reserver_email,
@@ -789,15 +794,27 @@ function add(server){
             isManager: isManager,
             date: date,
             tier: tier,
-          });
+            layout: 'index',
+            title: 'TechLite - Manage Reservations'
+          };
+
+          return respdata;
         }).catch(errorFn);
       }).catch(errorFn);
     }).catch(errorFn);
+    
+    return respdata;
+  }
+
+  function renderManage(resp,respdata) {
+    resp.render('manage',respdata);
   }
 
   // Manage reservation post request based on reservation_id
-  server.post('/manage-reservation', function(req, resp) {
-    manageReservation(req.body.reservation_id,resp);
+  server.post('/manage-reservation', async function(req, resp) {
+    let reservation_id = req.body.reservation_id;
+    let respdata = await manageReservation(reservation_id,resp);
+    renderManage(resp,respdata);
   });
 
   server.post('/manage-prompt', function(req, resp) {
@@ -863,22 +880,25 @@ function add(server){
       case 3: tierModel = tier3_schedModel; break;
     }
 
-    // find all reservation instance in the tier model given the reservation_id
-    tierModel.find({ reservation_id: reservation_id }).lean().then(function(reservations) {
-      if (reservations.length == 0) {
-        console.log('No reservations found');
-        resp.send({ reservations: [] });
-      } else {
-        console.log('Reservations found');
-        // sort reservations in ascending order of time_start
-        reservations.sort((a, b) => a.time_start - b.time_start);
+    if (tier != 0) {
+      // find all reservation instance in the tier model given the reservation_id
+      tierModel.find({ reservation_id: reservation_id }).lean().then(function(reservations) {
+        if (reservations.length == 0) {
+          console.log('No reservations found');
+          resp.send({ reservations: [] });
+        } else {
+          console.log('Reservations found');
+          // sort reservations in ascending order of time_start
+          reservations.sort((a, b) => a.time_start - b.time_start);
 
-        console.log(reservations);
+          console.log(reservations);
 
-        resp.send({ reservations: reservations });
-      }
-    }).catch(errorFn);
-
+          resp.send({ reservations: reservations });
+        }
+      }).catch(errorFn);
+    } else {
+      resp.redirect('/');
+    }
 
 
   });
@@ -1146,6 +1166,34 @@ function add(server){
         }).catch(errorFn);
       }
     }).catch(errorFn);
+  });
+
+  /* let manageForm = document.createElement("form");
+    
+    manageForm.method = "POST";
+    manageForm.action = "/view-reservation";
+    
+    let hiddenField = document.createElement("input");
+    hiddenField.type = "hidden";
+    hiddenField.name = "reservation_id";
+    hiddenField.value = reservation_id;
+    manageForm.appendChild(hiddenField);
+    
+
+    var manageButton = document.createElement("button");
+    manageButton.type = "submit";
+    manageButton.textContent = "View";
+    manageForm.appendChild(manageButton);
+
+    manageDiv.appendChild(manageForm); */
+
+  // view server post request of inactive reservations given reservation_id
+  server.post('/view-reservation', async function(req, resp) {
+    let respdata = await manageReservation(req.body.reservation_id,resp);
+    respdata.layout = 'index';
+    respdata.title = 'TechLite - View Reservation';
+    console.log("respdata: " + respdata);
+    resp.render('view_reservation',respdata);
   });
 }
 
