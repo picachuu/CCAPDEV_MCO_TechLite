@@ -1,6 +1,8 @@
 // Installation Procedure
 // npm init
-// npm i express express-handlebars body-parser multer
+// npm i express express-handlebars body-parser mongoose bcrypt multer express-session connect-mongodb-session
+
+const dbmodel = require('./models/dbmodel'); //database models
 
 const express = require('express');
 const server = express();
@@ -22,6 +24,55 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;  // keep this at 10
 // end bcrypt
 
+const multer = require('multer');
+const path = require('path');
+
+// Set up storage engine
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'public/uploads');
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
+
+
+const mongoose = dbmodel.mongoose;
+const mongo_uri = dbmodel.mongo_uri;
+mongoose.connect(mongo_uri);
+
+
+// sessions: this is a way to store data on the client side browser (per) - basically cookies
+const session = require('express-session');
+const mongoStore = require('connect-mongodb-session')(session);
+
+server.use(session({
+  secret: 'a secret fruit',
+  saveUninitialized: true, 
+  resave: false,
+  store: new mongoStore({ 
+    uri: mongo_uri,
+    collection: 'mySession',
+    expires: 1000*60*15 // 15 minutes
+  })
+}));
+
+
+
+// stores modules and constants that will be used by the controllers
+// not sure if all will be used within controller
+const modules = {
+  dbmodel: dbmodel,
+  express: express,
+  bcrypt: bcrypt,
+  saltRounds: saltRounds,
+  mongoose: mongoose,
+  upload: upload
+};
+
 
 //This part of the code will load the controllers that will interact
 //with the rest of the system.
@@ -29,14 +80,7 @@ const controllers = ['routes','dbquery','dbaccounts'];
 for(var i=0; i<controllers.length; i++){
   const ctrl = require('./controllers/'+controllers[i]);
 
-  switch (controllers[i]) {
-    case 'dbaccounts':
-      ctrl.add(server, bcrypt, saltRounds);
-      break;
-    default:
-      ctrl.add(server);
-      break;
-  }
+  ctrl.add(server, modules);
 }
 
 const port = process.env.PORT | 3000;

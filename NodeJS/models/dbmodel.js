@@ -21,6 +21,7 @@ const userInfoCollection = "user_info";
 const userReservationsCollection = "user_reservation";
 const seatCollection = "seat";
 const db_url = "mongodb://127.0.0.1:27017/";
+const mongo_uri = db_url+databaseName;
 
 
 //Require a MongoDB connection using mongoose. Include the mongoose library
@@ -101,3 +102,5 @@ module.exports.tier3_schedModel = tier3_schedModel;
 module.exports.userReservationModel = userReservationModel;
 module.exports.userModel = userModel; 
 module.exports.seatModel = seatModel; 
+module.exports.mongo_uri = mongo_uri;
+module.exports.mongoose = mongoose;

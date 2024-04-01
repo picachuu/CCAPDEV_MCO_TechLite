@@ -1,36 +1,28 @@
-const mongoose = require('mongoose');
-
-const dbmodel = require('../models/dbmodel');
-const tier1_schedModel = dbmodel.tier1_schedModel;
-const tier2_schedModel = dbmodel.tier2_schedModel;
-const tier3_schedModel = dbmodel.tier3_schedModel;
-const userReservationModel = dbmodel.userReservationModel;
-const userModel = dbmodel.userModel;
-const seatModel = dbmodel.seatModel;
-const db_url = dbmodel.db_url;
-const databaseName = dbmodel.databaseName;
-const errorFn = dbmodel.errorFn;
-const successFn = dbmodel.successFn;
-
-const multer = require('multer');
-const path = require('path');
-
-// Set up storage engine
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'public/uploads');
-    },
-    filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
-
-const upload = multer({ storage: storage });
+const { json } = require("body-parser");
 
 
-mongoose.connect(db_url+databaseName);
 
-function add(server){
+
+
+function add(server, modules){
+  // establish all module constants
+  const dbmodel = modules.dbmodel;
+  const bcrypt = modules.bcrypt;
+  const saltRounds = modules.saltRounds;
+  const mongoose = modules.mongoose;
+
+  const tier1_schedModel = dbmodel.tier1_schedModel;
+  const tier2_schedModel = dbmodel.tier2_schedModel;
+  const tier3_schedModel = dbmodel.tier3_schedModel;
+  const userReservationModel = dbmodel.userReservationModel;
+  const userModel = dbmodel.userModel;
+  const seatModel = dbmodel.seatModel;
+  const db_url = dbmodel.db_url;
+  const databaseName = dbmodel.databaseName;
+  const errorFn = dbmodel.errorFn;
+  const successFn = dbmodel.successFn;
+  const upload = modules.upload;
+
 
   server.post('/reserve', function(req, resp){
     console.log('Reserve post request received');
@@ -470,6 +462,8 @@ function add(server){
       assigned_to: name,
       email: email
     }
+
+    console.log("Searching for Tier"+selectedTier+": "+ JSON.stringify(searchQuery));
 
     // select tier model
     let tierModel;
