@@ -16,13 +16,19 @@ git clone https://github.com/picachuu/CCAPDEV_MCO_TechLite.git
 Install the dependencies:
 
 ```bash
-npm i express express-handlebars body-parser mongoose multer
+npm i express express-handlebars body-parser mongoose bcrypt multer express-session connect-mongodb-session
 ```
 
 Load the database:
+
+- Run app.js to initialize the database:
+```bash
+cd NodeJS
+node app.js
+```
 - Launch node app.js (to create database)
-- Open mongodb compass 
-- Load all collections given the csv files corresponding to the collections in mongodb compass
+- Launch MongoDB Compass
+- Import all collections given in the csv files corresponding to the collections in MongoDB Compass
 
 Run the application:
 
