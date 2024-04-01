@@ -1,13 +1,3 @@
-// // whether user is logged
-// var logged = true;
-// // user information
-// var username = "admin";
-// var email = "admin@email.com";
-// var img_url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-// var banner_url = "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg";
-// var bio_msg = 'Admin of the TechLite: "I dunno but apdev kinda tuf innit"';
-// var is_manager = true;
-
 var isRealtime = false;// reat-time variable to activate real-time updates for specific functions
 var setDate = true;
 
@@ -41,7 +31,7 @@ function getUserData() {
         async: false  // Make the AJAX request synchronous
     }).responseJSON;
 
-    if (response.logged) {
+    if (response.user) {
         let userObject = response.user;
         return {
             logged: true,
@@ -322,6 +312,7 @@ function isWithinOneHour(date) {
         bio_msg = data.bio_msg;
         is_manager = data.is_manager;
 
+
         if (img_url !== ""){
             document.getElementById('navbarProfileImage').src = img_url;
         }
@@ -519,9 +510,9 @@ function isWithinOneHour(date) {
                 event.preventDefault(); // Prevent default anchor behavior
 
                 // ==== Placeholder: Logic to logout user ====
-                alert('Logging out...');
+               alert('Logging out...');
                 $.post('/log-out'); //kinda weird but it works
-                window.location.href = '/'; // Redirect to home page
+                window.location.href = '/?login=out'; // Redirect to home page
             });
         }
 

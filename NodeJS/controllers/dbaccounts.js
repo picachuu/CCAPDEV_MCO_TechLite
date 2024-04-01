@@ -1,12 +1,3 @@
-let username = null;
-let email = null;
-let logged_status = false;
-let display = null;
-let is_manager = null;
-let img_url = null;
-let banner_url = null;
-let bio_msg = null;
-
 function add(server,modules){
   // establish all module constants
   const dbmodel = modules.dbmodel;
@@ -38,11 +29,23 @@ function add(server,modules){
 
     user = await checkLoginDB(searchQuery); // wait for the function to finish before proceeding
 
+    user = {
+      username: user.username,
+      email: user.email,
+      display: user.display,
+      is_manager: user.is_manager,
+      img_url: user.img_url,
+      banner_url: user.banner_url,
+      bio_msg: user.bio_msg
+    }
+
+    req.session.user = user; // session checkpoint, session start
+
     // below is a placeholder
     if (user != null){
-      resp.redirect('/?success=true'); //redirect to home page with success message
+      resp.redirect('/?login=success'); //redirect to home page with success message
     } else {
-      resp.redirect('/?success=false'); //redirect to home page with failure message
+      resp.redirect('/?login=failed'); //redirect to home page with failure message
     }
 
   });
@@ -66,24 +69,15 @@ function add(server,modules){
       console.log('No User Found');
     }
 
+    
     if (user) {
       valid = true;
-      logged_status = true;
-      username = user.username;
-      email = user.email;
-      display = user.display;
-      is_manager = user.is_manager;
-      img_url = user.img_url;
-      banner_url = user.banner_url;
-      bio_msg = user.bio_msg;
-    } else {
-      logged_status = false;
     }
 
     resp.send({valid: valid});
   });
 
-  async function refreshCredentials() {
+  async function refreshCredentials(username, email) {
     const searchQuery = { //searchQuery for username based log-in
       username: username,
       email: email
@@ -97,50 +91,29 @@ function add(server,modules){
       console.log('No User Found');
     }
 
-    if (user) {
-      logged_status = true;
-      username = user.username;
-      email = user.email;
-      display = user.display;
-      is_manager = user.is_manager;
-      img_url = user.img_url;
-      banner_url = user.banner_url;
-      bio_msg = user.bio_msg;
-    } else {
-      logged_status = false;
-    }
+    return user;
   }
 
   server.post('/obtain-credentials', async function(req, resp){  //async function for asynchronous operations
-    let user = null;
+    let user = req.session.user;
 
-    if (logged_status) refreshCredentials();
+    if (user) {
+      user = await refreshCredentials(user.username, user.email);
+    }
 
     console.log("Obtaining credentials...");
-    console.log("Logged Status: " + logged_status);
-    console.log("Username: " + username);
-    console.log("Email: " + email);
-    console.log("Display: " + display);
-    console.log("Is_Manager: " + is_manager);
+    console.log("User: " + JSON.stringify(user));
 
-    if (logged_status) {
+    if (user) {
       user = {
-        username: username,
-        email: email,
-        display: display,
-        is_manager: is_manager,
-        img_url: img_url,
-        banner_url: banner_url,
-        bio_msg: bio_msg
+        username: user.username,
+        email: user.email,
+        display: user.display,
+        is_manager: user.is_manager,
+        img_url: user.img_url,
+        banner_url: user.banner_url,
+        bio_msg: user.bio_msg
       }
-    } else {
-      username = null;
-      email = null;
-      display = null;
-      is_manager = null;
-      img_url = null;
-      banner_url = null;
-      bio_msg = null;
     }
 
     if (user){
@@ -149,30 +122,15 @@ function add(server,modules){
       console.log('No User Found');
     }
 
-    resp.send({logged: logged_status, user: user});
+    resp.send({user: user});
   });
 
-  server.post('/log-out', async function(req, resp){
-    // set all user credentials to null
+  server.post('/log-out', function(req, resp){
     console.log('Logging out...');
-    logged_status = false;
-    username = null;
-    email = null;
-    display = null;
-    is_manager = null;
-    img_url = null;
-    banner_url = null;
-    bio_msg = null;
-
-    console.log('Logged Status: ' + logged_status);
-    
-    
-
-    if (logged_status){
-      resp.redirect('/?success=false');
-    } else {
-      resp.redirect('/?success=true');
-    }
+    console.log('Session: ' + req.session.user);
+    req.session.destroy(function(err) {
+      console.log('Session Destroyed');
+    });
   });
 
   async function checkLoginDB(searchQuery){ //async function for asynchronous operations

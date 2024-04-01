@@ -1,6 +1,6 @@
 // Installation Procedure
 // npm init
-// npm i express express-handlebars body-parser multer
+// npm i express express-handlebars body-parser mongoose bcrypt multer express-session connect-mongodb-session
 
 const dbmodel = require('./models/dbmodel'); //database models
 
@@ -44,7 +44,9 @@ const mongoose = dbmodel.mongoose;
 const mongo_uri = dbmodel.mongo_uri;
 mongoose.connect(mongo_uri);
 
-/* const session = require('express-session');
+
+// sessions: this is a way to store data on the client side browser (per) - basically cookies
+const session = require('express-session');
 const mongoStore = require('connect-mongodb-session')(session);
 
 server.use(session({
@@ -54,9 +56,9 @@ server.use(session({
   store: new mongoStore({ 
     uri: mongo_uri,
     collection: 'mySession',
-    expires: 1000*60*60 // 1 hour
+    expires: 1000*60*15 // 15 minutes
   })
-})); */
+}));
 
 
 
