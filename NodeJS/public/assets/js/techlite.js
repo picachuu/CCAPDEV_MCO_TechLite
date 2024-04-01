@@ -454,12 +454,14 @@ function isWithinOneHour(date) {
 
             if (getDisplay() === undefined || getDisplay() === null || getDisplay() === '') {
                 usernameContainer.innerHTML = `
-                    <h4>@</h4>
+                    <div class="no-display"><h4>@</h4>
                     <h4 id="userName" contenteditable="false">${username}</h4>
+                    </div>
+                                  
                 `;
-                usernameContainer.style.flexDirection = 'row';
+                //usernameContainer.style.flexDirection = 'row';
                 if (mainProfile) {
-                    mainProfile.style.marginTop = '-120px';
+                    mainProfile.style.marginTop = '-90px';
                 }
             } else {
                 document.getElementById('displayName').innerText = getDisplay();
@@ -1507,29 +1509,45 @@ document.addEventListener('DOMContentLoaded', function() {
     var coverImageInput = document.getElementById('coverImageInput');
     var editIcon = document.getElementById('editIcon');
     var mainProfile = document.getElementById('main-profile');
+    var addDisplay = document.getElementById('addDisplayBtn');
+    var addDisplayContainer = document.getElementById('addDisplayContainer');
 
     var editing = false;
 
     function toggleEditMode() {
+        if(document.getElementById('displayName')) {
+            displayName = document.getElementById('displayName');
+        }
+        
         editing = !editing;
-        displayName.contentEditable = editing;
         userBio.contentEditable = editing;
-    
+        displayName.contentEditable = editing;  
+
         if (editing) {
+            addedDisplay = false;
+            if(getDisplay()){
+                displayName.focus();
+            }else{
+                addDisplayContainer.innerHTML = `
+                    <button class="add-display" id="addDisplayBtn" onclick="updateUsernameContainer()">
+                    <li class="fa fa-plus"></li> Add Display Name
+                    </button>`;
+            }
             displayName.classList.add('editable');
             userBio.classList.add('editable');
             editIcon.className = 'fa fa-check';
             imageOverlay.classList.add('cursor-pointer'); 
             coverOverlay.classList.add('cursor-pointer'); 
-            focusAtEnd(displayName);
-        } else {
+        } else {  
+            addedDisplay = false;
+            addDisplayContainer.innerHTML = ``;
             displayName.classList.remove('editable');
             userBio.classList.remove('editable');
             editIcon.className = 'fa fa-pencil';
             imageOverlay.classList.remove('cursor-pointer'); 
             coverOverlay.classList.remove('cursor-pointer'); 
-        }
-    
+            console.log(getDisplay()); //important for some reason; breaks otherwise
+        }    
         profileImageContainer.classList.toggle('with-overlay', editing);
         coverImageContainer.classList.toggle('with-overlay', editing);
     }
@@ -1537,7 +1555,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var displayNameMaxLength = 25;
     var userBioMaxLength = 160;
     
-
     displayName.addEventListener('keypress', function(e) {
         if (displayName.textContent.length >= displayNameMaxLength) {
             e.preventDefault();
@@ -1568,8 +1585,7 @@ document.addEventListener('DOMContentLoaded', function() {
             saveProfileChanges();
         }
         toggleEditMode();
-    });
-    
+    });   
 
     function handleProfileImageUpload(e) {
         e.stopPropagation();
@@ -1608,31 +1624,86 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(this.files[0]);
         }
     });
-
-    function focusAtEnd(element) {
-        var range = document.createRange();
-        var sel = window.getSelection();
-        range.selectNodeContents(element);
-        range.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        element.focus();
-    }
+    
 });
 
+var addedDisplay = false;
+
+function updateUsernameContainer() {
+    const usernameContainer = document.querySelector('.username-container');
+    var addDisplayContainer = document.getElementById('addDisplayContainer');
+
+    if(usernameContainer){
+        addedDisplay = true;
+        usernameContainer.innerHTML = `
+            <div><h4 id="displayName" class="editable" contenteditable="true">Display Name</h4></div>
+            <div><h2><span>@</span><span id="userName" contenteditable="false"></span></h2></div>
+        `;
+        addDisplayContainer.innerHTML = ``;
+        document.getElementById('userName').innerText = getUsername();
+
+        var displayName = document.getElementById('displayName');
+
+        displayName.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+        
+    } else {
+        console.log("no container");
+    }
+}
+
 function saveProfileChanges() {
-    var displayName = document.getElementById('displayName').innerText;
+    var displayName = '';
     var userBio = document.getElementById('userBio').innerText;
     var username = getUsername(); 
+    var displayNameE = document.getElementById('displayName');
     const formData = new FormData();
+
     formData.append('username', username);
-    formData.append('displayName', displayName);
     formData.append('bio', userBio);
     formData.append('profileImage', document.getElementById('profileImageInput').files[0]);
     formData.append('coverImage', document.getElementById('coverImageInput').files[0]);
 
+    if(getDisplay()){
+        addedDisplay = true;
+    }
+    if(addedDisplay){
+        displayName = document.getElementById('displayName').innerText;
+    }
+/*
+    if(addedDisplay){
+        displayName = document.getElementById('displayName').innerText;
+    } else {
+        console.log("save profile changes 1: " + getDisplay());
+        if (getDisplay()) {
+            displayName = document.getElementById('displayName').innerText;
+        }
+    }
+*/
+    const usernameContainer = document.querySelector('.username-container');
+    const mainProfile = document.querySelector('.main-profile'); // Select the .main-profile element
 
-    
+    if (displayName == '' ) {
+        usernameContainer.innerHTML = `
+            <div class="no-display"><h4>@</h4>
+            <h4 id="userName" contenteditable="false">${username}</h4>
+            </div>
+        `;
+        
+        if (mainProfile) {
+            mainProfile.style.marginTop = '-90px';
+        }
+        addedDisplay = false;
+    }
+   if(displayName != '' && displayNameE.classList.contains('editable')){
+        displayNameE.classList.remove('editable');
+    }
+
+    formData.append('displayName', displayName);
+   
     fetch('/update-profile', {
         method: 'POST',
         body: formData,
