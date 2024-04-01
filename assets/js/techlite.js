@@ -284,7 +284,7 @@
 
 
 /* Reserve */
-function showSeats(tier) {
+function showSeatsOLDDDD(tier) { // doesn't seem to be used
     const seatsContainer = document.getElementById('seatsContainer');
     seatsContainer.innerHTML = ''; // Clear previous seats
     let selectedSeat = null; // Keep track of the selected seat
@@ -359,7 +359,7 @@ function showSeats(tier) {
         seat.textContent = `Seat ${i}`;
         columns[columnIndex].appendChild(seat);
     }
-}
+}   // doesn't seem to be used
 
 
 

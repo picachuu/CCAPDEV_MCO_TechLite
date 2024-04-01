@@ -25,6 +25,12 @@ input[type="text"], input[type="email"], select {
   cursor: not-allowed;
 }
 
+#timeBlocksContainer .time-slot.expired, .time-blocks-container .time-slots.expired,#userTimeBlocksContainer .time-slot.expired, .time-blocks-container .time-slots.expired {
+  background-color: #431010;/* #3b2d05  */
+  color: white; 
+  cursor: not-allowed;
+}
+
 
 /* Button Enhancements */
 /* Time Blocks Container Grid Layout */

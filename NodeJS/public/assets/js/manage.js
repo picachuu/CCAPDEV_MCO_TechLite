@@ -225,7 +225,7 @@ function addTimeblock(seatNumber, tierNumber, year, month, day, time_start, assi
                         let element = document.getElementById('userTimeBlocksContainer');
 
                         if (element.querySelector('.selected.time-slot')) {
-                            populateTimeBlocksManage(seatNumber, tierNumber, daySelected); // in reserve.js
+                            populateTimeBlocksManage(seatNumber, tierNumber, day, month, year); // in reserve.js
                         } else {
                             document.getElementById('timeBlocksContainer').innerHTML = "";
                         }

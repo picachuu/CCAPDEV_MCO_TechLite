@@ -9,6 +9,18 @@
 // var is_manager = true;
 
 var isRealtime = false;// reat-time variable to activate real-time updates for specific functions
+var setDate = true;
+
+// changes current date to a specific date and time of the compare date helper functions
+var dateYear = 2024;
+var dateMonth = 3;
+var dateDay = 9;
+var dateHour = 1;
+var dateMinute = 25;
+
+function getIsRealtime() {
+    return isRealtime;
+}
 
 // whether user is logged
 var logged = getUserData().logged;
@@ -89,18 +101,27 @@ function getIsManager() {
 
 //helper function to compare date with present datetime (assume receives date type)
 function isPast(date) { //DO NOT CHANGE
-    return date < new Date();
+    if (setDate) {
+        return date < new Date(dateYear, dateMonth - 1, dateDay, dateHour, dateMinute);
+    } else {
+        return date < new Date();
+    }
 }
 //alert(isPast(new Date(2024, 4 - 1, 1, 9, 40))); // Example usage of isPast function (month is month - 1)
 
 //helper function to compare date if it's within one hour in the future of the present datetime (assume receives date type)
-// so if current date is 10:00: returns true if date is between 9:00 and 10:00
+// so if current date is 10:00: returns true if date parameter is between 9:00 and 10:00
 function isWithinOneHour(date) {
-    let currentDate = new Date();
-    let oneHourAgo = new Date(currentDate);
-    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    let currentDate
+    if (setDate) {
+        currentDate = new Date(dateYear, dateMonth - 1, dateDay, dateHour, dateMinute);
+    } else {
+        currentDate = new Date();
+    }
+    let oneHourAfter = new Date(currentDate);
+    oneHourAfter.setHours(oneHourAfter.getHours() + 1);
     // return true if date is between one hour ago and current date
-    return date > oneHourAgo && date < currentDate;
+    return date < oneHourAfter && date >= currentDate;
 }
 //alert(isWithinOneHour(new Date(2024, 4 - 1, 1, 9, 40))); // Example usage of isWithinOneHour function (month is month - 1)
 

@@ -28,7 +28,7 @@ function checkSelectionAndPopulateTimeBlocks() {
     const tierSelect = document.getElementById('tierSelect');
     const daySelect = document.getElementById('daySelect');
     if (tierSelect.value && daySelect.value != "0") {
-        // BRO THIS WAS ONLY populateTimeBlocks() XDDDDDDD
+        // no idea what this meant ---> / BRO THIS WAS ONLY populateTimeBlocks() XDDDDDDD
         showSeats(tierSelect.value); // Populate if both selections are made
     } else {
         document.getElementById('seatsContainer').innerHTML = ''; // Clear seats
@@ -54,16 +54,22 @@ function validateSelection() {
 }
 
 // function to determine if the current seat is unavailable or not based on number of taken_false seats
-function isSeatUnavailable(seatNumber, tierNumber, daySelected) {
+function isSeatUnavailable(seatNumber, tierNumber, daySelected, monthSelected, yearSelected) {
     var isUnavailable = false;
     
-    // real-time??
-    //if you're worried about 30, 31, and then 1 (of next month), dw. Month doesn't really matter, only the days ;)
+    // this comment should be irrelevant now ---> //if you're worried about 30, 31, and then 1 (of next month), dw. Month doesn't really matter, only the days ;)
     
     $.ajax({
         url: 'reserve',
         type: 'POST',
-        data: { seat_num: Number(seatNumber), tier_num: tierNumber, day_num: daySelected, mode: "taken_false"},
+        data: { 
+            seat_num: Number(seatNumber), 
+            tier_num: tierNumber, 
+            day_num: daySelected, 
+            month_num: monthSelected, 
+            year_num: yearSelected , 
+            mode: "taken_false"
+        },
         async: false,  // Make the request synchronous
         success: function(available, status) {
             if (status === 'success') {
@@ -103,11 +109,16 @@ function showSeats(tier) {
         const columnIndex = Math.floor((i - 1) / 5);
         seat.textContent = `Seat ${i}`;
 
+        const dateString = document.getElementById('daySelect').value;  // in the format 'YYYY-MM-DD'
+        // get day month year
+        const year = Number(dateString.split('-')[0]);
+        const month = Number(dateString.split('-')[1]);
+        const day = Number(dateString.split('-')[2]);
 
         // Check if seat is unavailable
         let selected_tier = Number(document.getElementById('tierSelect').value.slice(4));
-        let day = Number(document.getElementById('daySelect').value.slice(8));
-        const seatAvail = !isSeatUnavailable(i, selected_tier, day);
+
+        const seatAvail = !isSeatUnavailable(i, selected_tier, day, month, year);
 
         seatsAvailArray.push(seatAvail);
         seatsArray.push(seat);
@@ -148,7 +159,7 @@ function showSeats(tier) {
                     //     }
                     // }   // manager part end
 
-                    populateTimeBlocksRes(i, selected_tier, day); // Populate time blocks after seat is selected
+                    populateTimeBlocksRes(i, selected_tier, day, month, year); // Populate time blocks after seat is selected
                 }
             });
         }
@@ -170,7 +181,7 @@ function compareBackgroundColorHex(element, color) {
 
 var is_prev_timeBlock_taken = false;
 
-function populateTimeBlocksRes(seat_number, tier_number, day_number) {
+function populateTimeBlocksRes(seat_number, tier_number, day_number, month_number, year_number) {
     const container = document.getElementById('timeBlocksContainer');
     container.innerHTML = ''; // Clear previous blocks
     container.style.display = 'block';
@@ -181,7 +192,14 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
     $.ajax({
         url: 'reserve',
         type: 'POST',
-        data: { seat_num: Number(seat_number), tier_num: tier_number, day_num: day_number, mode: "all"},
+        data: { 
+            seat_num: Number(seat_number), 
+            tier_num: tier_number, 
+            day_num: day_number, 
+            month_num: month_number,
+            year_num: year_number,
+            mode: "all"
+        },
         async: false,  // Make the request synchronous
         success: function(all, status) {
             if (status === 'success') {
@@ -206,18 +224,38 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
                     const block = document.createElement('button');
                     block.classList.add('time-slot');
                     block.textContent = time;
+                    const time_start = all.seats[i].time_start;
+                    const hour = Math.floor(time_start / 100);
+                    const minute = time_start % 100;
 
-                    const past = isPast(new Date(day_number)); //checkpoint
+                    const blockDate = new Date(year_number, month_number - 1, day_number, hour, minute);
+
+                    // getting booleans with given day_number, month_number, year_number, time_start
+                    let past = isPast(blockDate); 
+                    let oneHour = isWithinOneHour(blockDate) && !getIsManager(); 
+                    if (!getIsRealtime()) { // real-time control
+                        past = false;
+                        oneHour = false;
+                    }
 
                     const rowIndex = Math.floor(i / 12);
 
-                    if(all.seats[i].taken == true) { 
+                    if(all.seats[i].taken == true || past || oneHour) { // only users/members are restricted from oneHour
+                        block.title = `Time block taken.`;
                         block.classList.add('unavailable');
+                        if (past) {
+                            block.classList.add('expired');
+                            block.title = `Time block expired.`;
+                        }
+                        if (oneHour) {
+                            block.classList.add('expired');
+                            block.title = `Within one hour restriction.`;
+                        }
                         unavailableTimeSlots[time] = { name: all.seats[i].assigned_to, email: all.seats[i].email };
                         //better we modify na rin the unavailableTimeSlots[]
                         
-                        // only allow managers to click on unavailable time slots
-                        if (getIsManager()) {
+                        // only allow managers to click on unavailable time slots given that it's not past or within one hour
+                        if (getIsManager() && !past) {
                             block.onclick = () => showDetails(time,block);
                         }
                     } else {
@@ -311,7 +349,8 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number) {
     });
 }
 
-function populateTimeBlocksManage(seat_number, tier_number, day_number) {
+// used in manage.js
+function populateTimeBlocksManage(seat_number, tier_number, day_number, month_number, year_number) {
     const updateBtn = document.getElementById('updateBtn');
     const delBtn = document.getElementById('delBtn');
     updateBtn.style.display = 'block';
@@ -320,17 +359,20 @@ function populateTimeBlocksManage(seat_number, tier_number, day_number) {
     container.innerHTML = ''; // Clear previous blocks
     container.style.display = 'block';
 
-    
-    
-
-
     let selectedBlocks = 0;
 
     // Fetch time blocks from server based on seat number, tier number, and day number
     $.ajax({
         url: 'reserve',
         type: 'POST',
-        data: { seat_num: Number(seat_number), tier_num: tier_number, day_num: day_number, mode: "all"},
+        data: { 
+            seat_num: Number(seat_number), 
+            tier_num: tier_number, 
+            day_num: day_number, 
+            month_num: month_number,
+            year_num: year_number,
+            mode: "all"
+        },
         async: false,  // Make the request synchronous
         success: function(all, status) {
             if (status === 'success') {
@@ -354,10 +396,34 @@ function populateTimeBlocksManage(seat_number, tier_number, day_number) {
                     block.classList.add('time-slot');
                     block.textContent = time;
 
+                    const time_start = all.seats[i].time_start;
+                    const hour = Math.floor(time_start / 100);
+                    const minute = time_start % 100;
+
+                    const blockDate = new Date(year_number, month_number - 1, day_number, hour, minute);
+
+                    // getting booleans with given day_number, month_number, year_number, time_start
+                    let past = isPast(blockDate); 
+                    let oneHour = isWithinOneHour(blockDate) && !getIsManager(); 
+                    if (!getIsRealtime()) { // real-time control
+                        past = false;
+                        oneHour = false;
+                    }
+
                     const rowIndex = Math.floor(i / 6);
 
-                    if(all.seats[i].taken == true) { 
+                    if(all.seats[i].taken == true || past || oneHour) { // only users/members are restricted from oneHour
+                        block.title = `Time block taken.`;
                         block.classList.add('unavailable');
+                        if (past) {
+                            block.classList.add('expired');
+                            block.title = `Time block expired.`;
+                        }
+                        if (oneHour) {
+                            block.classList.add('expired');
+                            block.title = `Within one hour restriction.`;
+                        }
+
                         unavailableTimeSlots[time] = { name: all.seats[i].assigned_to, email: all.seats[i].email };
 
                         block.onclick = () =>  {event.preventDefault();}

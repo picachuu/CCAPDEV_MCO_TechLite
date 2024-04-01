@@ -33,7 +33,6 @@ mongoose.connect(db_url+databaseName);
 function add(server){
 
   server.post('/reserve', function(req, resp){
-
     console.log('Reserve post request received');
 
     let tierModel;
@@ -49,14 +48,18 @@ function add(server){
       case "all": searchQuery = {
         cancelled_by: null,
         seats: Number(req.body.seat_num),
-        day: Number(req.body.day_num)
+        day: Number(req.body.day_num),
+        month: Number(req.body.month_num),
+        year: Number(req.body.year_num)
       }; break;
 
       case "taken_false": searchQuery = {
         seats: Number(req.body.seat_num),
         taken: false,
         cancelled_by: null,
-        day: Number(req.body.day_num)
+        day: Number(req.body.day_num),
+        month: Number(req.body.month_num),
+        year: Number(req.body.year_num)
       }; break;
 
       //taken_true has not been used yet pero could be useful for finding which are to be editable
@@ -64,7 +67,9 @@ function add(server){
         seats: Number(req.body.seat_num),
         taken: true,
         cancelled_by: null,
-        day: Number(req.body.day_num)
+        day: Number(req.body.day_num),
+        month: Number(req.body.month_num),
+        year: Number(req.body.year_num)
       }; break;
     }
 
@@ -78,7 +83,7 @@ function add(server){
         resp.send({seats: vals});
     }).catch(errorFn);
 
-  });
+  }); // end reserve post request
 
   server.post('/tier-slots', function(req, resp) {
     console.log('tier-slots query received');
