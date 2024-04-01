@@ -564,6 +564,7 @@ function addManageBtnForm(manageDiv,reservation_id) {
     manageButton.type = "submit";
     manageButton.textContent = "Manage";
     manageForm.appendChild(manageButton);
+    manageButton.classList.add('main-border-button');
 
     manageDiv.appendChild(manageForm);
 }
@@ -585,6 +586,7 @@ function addViewBtnForm(manageDiv,reservation_id) {
     manageButton.type = "submit";
     manageButton.textContent = "View";
     manageForm.appendChild(manageButton);
+    manageButton.classList.add('main-border-button');
 
     manageDiv.appendChild(manageForm);
 }

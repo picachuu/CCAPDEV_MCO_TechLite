@@ -1492,6 +1492,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    displayName.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    });
+
+    userBio.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    });
+
     editBtn.addEventListener('click', function(e) {
         e.preventDefault();
         if (editing) {
