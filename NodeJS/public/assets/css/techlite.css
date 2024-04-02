@@ -1656,6 +1656,16 @@ section {
   background-color: #c32f2f;
 }
 
+.view-page {
+  background-image: url(../images/view-bg.jpg);
+  background-position: center center;
+  background-size: cover;
+  min-height: 800px;
+  padding: 80px 60px;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
 /* About */
 .about {
   background-image: url(../images/about.jpg);
