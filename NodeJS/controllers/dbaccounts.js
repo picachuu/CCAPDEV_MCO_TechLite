@@ -583,7 +583,52 @@ function add(server,modules){
     }
   }
 
-}
 
+  server.post('/change-password', async function(req, resp) {
+    console.log('Changing password...');
+
+    const username = req.session.user.username;
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+    if (newPassword !== confirmNewPassword) {
+      return resp.send({valid: false, reason: "New passwords do not match."});
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return resp.send({
+        valid: false,
+        reason: "Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric, and 1 special character."
+      });
+    }
+
+    try {
+      const user = await userModel.findOne({ username: username }).lean();
+
+      if (!user) {
+        console.log(`No user found with username: ${username}`);
+        return resp.send({ valid: false, reason: "User not found." });
+      }
+
+      const match = await bcrypt.compare(currentPassword, user.password);
+      if (!match) {
+        console.log('Current password is incorrect.');
+        return resp.send({ valid: false, reason: "Current password is incorrect." });
+      }
+
+      const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      await userModel.updateOne({ username: username }, { $set: { password: hashedNewPassword } });
+      
+      console.log('Password updated successfully for user:', username);
+      resp.send({ valid: true, reason: "Password changed successfully." });
+
+    } catch (error) {
+      console.error("Error in changing password:", error);
+      resp.send({ valid: false, reason: "An error occurred while changing the password." });
+    }
+  });
+
+}
 
 module.exports.add = add;
