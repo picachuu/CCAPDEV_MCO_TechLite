@@ -142,12 +142,6 @@
             <li>Lite Coins <span>3</span></li>
           </ul>
         </div>
-        <div class="row align-self-center manager-tools-section">
-          <h3>Manager Tools</h3>
-          <button id="managerCreate">
-            <i class="fa fa-user-plus"></i>Create User Account
-            </button>
-        </div>
         <div class="row align-self-center account-settings-section">
           <h3>Account Settings</h3>
           <button id="changePassword">
@@ -161,6 +155,80 @@
     </div>
   </div>
 </div>
+
+<div class="container manager-container">
+  <div class="profile-page-content">
+    <div class="row">
+      <div class="col-lg-10">
+        <div class="walkin-reservations">
+          <div class="heading-section">
+            <h4><em>Manage Walk-In</em>  Reservations</h4>
+            <div class="tier-filter">
+              <button id="WfilterTier1">T1</button>
+              <button id="WfilterTier2">T2</button>
+              <button id="WfilterTier3">T3</button>
+            </div>
+          </div>
+          <div id="walkin-container">
+              <!-- This part should be added by javascript-->
+          </div>
+          <div id="paginationW" class="pagination">
+            <i id="firstButtonW" class="fa fa-angles-left"></i>
+            <i id="prevButtonW" class="fa fa-angle-left"></i>
+            <span>Page <span id="currentPageW">1</span></span>
+            <i id="nextButtonW" class="fa fa-angle-right"></i>
+            <i id="lastButtonW" class="fa fa-angles-right"></i>
+          </div>
+          <!-- ... existing code ... -->
+          <!--
+          <div class="item">
+            <ul>
+              <li><img src="assets/images/tier1.jpg" alt=""></li>
+              <li><h4>Room</h4><span>Tier 1 Seat 15</span></li>
+              <li><h4>Date Added</h4><span>20/02/2024</span></li>
+              <li><h4>Status</h4><span>Ongoing</span></li>
+              <li><h4>Time Left</h4><span>70 mins</span></li>
+              <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
+            </ul>
+          </div>
+          
+          <div class="item">
+            <ul>
+              <li><img src="assets/images/tier1.jpg" alt=""></li>
+              <li><h4>Room</h4><span>Tier 1 Seat 5</span></li>
+              <li><h4>Date Added</h4><span>31/12/2023</span></li>
+              <li><h4>Status</h4><span>Expired</span></li>
+              <li><h4>Time Left</h4><span>N/A</span></li>
+              <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
+            </ul>
+          </div>
+          <div class="item last-item">
+            <ul>
+              <li><img src="assets/images/tier1.jpg" alt=""></li>
+              <li><h4>Room</h4><span>Tier 1 Seat 2</span></li>
+              <li><h4>Date Added</h4><span>24/11/2023</span></li>
+              <li><h4>Status</h4><span>Expired</span></li>
+              <li><h4>Time Left</h4><span>N/A</span></li>
+              <li><div class="main-border-button border-no-active"><a href="manage" method="get">Manage</a></div></li>
+            </ul>
+          </div>
+          -->
+          <!-- This part should be added by javascript-->
+        </div>
+      </div>
+      <div class="col profile-points">
+        <div class="row align-self-center manager-tools-section">
+          <h3>Manager Tools</h3>
+          <button id="managerCreate">
+            <i class="fa fa-user-plus"></i>Create User Account
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="container">
   <div class="logout-container">
     <a href="/log-out" id="logoutBtn" class="logout-button">

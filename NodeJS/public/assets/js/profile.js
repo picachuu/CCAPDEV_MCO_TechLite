@@ -12,6 +12,9 @@ let currentPageActive = 1;
 let totalPagesActive = 0;
 let selectedTiersActive = [1, 2, 3]; 
 let selectedTiersInactive = [1, 2, 3]; 
+let currentPageWalkIn = 1;
+let totalPagesWalkIn = 0;
+let selectedTiersWalkIn = [1, 2, 3];
 
 let pageSize = 3;
 
@@ -133,6 +136,16 @@ function loadActiveReservations(page) {
     });
 }
 
+function loadWalkInReservations(page) {
+    page = Math.max(1, Number(page));
+    
+
+
+
+    
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
     //pagination event listeners
     document.getElementById('nextButton').addEventListener('click', function() {
@@ -183,6 +196,31 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPagePast = totalPagesPast;
         loadPastReservations(currentPagePast);
     });
+
+    //walkin reservations
+    document.getElementById('nextButtonW').addEventListener('click', function() {
+        if (currentPageWalkIn < totalPagesWalkIn) {
+            currentPageWalkIn++; 
+            loadWalkInReservations(currentPageWalkIn);
+        }
+    });
+
+    document.getElementById('prevButtonW').addEventListener('click', function() {
+        if (currentPageWalkIn > 1) {
+            currentPageWalkIn--; 
+            loadWalkInReservations(currentPageWalkIn);
+        }
+    });
+
+    document.getElementById('firstButtonW').addEventListener('click', function() {
+        currentPageWalkIn = 1;
+        loadWalkInReservations(currentPageWalkIn);
+    });
+
+    document.getElementById('lastButtonW').addEventListener('click', function() {
+        currentPageWalkIn = totalPagesWalkIn;
+        loadWalkInReservations(currentPageWalkIn);
+    });
     
 });
 
@@ -197,6 +235,14 @@ function updatePaginationControls(currentPage, totalPages) {
 function updatePaginationControlsP(currentPage, totalPages) {
     const prevButton = document.getElementById('prevButtonP');
     const nextButton = document.getElementById('nextButtonP');
+    
+    prevButton.disabled = currentPage <= 1;
+    nextButton.disabled = currentPage >= totalPages;
+}
+
+function updatePaginationControlsW(currentPage, totalPages) {
+    const prevButton = document.getElementById('prevButtonW');
+    const nextButton = document.getElementById('nextButtonW');
     
     prevButton.disabled = currentPage <= 1;
     nextButton.disabled = currentPage >= totalPages;
@@ -224,6 +270,17 @@ function toggleTierSelectionP(tier) {
     loadPastReservations(1);
 }
 
+function toggleTierSelectionW(tier) {
+    const index = selectedTiersWalkIn.indexOf(tier);
+    if (index > -1) {
+        selectedTiersWalkIn.splice(index, 1);
+    } else {
+        selectedTiersWalkIn.push(tier);
+    }
+    updateTierButtonsW(); 
+    loadWalkInReservations(1);
+}
+
 function updateTierButtons() {
     for (let tier = 1; tier <= 3; tier++) {
         const button = document.getElementById(`filterTier${tier}`);
@@ -246,11 +303,24 @@ function updateTierButtonsP() {
     }
 }
 
+function updateTierButtonsW() {
+    for (let tier = 1; tier <= 3; tier++) {
+        const button = document.getElementById(`WfilterTier${tier}`);
+        if (selectedTiersWalkIn.includes(tier)) {
+            button.classList.add("selected");
+        } else {
+            button.classList.remove("selected");
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     updateTierButtons();
     updateTierButtonsP();
     loadActiveReservations(1);
     loadPastReservations(1);
+    updateTierButtonsW();
+    loadWalkInReservations(1);
 
     for (let tier = 1; tier <= 3; tier++) {
         document.getElementById(`filterTier${tier}`).addEventListener('click', function() {
@@ -259,6 +329,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById(`PfilterTier${tier}`).addEventListener('click', function() {
             toggleTierSelectionP(tier);
+        });
+
+        document.getElementById(`WfilterTier${tier}`).addEventListener('click', function() {
+            toggleTierSelectionW(tier);
         });
     }
 });

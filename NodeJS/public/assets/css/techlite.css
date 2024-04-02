@@ -2040,8 +2040,11 @@ footer p a:hover {
   margin-bottom: 0;
 }
 
-.manager-tools-section{
+.manager-container {
   display:none;
+}
+
+.manager-tools-section{
   margin-top:15px;
   border-radius: 23px;
   padding: 10px;
