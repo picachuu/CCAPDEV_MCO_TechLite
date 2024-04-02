@@ -48,10 +48,16 @@ function add(server, modules){
   });
 
   server.get('/profile', function(req, resp){
+    if (req.session && req.session.user) {
       resp.render('profile',{
           layout: 'index',
           title: 'TechLite - Profile',
+          isManager: req.session.user.is_manager == true,
       });
+    } else {
+        // Handle the case where there's no session
+        resp.redirect('/');
+    }
   });
 
   server.get('/reserve', function(req, resp){
