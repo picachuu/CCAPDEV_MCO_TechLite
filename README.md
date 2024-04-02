@@ -1,6 +1,7 @@
 ## Project TechLite
-
+<p align="justify">
 TechLite is an innovative web-based platform designed to elevate the gaming experience for enthusiasts and casual gamers alike. This project aims to streamline the process of reserving high-performance gaming workstations, accessing a variety of services including food ordering and printing, and enhancing user engagement through rewards and a comprehensive service offering. TechLite bridges the gap between high-end gaming requirements and convenience, ensuring every gamer finds exactly what they need for an unforgettable gaming session.
+</p>
 
 ## Prerequisites
 Node.js and Node Package Manager must be installed. You can download and install the following from https://nodejs.org/.
@@ -16,19 +17,23 @@ git clone https://github.com/picachuu/CCAPDEV_MCO_TechLite.git
 Install the dependencies:
 
 ```bash
-npm i express express-handlebars body-parser mongoose multer
+npm i express express-handlebars body-parser mongoose bcrypt multer express-session connect-mongodb-session
 ```
 
 Load the database:
-- Launch node app.js (to create database)
-- Open mongodb compass 
-- Load all collections given the csv files corresponding to the collections in mongodb compass
+
+- Launch MongoDB Compass
+- Run app.js to initialize the database:
+```bash
+cd NodeJS
+node app.js
+```
+- Launch node app.js (to create database) and Ctrl + C to end the session
+- Import all collections given in the csv files corresponding to the collections in MongoDB Compass
 
 Run the application:
 
 ```bash
-cd CCAPDEV_MCO_TechLite
-cd NodeJS
 node app.js
 ```
 
