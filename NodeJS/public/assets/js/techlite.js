@@ -478,7 +478,7 @@ function isWithinOneHour(date) {
             let role = "Member";
             if (is_manager) {
                 role = "Manager";
-                document.querySelector('.manager-tools-section').style.display = 'block';
+                document.querySelector('.manager-container').style.display = 'block';
             } 
             document.getElementById('roleTag').innerText = role;
         }

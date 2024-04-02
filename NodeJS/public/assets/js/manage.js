@@ -211,9 +211,9 @@ function addTimeblock(seatNumber, tierNumber, year, month, day, time_start, assi
                     block.onclick = () => {
                         event.preventDefault();
                         if (cancelled_by) {
-                            block.title = `This time block has expired.`;
-                        } else if (past && isRealtime){
                             block.title = `This time block was cancelled.`;
+                        } else if (past && isRealtime){
+                            block.title = `This time block has expired.`;
                             //block.title = `This time block was cancelled by ${cancelled_by}.`;
                         }  
                     }

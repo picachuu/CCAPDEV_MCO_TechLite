@@ -215,6 +215,83 @@ function add(server, modules){
     }
   });
 
+  // Profile walk-in reservations post request based on reservation_id to show all walk-in reservations
+  server.post('/profile-walkin-reservations', async function(req, resp) { 
+    console.log('Profile walk-in reservations request received');
+    console.log(req.body);
+    if (req.body.logged == 'false' && req.session && req.session.user) {
+      resp.redirect('/');
+    } else {
+
+      const tierFilters = req.body.tier_nums ? req.body.tier_nums.map(Number) : [1, 2, 3];
+
+      let combinedReservations = [];
+      let totalReservations = 0;
+
+      const tiers = [tier1_schedModel, tier2_schedModel, tier3_schedModel];
+      let tierCounts = {1: 0, 2: 0, 3: 0};
+
+      let searchQuery = {
+        email: 'walk-in'
+      };
+
+      for (let tierIndex = 0; tierIndex < tiers.length; tierIndex++) {
+        if (!tierFilters.includes(tierIndex + 1)) continue;
+
+        let tierModel = tiers[tierIndex];
+
+        // (1) find all the walk-in reservations in the tier collections (Model: tier1_schedModel, tier2_schedModel, tier3_schedModel)
+        const allReservations = await tierModel.find(searchQuery).lean();
+
+        // (2) make an array of unique reservation_id from allReservations
+        const reservationIds = [...new Set(allReservations.map(reservation => reservation.reservation_id))];
+
+        // (3) find all user_reservation documents given reservation_id in the user_reservation collection (Model: userReservationModel)
+        const user_reservation = await userReservationModel.find({ _id: { $in: reservationIds } }).lean();
+
+        // (4) create an array of reservations (tierModel) from the user_reservation document using reservation._id (including reserver information)
+        let reservations = [];
+        for (let i = 0; i < user_reservation.length; i++) {
+            const reservation_id = user_reservation[i]._id;
+            let user_reserver = await userModel.findOne({ _id: user_reservation[i].reserver }).lean();
+            let reserver_username = user_reserver.username;
+            let reserver_email = user_reserver.email;
+
+            let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
+
+            tempfind.sort((a, b) => a.time_start - b.time_start);
+
+            // add reserver information to each reservation
+            tempfind = tempfind.map(reservation => ({
+              ...reservation,
+              reserver_username: reserver_username,
+              reserver_email: reserver_email
+            }));
+            
+            reservations.push(tempfind);
+        }
+
+        // sort reservations by time_start of the first reservation (not yet implemented(unsure))
+
+
+        const reservationsWithTier = reservations.map(reservation => ({
+            ...reservation,
+            tier: tierIndex + 1
+        }));
+        combinedReservations.push(...reservationsWithTier);
+        tierCounts[tierIndex + 1] = reservationsWithTier.length;
+        totalReservations += reservationsWithTier.length;
+      }
+
+      console.log("Tier Counts:", tierCounts);
+
+      resp.send({
+          reservations: combinedReservations,
+          total: totalReservations,
+      });
+    }
+  });
+
   server.post('/update-profile', upload.fields([{ name: 'profileImage' }, { name: 'coverImage' }]), async (req, res) => {
     const { username, displayName, bio } = req.body;
 
