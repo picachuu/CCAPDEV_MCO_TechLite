@@ -436,6 +436,9 @@ function createReservationElement(reservation) {
         return null;
     }
     
+    //the start of a new Prog Lang (LV and Stanley):
+    //divtoadd -> reservationContainer
+
     var reservationDiv = document.createElement('div');
     reservationDiv.classList.add('item');
     var reservationUl = document.createElement("ul");
