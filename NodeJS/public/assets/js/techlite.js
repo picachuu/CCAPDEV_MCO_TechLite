@@ -846,10 +846,16 @@ function purchaseReward() {
 
 // Function to toggle popups
 function togglePopup(popup) {
+    const body = document.body;
+
     if (popup.style.display === "block") {
         popup.style.display = "none";
+        body.classList.remove("body-no-scroll"); 
     } else {
         popup.style.display = "block";
+        body.classList.add("body-no-scroll"); 
+
+        popup.style.pointerEvents = "all";
     }
 }
 
