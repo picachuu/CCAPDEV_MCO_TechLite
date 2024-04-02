@@ -160,13 +160,14 @@
 <div id="changePassPopup" class="login-popup" style="display: none;">
   <a href="#" class="close">&times;</a>
   <h4>Change Your Password</h4>
-  <form id="changePassForm" action="/update-password" method="post">
-    <input type="password" name="currentPassword" class="current-password form-control" placeholder="Current Password" required/>
-    <input type="password" name="newPassword" class="new-password form-control" placeholder="New Password" required/>
-    <input type="password" name="confirmNewPassword" class="confirm-new-password form-control" placeholder="Confirm New Password" required/>
-    <input id="change-password-btn" class="btn login" type="submit" value="Change Password" />
+  <form id="changePassForm">
+    <input type="password" id="currentPassword" class="current-password form-control" placeholder="Current Password" required/>
+    <input type="password" id="newPassword" class="new-password form-control" placeholder="New Password" required/>
+    <input type="password" id="confirmNewPassword" class="confirm-new-password form-control" placeholder="Confirm New Password" required/>
+    <input type="button" id="changePasswordBtn" class="btn login" value="Change Password" />
   </form>
 </div>
+
 
 
 {{#if isManager}}

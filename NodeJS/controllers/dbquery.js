@@ -325,6 +325,9 @@ function add(server, modules){
     }
 });
 
+
+
+
   server.post('/manageable-check', function(req, resp) {// need change to real-time
     console.log('Manage post request received');
 
