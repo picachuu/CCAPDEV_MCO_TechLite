@@ -577,6 +577,28 @@ function add(server, modules){
     }
   });
 
+  server.post('/search-seats-request', function(req, resp) {
+    console.log('--- search post request received ---');
+    let searchResults = [];
+
+    if (req.body.isManager == 'true') { // get all reservations given 
+      let searchQuery = {
+        seats: req.body.seats,
+        day: Number(req.body.date.split('-')[2]),
+        year: Number(req.body.date.split('-')[0]),
+        month: Number(req.body.date.split('-')[1]),
+        time_start: req.body.time_start
+      }
+    }
+    
+    if (req.body.tier == 'none') {
+      //loop through all tiers and concatenate to a results array
+    }
+    
+
+
+  });
+
   // Reservation Form post request (reserving a slot given variables)
   server.post('/reserve-form', function(req, resp) {
     console.log('--- Reserve form post request received ---');
@@ -891,7 +913,6 @@ function add(server, modules){
     } else {
       resp.redirect('/');
     }
-
 
   });
 
