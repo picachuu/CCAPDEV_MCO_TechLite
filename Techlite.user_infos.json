@@ -1,0 +1,180 @@
+[{
+  "_id": {
+    "$oid": "66037eeb49322c12285de09d"
+  },
+  "username": "stanstan50",
+  "email": "stanstan50@email.com",
+  "display": "UwU_Stan",
+  "password": "$2b$10$LUDlXNFZow3yfcB965hm.uTPjpmUtjrYAJrgQVRZAhzg5EqvbqU9m",
+  "is_manager": true,
+  "img_url": "/uploads/profileImage-1711994246204.gif",
+  "banner_url": "/uploads/coverImage-1711994384174.png",
+  "bio_msg": "Stanley of the Zeng"
+},
+{
+  "_id": {
+    "$oid": "66037eeb49322c12285de09e"
+  },
+  "username": "picachuu",
+  "email": "picachuu@email.com",
+  "display": "UwU_Ica\r\n\r\n",
+  "password": "$2b$10$YGatuOJp/k/BSTRc.PALO.XgKPQigFcgyaavBeSr2Qyc6qoBLjfD6",
+  "is_manager": true,
+  "img_url": "https://cdn.pixabay.com/photo/2023/10/06/06/54/fantasy-8297567_1280.png",
+  "banner_url": "https://cdn.pixabay.com/photo/2023/10/06/06/54/fantasy-8297567_1280.png",
+  "bio_msg": "Jannica of the Limd"
+},
+{
+  "_id": {
+    "$oid": "66037eeb49322c12285de09f"
+  },
+  "username": "Niconicolo",
+  "email": "Niconicolo@email.com",
+  "display": "UwU_Nic",
+  "password": "$2b$10$Z5.1f1ntDQh1NMj3h2FUxuXQgKTONBZhv9zNtWoAMIB9NWqAZSboC",
+  "is_manager": false,
+  "img_url": "https://cdn.pixabay.com/photo/2024/02/25/13/30/car-8595770_1280.jpg",
+  "banner_url": "https://cdn.pixabay.com/photo/2024/02/25/13/30/car-8595770_1280.jpg",
+  "bio_msg": "Niccolo of the Jimenez"
+},
+{
+  "_id": {
+    "$oid": "66037eeb49322c12285de0a0"
+  },
+  "username": "LVDelRose",
+  "email": "LVDelRose@email.com",
+  "display": "UwU_LV",
+  "password": "$2b$10$aRX/BhYuafOV.SjJ7UuGG.weTHTwe250wxO/CzJhAv5KGhWJLKFT6",
+  "is_manager": false,
+  "img_url": "https://cdn.pixabay.com/photo/2020/05/09/12/44/mature-5149518_1280.jpg",
+  "banner_url": "https://cdn.pixabay.com/photo/2020/05/09/12/44/mature-5149518_1280.jpg",
+  "bio_msg": "Lance of the del Rosario"
+},
+{
+  "_id": {
+    "$oid": "66037eeb49322c12285de0a1"
+  },
+  "username": "admin",
+  "email": "admin@email.com",
+  "display": "bigadm",
+  "password": "$2b$10$EpFpip/eA8p6yr.KshwVUO0JuxbVZOcstxBZweHM6BYMeZJdu6oOi",
+  "is_manager": true,
+  "img_url": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+  "banner_url": "https://cdn.pixabay.com/photo/2022/03/17/11/17/bootleg-7074375_960_720.jpg",
+  "bio_msg": "Admin of the TechLite: \"I dunno but apdev kinda tuf innit\" - life is also tuf thoo"
+},
+{
+  "_id": {
+    "$oid": "660384002940eeb7c35d2ca6"
+  },
+  "username": "stanley",
+  "email": "stanley@gmail.com",
+  "password": "$2b$10$7PKN4f0fH4SHFsuzv0a0kOKJlE/tNpaVjBwDh4wcnzlmaNX5iie1W",
+  "is_manager": false
+},
+{
+  "_id": {
+    "$oid": "660384422940eeb7c35d2cad"
+  },
+  "username": "ss",
+  "email": "ss@s.s",
+  "password": "$2b$10$c7ua4ztGIdgF8A2Qv6TcWuUTxJfix85U0n5dt1f6WxYa1LrTg0WZ2",
+  "is_manager": false
+},
+{
+  "_id": {
+    "$oid": "66038483e8cfc91377b4f7de"
+  },
+  "username": "stan",
+  "email": "stan@g.g",
+  "password": "$2b$10$UHxC/rZBxWHgt64TKMCrVuLzmGlwcnMNSpVIg0EZ0F53zKjq.YJIK",
+  "is_manager": false
+},
+{
+  "_id": {
+    "$oid": "660385544da729c210ed9fec"
+  },
+  "username": "pp",
+  "email": "pp@p.s",
+  "display": "asdfa",
+  "password": "$2b$10$Va4.xkSn.c/UB79rSg4f0.fPSg8vGDh0FB8YzZrG/yN7L93OgZYGW",
+  "is_manager": false
+},
+{
+  "_id": {
+    "$oid": "660772a29cc27891a300ee62"
+  },
+  "username": "sta",
+  "email": "sta@gmai.com",
+  "display": "sss",
+  "password": "$2b$10$OkPPYhjYIbsAilZdhjuu6eFb8NRA6NICGcVGbeu0Wpo6gOWdDZJD.",
+  "is_manager": false,
+  "img_url": "",
+  "banner_url": "",
+  "bio_msg": ""
+},
+{
+  "_id": {
+    "$oid": "660a470fa53a3bb64b36ddb5"
+  },
+  "username": "manager",
+  "email": "manager@email.com",
+  "display": "",
+  "password": "$2b$10$SQo4wwsdp1wb/j3obGQqAeryUrGm/ST5CHetWPTS/ia47L5.B4gOS",
+  "is_manager": true,
+  "img_url": "",
+  "banner_url": "",
+  "bio_msg": ""
+},
+{
+  "_id": {
+    "$oid": "660a48c0a53a3bb64b36ddf1"
+  },
+  "username": "User",
+  "email": "User@email.com",
+  "display": "Generic User",
+  "password": "$2b$10$qJUabOtdBnY2XoKk38jDJOEJmt5Q6ILtkxH1HhQg0pweAb97iSyB.",
+  "is_manager": false,
+  "img_url": "",
+  "banner_url": "",
+  "bio_msg": ""
+},
+{
+  "_id": {
+    "$oid": "660a49d9a53a3bb64b36de60"
+  },
+  "username": "s",
+  "email": "s@s.ss",
+  "display": "",
+  "password": "$2b$10$Q0l7YNuhJrLqD1o39O//WefSFOD5sKBCCDVfDBjeh64BYeCyHRIzG",
+  "is_manager": false,
+  "img_url": "",
+  "banner_url": "",
+  "bio_msg": ""
+},
+{
+  "_id": {
+    "$oid": "660a4a6b9bc2bbfb310026e9"
+  },
+  "username": "sss",
+  "email": "ssss@s.s",
+  "display": "",
+  "password": "$2b$10$ddiy7bugCyuyAS0lY/Adjuxm7k3sqYc9V3hYao./HceEp0xSAtpVS",
+  "is_manager": false,
+  "img_url": "",
+  "banner_url": "",
+  "bio_msg": ""
+},
+{
+  "_id": {
+    "$oid": "660a4aa99bc2bbfb31002717"
+  },
+  "username": "asas",
+  "email": "asas@a.a",
+  "display": "",
+  "password": "$2b$10$a42qggJx.jEypqqDM6tM2uRIiUSOZWAEgH7jVNzpP3vQ00vWyAB6i",
+  "is_manager": false,
+  "img_url": "",
+  "banner_url": "",
+  "bio_msg": ""
+}]
