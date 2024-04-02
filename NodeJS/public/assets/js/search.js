@@ -23,6 +23,21 @@ if (window.location.pathname === '/search') {
     });
 }
 
+function showSearchForm(selection) {
+    if (selection === 'accounts') {
+        document.getElementById('searchMemberForm').style.display = 'block';
+        document.getElementById('searchSlotsForm').style.display = 'none';
+    }
+    else if (selection === 'slots') {
+        document.getElementById('searchMemberForm').style.display = 'none';
+        document.getElementById('searchSlotsForm').style.display = 'block';
+    }
+    else {
+        document.getElementById('searchMemberForm').style.display = 'none';
+        document.getElementById('searchSlotsForm').style.display = 'none';
+    }
+}
+
 function loadtierSelection() {
 
     const tierFilterSelect = document.getElementById('tierFilter');
@@ -30,7 +45,7 @@ function loadtierSelection() {
     tierFilterSelect.add(option);
 
     for (let i = 1; i < 4; i++) {
-        const option = new Option('Tier '+i, 'tier'+i);
+        const option = new Option('Tier '+i, i);
         tierFilterSelect.add(option);
     }
 }
@@ -54,7 +69,7 @@ function loadSeatSelection() {
     seatFilterSelect.add(option);
 
     for (let i = 1; i < 16; i++) {
-        const option = new Option('Seat '+i, 'seat'+i);
+        const option = new Option('Seat '+i, i);
         seatFilterSelect.add(option);
     }
 }
@@ -74,19 +89,21 @@ function loadDateSelection() {
 }
 
 function PopulateResultContainer() {
+
+    document.getElementById('searchResult-container').innerHTML = '';
     var searchOption = document.getElementById('searchOptions').value;
     switch (searchOption) {
-        case 'member':
-                PopulateMemberResults(); //same for manager and user
+        case 'accounts':
+            PopulateMemberResults(); //same for manager and user
             break;
         case 'seats':
-                PopulateSeatResults(); //manager: all, user: available
+            PopulateSlotsResults(); //manager: all, user: available
             break;
     }
 }
 
-function PopulateSeatResults() {
-    
+function PopulateSlotsResults() {
+    console.log('Populating slots results');
     data_send = {
         tier: document.getElementById('tierFilter').value,
         seats: document.getElementById('seatFilter').value,
@@ -96,20 +113,140 @@ function PopulateSeatResults() {
     };
     
     $.ajax({
-            url: 'search-seats-request',
+            url: 'search-slots-request',
             type: 'POST',
             data: data_send,
             async: true,
             success: function(server_resp, status) {
-                //fill up with results yung container
-                
 
+                //iterate through the length of the seats array and create a div (to be added to results container for each seat
+                server_resp.slots.forEach(slot => {
+                    AddSlotToContainer(slot);
+                });
             },
             error: function() {
                 console.error('Failed to load reservations');
             }
     });
-    
 }
 
+function AddSlotToContainer(slot) {
+    //if taken (is available, meaning this was used for manager search of slots parameter)
 
+   
+    if (slot.taken) {
+
+    }
+
+    else {//if available
+        const resultContainer = document.getElementById('searchResult-container');
+        var slotDiv = document.createElement('div');
+        slotDiv.classList.add('item');
+        var slotUl = document.createElement("ul");
+
+        // Tier image based on reservation.tier
+        var reservationLi1 = document.createElement("li");
+        var image = document.createElement('img');
+        image.alt = "Tier Image";
+        switch(Number(slot.tier)) {
+            case 1:
+                image.src = 'assets/images/tier1.png';
+                break;
+            case 2:
+                image.src = 'assets/images/tier2.png';
+                break;
+            case 3:
+                image.src = 'assets/images/tier3.png';
+                break;
+            default:
+                image.alt = 'No image available';
+        }
+        reservationLi1.appendChild(image);
+        slotUl.appendChild(reservationLi1);
+
+        // Room and Seat
+        const seatNum = slot.seats;
+        var roomAndSeatLi = document.createElement("li");
+        var roomHeader = document.createElement('h4');
+        var roomSpan = document.createElement('span');
+        roomHeader.textContent = 'Room';
+        roomSpan.textContent = 'Tier ' + slot.tier + ' Seat ' + seatNum;
+        roomAndSeatLi.appendChild(roomHeader);
+        roomAndSeatLi.appendChild(roomSpan);
+        slotUl.appendChild(roomAndSeatLi);
+
+        // Date Reserved
+        const dateReserved = slot.day + '/' + slot.month + '/' + slot.year;
+        var dateLi = document.createElement("li");
+        var dateHeader = document.createElement('h4');
+        var dateSpan = document.createElement('span');
+        dateHeader.textContent = 'Date Reserved';
+        dateSpan.textContent = dateReserved;
+        dateLi.appendChild(dateHeader);
+        dateLi.appendChild(dateSpan);
+        slotUl.appendChild(dateLi);
+
+        // Status
+        var statusLi = document.createElement("li");
+        var statusHeader = document.createElement('h4');
+        var statusSpan = document.createElement('span');
+        statusHeader.textContent = 'Status';
+        // Assume logic for determining if expired or ongoing is implemented elsewhere
+        statusSpan.textContent = 'Ongoing'; // placeholder
+        statusLi.appendChild(statusHeader);
+        statusLi.appendChild(statusSpan);
+        slotUl.appendChild(statusLi);
+
+        // Time Start
+        var timeLi = document.createElement("li");
+        var timeHeader = document.createElement('h4');
+        timeHeader.textContent = 'Time Start';
+        timeLi.appendChild(timeHeader);
+        var timeSpan = document.createElement('span');
+
+        timeSpan.textContent = `${Math.floor((slot.time_start)/100).toString().padStart(2, '0')}:${((slot.time_start)%100).toString().padStart(2, '0')}`+' (30 mins)';
+        
+        timeLi.appendChild(timeSpan);
+        
+        slotUl.appendChild(timeLi);
+
+        // Manage Link
+        var reserveLi = document.createElement("li");
+        var reserveDiv = document.createElement('div');
+        reserveDiv.classList.add('main-border-button');
+        
+        //addReserveBtn();
+        // use in adding taken slots
+        //addManageBtnForm(manageDiv, reservation[0].reservation_id);
+        
+        
+        reserveLi.appendChild(reserveDiv);
+        slotUl.appendChild(reserveLi);
+
+        slotDiv.appendChild(slotUl);
+
+        resultContainer.appendChild(slotDiv);
+    }
+}
+
+function addReserveBtn(reserveDiv, slot_tier, slot_id) {
+    let manageForm = document.createElement("form");
+    
+    manageForm.method = "POST";
+    manageForm.action = "/add-reservation";
+    
+    let hiddenField = document.createElement("input");
+    hiddenField.type = "hidden";
+    hiddenField.name = "reservation_id";
+    hiddenField.value = reservation_id;
+    manageForm.appendChild(hiddenField);
+    
+
+    var manageButton = document.createElement("button");
+    manageButton.type = "submit";
+    manageButton.textContent = "Manage";
+    manageForm.appendChild(manageButton);
+    manageButton.classList.add('main-border-button');
+
+    reserveDiv.appendChild(manageForm);
+}
