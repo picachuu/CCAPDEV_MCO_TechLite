@@ -1,4 +1,4 @@
-var isRealtime = false;// reat-time variable to activate real-time updates for specific functions
+var isRealtime = true;// reat-time variable to activate real-time updates for specific functions
 var setDate = true;
 
 // changes current date to a specific date and time of the compare date helper functions
@@ -113,12 +113,7 @@ function isPast(date) { //DO NOT CHANGE
 //helper function to compare date if it's within one hour in the future of the present datetime (assume receives date type)
 // so if current date is 10:00: returns true if date parameter is between 9:00 and 10:00
 function isWithinOneHour(date) {
-    let currentDate
-    if (setDate) {
-        currentDate = new Date(dateYear, dateMonth - 1, dateDay, dateHour, dateMinute);
-    } else {
-        currentDate = new Date();
-    }
+    let currentDate = getCurrentDateTime();
     let oneHourAfter = new Date(currentDate);
     oneHourAfter.setHours(oneHourAfter.getHours() + 1);
     // return true if date is between one hour ago and current date
@@ -846,10 +841,16 @@ function purchaseReward() {
 
 // Function to toggle popups
 function togglePopup(popup) {
+    const body = document.body;
+
     if (popup.style.display === "block") {
         popup.style.display = "none";
+        body.classList.remove("body-no-scroll"); 
     } else {
         popup.style.display = "block";
+        body.classList.add("body-no-scroll"); 
+
+        popup.style.pointerEvents = "all";
     }
 }
 
@@ -1358,13 +1359,18 @@ function fetchReservationDetails() {
 
 // === Forms ===
 
+async function checkLogin() {
+    let form = $('form[name="login"]'); // Selects the form with the name 'login'
+    return await checkCredentials(form,'Login');
+}
+
 // make the funciton to be async with async keyword (required by await keyword)
 // at the form [ onsubmit="event.preventDefault(); checkLogin().then(valid => { if (valid) this.submit(); })" ]
 // ^^ supports for asynchronous operations --- checkLogin() is assumed to be a function that returns a Promise. This Promise represents the ongoing AJAX request to check the login credentials.
 // ^^ The .then(valid => { if (valid) this.submit(); }) part is a Promise chain. When the Promise returned by checkLogin() resolves, the function passed to .then() is called with the resolved value. 
 // ^^ If the resolved value (valid) is truthy, the form is manually submitted with this.submit().
-async function checkLogin() {
-    let form = $('form[name="login"]'); // Selects the form with the name 'login'
+async function checkCredentials(form,prompt) {
+    
     let username = form.find('input[name="username"]').val(); // Gets the value of the input with the name 'username'
     let password = form.find('input[name="password"]').val(); // Gets the value of the input with the name 'password'
     
@@ -1374,7 +1380,7 @@ async function checkLogin() {
     try {  
         // uses await to wait for the response from the server instead of forcing synchronousity
         let response = await $.ajax({   // returns a JSON with user element object
-            url: '/check-login',
+            url: '/check-login',    // basically to check username and password field credentials
             type: 'POST',
             data: {
                 username: username,
@@ -1387,7 +1393,7 @@ async function checkLogin() {
         console.error('Error:', error);
     }
 
-    window.alert(valid ? "Login successful" : 'Login failed');
+    window.alert(valid ? prompt+" successful" : prompt+' failed');
 
     return valid;
 }
@@ -1401,7 +1407,7 @@ function validateCreateUser() {
 }
 
 // client-side validation for creating an account (Manager tools)
-function validateCreateUser() {
+function validateCreateUserM() {
     // Get form values
     let form = $('form[name="createUserM"]');
     
@@ -1715,15 +1721,15 @@ function saveProfileChanges() {
     .catch(error => console.error('Error:', error));
 }
 
-// Manager Tools
+// Account Tools
 document.addEventListener('DOMContentLoaded', function () {
     let createBtn = document.getElementById('managerCreate');
     let popup = document.getElementById('managerCreatePopup');
     let closeBtn = popup.querySelector('.close');
-  
+    
     if (createBtn) {
       createBtn.addEventListener('click', function() {
-        popup.style.display = 'block';
+        togglePopup(popup);
       });
     }
   
@@ -1733,5 +1739,89 @@ document.addEventListener('DOMContentLoaded', function () {
         popup.style.display = 'none';
       });
     }
+
+    let changePasswordBtn = document.getElementById('changePassword');
+    let changePassPopup = document.getElementById('changePassPopup');
+    let changePassClose = changePassPopup.querySelector('.close');
+
+
+    if (changePasswordBtn) {
+        changePasswordBtn.addEventListener('click', function() {
+            togglePopup(changePassPopup);
+        });
+    }
+
+    if (changePassClose) {
+        changePassClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePassPopup.style.display = 'none';
+        });
+    }
+
+    let deleteAccountBtn = document.getElementById('deleteAccount');
+    let deleteAccountPopup = document.getElementById('deleteAccountPopup');
+    let deleteAccountClose = deleteAccountPopup.querySelector('.close');
+
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', function() {
+            togglePopup(deleteAccountPopup);
+        });
+    }
+
+    if (deleteAccountClose) {
+        deleteAccountClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            deleteAccountPopup.style.display = 'none';
+        });
+    }
 });
+
+$(document).ready(function() {
+    $('#changePasswordBtn').click(function(e) {
+      e.preventDefault();
+      const currentPassword = $('#currentPassword').val();
+      const newPassword = $('#newPassword').val();
+      const confirmNewPassword = $('#confirmNewPassword').val();
   
+      if (newPassword !== confirmNewPassword) {
+        alert("New passwords do not match.");
+        return;
+      }
+  
+      $.ajax({
+        url: '/change-password',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+          confirmNewPassword: confirmNewPassword
+        }),
+        success: function(response) {
+          if (response.valid) {
+            alert("Password changed successfully.");
+            togglePopup(document.getElementById('changePassPopup'));
+          } else {
+            alert("Error: " + response.reason);
+          }
+        },
+        error: function() {
+          alert("An error occurred while attempting to change your password.");
+        }
+      });
+    });
+  });
+  
+  
+// Delete Account Action
+function deleteAccount(username, email) {
+    
+    if (delConfirmation()) {
+        // Delete the account
+        alert('Account deleted successfully');
+    }
+}
+
+function delConfirmation() {
+    return confirm('Are you sure you want to delete your account?');
+}

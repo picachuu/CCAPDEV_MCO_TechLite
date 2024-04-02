@@ -29,6 +29,11 @@ function add(server,modules){
 
     user = await checkLoginDB(searchQuery); // wait for the function to finish before proceeding
 
+    let valid = false;
+    if (user) {
+      valid = true;
+    }
+
     user = {
       username: user.username,
       email: user.email,
@@ -39,10 +44,9 @@ function add(server,modules){
       bio_msg: user.bio_msg
     }
 
-    req.session.user = user; // session checkpoint, session start
-
     // below is a placeholder
-    if (user != null){
+    if (valid){
+      req.session.user = user; // session checkpoint, session start
       resp.redirect('/?login=success'); //redirect to home page with success message
     } else {
       resp.redirect('/?login=failed'); //redirect to home page with failure message
@@ -381,7 +385,250 @@ function add(server,modules){
     return null;  // reason
   }
 
-}
 
+  //delete-account from profile
+  server.post('/delete-account', async function(req, resp){
+    let valid = false;
+    if (req.session.user.username == req.body.username) {
+      //Creating a new instance can be made this way.
+      const searchQuery = { //searchQuery for username based log-in
+        username: req.body.username,
+        password: req.body.password
+      };
+    
+      let user = null;  // user object for user information is default to null
+    
+
+      user = await checkLoginDB(searchQuery); // wait for the function to finish before proceeding
+
+      
+      if (user) {
+        valid = true;
+      }
+
+
+      if (valid){  // if not null, delete the account
+        req.session.destroy(function(err) {
+          deleteAccountDB(user);
+          deleteActiveReservations(user);
+          resp.render('account_delete',{
+            layout: 'index',
+            title: 'TechLite - Delete Account',
+            prompt: 'Successful',
+            message: 'Thanks for having us!'
+          });
+        });
+      }
+    } 
+    
+    if (!valid){
+      resp.render('account_delete',{
+        layout: 'index',
+        title: 'TechLite - Delete Account',
+        prompt: 'Failed',
+        message: 'Invalid credentials'
+      });
+    }
+    
+  });
+
+  function deleteAccountDB(user) {
+    // delete user account from database
+    // by making all fields null aside from _id and is_manager
+    const user_id = user._id;
+      userModel.findOneAndUpdate(
+        { _id: user_id }, 
+        { $set: 
+          { username: null, 
+            email: null, 
+            display: null, 
+            password: null, 
+            img_url: null, 
+            banner_url: null, 
+            bio_msg: null 
+          } 
+        }
+      ).catch(errorFn);
+  }
+
+  function deleteActiveReservations(user) {
+    /* 
+    through all tiers
+
+    User Assigned Reservations (parameters needed):
+    find
+    - assigned_to = user.username
+    - email = user.email
+    - taken = true
+    - cancelled_by = null
+
+    Then filter by date is greater than datetime now using parameters:
+    - year
+    - month
+    - day
+    - time_start (hour, minute)
+
+    User Assigned Reservations Edit
+    - cancelled_by = user._id;
+
+    Recreate the slots (paramters needed): From User Assigned Reservations
+    - seats
+    - time_start (time_end)
+    - month
+    - day
+    - year
+
+    seats: seat,
+    reservation_id: null, //objectID type
+    cancelled_by: null,
+    time_start: time_start,
+    time_end: endTime,
+    assigned_to: null,
+    email: null,
+    taken: false,
+    month: month,
+    day: day,
+    year: year
+    }; */
+    let setDate = true;
+    let dateYear = 2024;
+    let dateMonth = 3;
+    let dateDay = 9;
+    let dateHour = 1;
+    let dateMinute = 25;
+
+    function getCurrentDateTime() {
+        let currentDate;
+        if (setDate) {
+            currentDate = new Date(dateYear, dateMonth - 1, dateDay, dateHour, dateMinute);
+        } else {
+            currentDate = new Date();
+        }
+        return currentDate;
+    }
+    const name = user.username;
+    const email = user.email;
+
+    for (let i = 1; i <= 3; i++) {
+      // Get tier model for the respective tier collection
+      let tierModel;
+      switch(i) {
+          case 1: tierModel = tier1_schedModel; break;
+          case 2: tierModel = tier2_schedModel; break;
+          case 3: tierModel = tier3_schedModel; break;
+      }
+
+      // step 1: get all reservations slots made by the user
+      tierModel.find({
+        assigned_to: name,
+        email: email,
+        taken: true,
+        cancelled_by: null
+      }).lean().then(async function(reservations) {
+        // step 2: filter the reservations to only include those that are in the future
+        let now = getCurrentDateTime();
+        let futureReservations = reservations.filter(reservation => {
+          let year = reservation.year;
+          let month = reservation.month;
+          let day = reservation.day;
+          let time_start = reservation.time_start;
+          let date = new Date(year, month - 1, day, time_start / 100, time_start % 100);
+          return date > now;
+        });
+
+        // step 3: cancel the future reservations
+        for (let i = 0; i < futureReservations.length; i++) {
+          let reservation = futureReservations[i];
+          let updateQuery = {
+            seats: reservation.seats,
+            day: reservation.day,
+            year: reservation.year,
+            month: reservation.month,
+            taken: true,
+            cancelled_by: null,
+            time_start: reservation.time_start
+          };
+
+          let updateValues = {
+            $set: {
+              cancelled_by: user._id,
+            }
+          };
+
+          // cancel the reservation
+          await tierModel.updateOne(updateQuery, updateValues).then(function(reservation) {
+            console.log('Reservation cancelled successfully');
+          }).catch(errorFn);
+
+          // step 4: create new documents for the cancelled slots
+          let newReserveInstance = {
+            seats: reservation.seats,
+            reservation_id: null, //objectID type
+            cancelled_by: null,
+            time_start: reservation.time_start,
+            time_end: reservation.time_end,
+            assigned_to: null,
+            email: null,
+            taken: false,
+            month: reservation.month,
+            day: reservation.day,
+            year: reservation.year
+          };
+
+          await tierModel.create(newReserveInstance).then(function() {
+            console.log('New reservation created successfully');
+          }).catch(errorFn);
+        }
+      }).catch(errorFn);
+    }
+  }
+
+
+  server.post('/change-password', async function(req, resp) {
+    console.log('Changing password...');
+
+    const username = req.session.user.username;
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+    if (newPassword !== confirmNewPassword) {
+      return resp.send({valid: false, reason: "New passwords do not match."});
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return resp.send({
+        valid: false,
+        reason: "Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric, and 1 special character."
+      });
+    }
+
+    try {
+      const user = await userModel.findOne({ username: username }).lean();
+
+      if (!user) {
+        console.log(`No user found with username: ${username}`);
+        return resp.send({ valid: false, reason: "User not found." });
+      }
+
+      const match = await bcrypt.compare(currentPassword, user.password);
+      if (!match) {
+        console.log('Current password is incorrect.');
+        return resp.send({ valid: false, reason: "Current password is incorrect." });
+      }
+
+      const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      await userModel.updateOne({ username: username }, { $set: { password: hashedNewPassword } });
+      
+      console.log('Password updated successfully for user:', username);
+      resp.send({ valid: true, reason: "Password changed successfully." });
+
+    } catch (error) {
+      console.error("Error in changing password:", error);
+      resp.send({ valid: false, reason: "An error occurred while changing the password." });
+    }
+  });
+
+}
 
 module.exports.add = add;

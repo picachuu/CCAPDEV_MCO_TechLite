@@ -12,7 +12,7 @@
 <div id="managerCreatePopup" class="create-account-popup" style="display: none;">
   <a href="#" class="close">&times;</a>
   <h4>Create a User Account</h4>
-  <form name="createUserM" action="create-account-success-manager" onsubmit="if (validateCreateUser()){event.preventDefault(); checkCreateFromManager().then(valid => { if (valid) this.submit(); })} else return false" method="get">
+  <form name="createUserM" action="create-account-success-manager" onsubmit="if (validateCreateUserM()){event.preventDefault(); checkCreateFromManager().then(valid => { if (valid) this.submit(); })} else return false" method="get">
     <input type="text" name="newUsername" class="form-control" placeholder="Username" required/>
     <input type="email" name="email" class="form-control" placeholder="Email" required/>
     <input type="text" name="displayName" class="form-control" placeholder="Display Name (Optional)"/>
@@ -23,6 +23,16 @@
       <option value="manager">Manager</option>
     </select>
     <input class="btn create-account" type="submit" value="Create" />
+  </form>
+</div>
+
+<div id="deleteAccountPopup" class="login-popup" style="display: none;">
+  <a href="#" class="close">&times;</a>
+  <h4>Account Deletion</h4>
+  <form id="deleteAccountForm" name="deleteAccount" action="delete-account" onsubmit="event.preventDefault(); checkDelete().then(valid => { if (valid) this.submit(); })" method="post">
+    <input type="text" name="username" class="form-control" placeholder="Your username" required/>
+    <input type="password" name="password" class="form-control" placeholder="Password" required/>
+    <input id="delete-account-btn" class="btn login" type="submit" value="Delete" />
   </form>
 </div>
 
@@ -124,7 +134,7 @@
                 <button id="PfilterTier3">T3</button>
               </div>
             </div>
-            <div id="inactive-container"> <!-- replace id for past entries-->
+            <div id="inactive-container">
                 <!-- This part should be added by javascript-->
             </div>
             <div id="paginationP" class="pagination">
@@ -148,7 +158,7 @@
           <button id="changePassword">
             <i class="fa fa-key"></i>Change Password
           </button>
-          <button id="deactivate">
+          <button id="deleteAccount">
             <i class="fa fa-trash-can"></i>Delete Account
           </button>
         </div>
@@ -156,6 +166,19 @@
     </div>
   </div>
 </div>
+
+<div id="changePassPopup" class="login-popup" style="display: none;">
+  <a href="#" class="close">&times;</a>
+  <h4>Change Your Password</h4>
+  <form id="changePassForm">
+    <input type="password" id="currentPassword" class="current-password form-control" placeholder="Current Password" required/>
+    <input type="password" id="newPassword" class="new-password form-control" placeholder="New Password" required/>
+    <input type="password" id="confirmNewPassword" class="confirm-new-password form-control" placeholder="Confirm New Password" required/>
+    <input type="button" id="changePasswordBtn" class="btn login" value="Change Password" />
+  </form>
+</div>
+
+
 
 {{#if isManager}}
 <div class="container manager-container">

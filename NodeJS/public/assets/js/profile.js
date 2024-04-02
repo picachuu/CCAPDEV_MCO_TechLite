@@ -744,12 +744,16 @@ function createWalkinReservationElement(reservation) {
     reservationUl.appendChild(timeLi);
 
     // Reserver Name
+    let reserver_username = reservation[0].reserver_username;
+    if (!reserver_username) {
+        reserver_username = '**Deleted**';
+    }
     let reserverLi = document.createElement("li");
     let reserverHeader = document.createElement('h4');
     let reserverSpan = document.createElement('span');
     reserverHeader.textContent = 'Reserver';
     reserverLi.appendChild(reserverHeader);
-    reserverSpan.textContent = reservation[0].reserver_username;
+    reserverSpan.textContent = reserver_username;
     reserverLi.appendChild(reserverSpan);
     reservationUl.appendChild(reserverLi);
 
@@ -811,4 +815,16 @@ function addViewBtnForm(manageDiv,reservation_id) {
     manageButton.classList.add('main-border-button');
 
     manageDiv.appendChild(manageForm);
+}
+
+// function to checkDelete for the popup delete account form from profile
+async function checkDelete() {
+    let form = $('form[name="deleteAccount"]'); // Selects the form with the name 'deleteAccount'
+    let username = form.find('input[name="username"]').val();
+    if (username == getUsername()) {
+        return await checkCredentials(form,'Deletion');
+    } else {
+        alert('Incorrect username');
+        return false;
+    }
 }

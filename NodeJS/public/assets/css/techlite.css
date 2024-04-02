@@ -102,6 +102,15 @@ body .page-content {
   z-index: 10; 
 }
 
+.body-no-scroll {
+  overflow: hidden; /* Prevent scrolling */
+  pointer-events: none; /* Make elements unclickable */
+}
+
+.popup-active .body-no-scroll * {
+  pointer-events: all; /* Re-enable pointer events for all children */
+}
+
 p {
   font-size: 15px;
   color: #666;
