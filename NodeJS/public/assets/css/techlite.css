@@ -1927,7 +1927,7 @@ footer p a:hover {
 .profile-page-content {
   background-color: #27292a;
   margin-top: 40px;
-  padding: 40px;
+  padding: 40px 40px 0px 40px;
   border-radius: 23px;
   margin-bottom: 40px;
 }
@@ -2045,7 +2045,6 @@ footer p a:hover {
 }
 
 .manager-tools-section{
-  margin-top:15px;
   border-radius: 23px;
   padding: 10px;
   background-color: #1f2122;
