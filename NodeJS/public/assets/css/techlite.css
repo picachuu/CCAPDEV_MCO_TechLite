@@ -152,7 +152,7 @@ input[type="text"], input[type="email"], select {
   color: #db3636;
 }
 
-.main-border-button button {
+.main-border-button button, .main-border-button a {
   font-size: 14px;
   color: #db3636;
   background-color: transparent;
@@ -168,7 +168,7 @@ input[type="text"], input[type="email"], select {
   overflow: hidden;
 }
 
-.main-border-button button:hover {
+.main-border-button button:hover, .main-border-button a:hover {
   border-color: #fff;
   background-color: #fff;
   color: #db3636;
