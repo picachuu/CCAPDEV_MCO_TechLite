@@ -1753,3 +1753,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
   
+// Delete Account Action
+function deleteAccount(username, email) {
+    
+    if (delConfirmation()) {
+        // Delete the account
+        alert('Account deleted successfully');
+    }
+}
+
+function delConfirmation() {
+    return confirm('Are you sure you want to delete your account?');
+}
