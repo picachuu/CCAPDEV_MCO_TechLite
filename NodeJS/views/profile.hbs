@@ -135,28 +135,7 @@
               <i id="lastButtonP" class="fa fa-angles-right"></i>
             </div>
         </div>
-        {{#if isManager}}
-        <div class="profile-reservations">
-            <div class="heading-section">
-              <h4><em>Walk-in</em>  Reservations</h4>
-              <div class="tier-filter">
-                <button id="WfilterTier1">T1</button>
-                <button id="WfilterTier2">T2</button>
-                <button id="WfilterTier3">T3</button>
-              </div>
-            </div>
-            <div id="walkin-container"> <!-- replace id for past entries-->
-                <!-- This part should be added by javascript-->
-            </div>
-            <div id="paginationW" class="pagination">
-              <i id="firstButtonW" class="fa fa-angles-left"></i>
-              <i id="prevButtonW" class="fa fa-angle-left"></i>
-              <span>Page <span id="currentPageP">1</span></span>
-              <i id="nextButtonW" class="fa fa-angle-right"></i>
-              <i id="lastButtonW" class="fa fa-angles-right"></i>
-            </div>
-        </div>
-        {{/if}}
+        
       </div>
       <div class="col profile-points">
         <div class="row align-self-center">
@@ -182,7 +161,7 @@
   <div class="profile-page-content">
     <div class="row">
       <div class="col-lg-10">
-        <div class="walkin-reservations">
+        <div class="profile-reservations">
           <div class="heading-section">
             <h4><em>Manage Walk-In</em>  Reservations</h4>
             <div class="tier-filter">
