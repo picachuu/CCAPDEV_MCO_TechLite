@@ -580,26 +580,80 @@ function add(server, modules){
     }
   });
 
-  server.post('/search-seats-request', function(req, resp) {
+  server.post('/search-slots-request', function(req, resp) {
     console.log('--- search post request received ---');
     let searchResults = [];
 
-    if (req.body.isManager == 'true') { // get all reservations given 
-      let searchQuery = {
-        seats: req.body.seats,
-        day: Number(req.body.date.split('-')[2]),
-        year: Number(req.body.date.split('-')[0]),
-        month: Number(req.body.date.split('-')[1]),
-        time_start: req.body.time_start
-      }
+    //if manager, get all slots given parameters
+    //if user, get all available (taken: false) slots given parameters
+
+    let searchQuery = {};
+
+    //if seat is != 'none', add seat to searchQuery
+    if (req.body.seats != 'none') searchQuery.seats = Number(req.body.seats);
+    
+    //if date is != 'none', add date to searchQuery
+    if (req.body.date != 'none') {
+      searchQuery.day = Number(req.body.date.split('-')[2]),
+      searchQuery.year = Number(req.body.date.split('-')[0]),
+      searchQuery.month = Number(req.body.date.split('-')[1])
+    }
+
+    //if time_start is != 'none', add time_start to searchQuery
+    if (req.body.time_start != 'none') searchQuery.time_start = Number(req.body.time_start);
+
+    //if isManager is false, then only include the available seats
+    if (req.body.isManager == 'false') {
+      searchQuery.taken = false;
     }
     
     if (req.body.tier == 'none') {
-      //loop through all tiers and concatenate to a results array
+      let tierModel;
+
+      for(let i = 1; i <= 3; i++) {
+        switch(i) {
+          case 1: tierModel = tier1_schedModel; break;
+          case 2: tierModel = tier2_schedModel; break;
+          case 3: tierModel = tier3_schedModel; break;
+        }
+
+        //append the results of each tier to the searchResults array
+        tierModel.find(searchQuery).lean().then(function(vals){
+          vals.forEach(slot => {
+            slot.tier = i;
+          });
+          searchResults = searchResults.concat(vals);
+        }).catch(errorFn);
+      }
+      
     }
-    
 
+    else { // if selected tier is specific
+      switch(req.body.tier) {
+        case 1: tierModel = tier1_schedModel; break;
+        case 2: tierModel = tier2_schedModel; break;
+        case 3: tierModel = tier3_schedModel; break;
+      }
 
+      //append the results of each tier to the searchResults array
+      tierModel.find(searchQuery).lean().then(function(vals){
+        vals.forEach(slot => {
+          slot.tier = req.body.tier;
+        });
+        searchResults = searchResults.concat(vals);
+      }).catch(errorFn);
+    }
+
+    //send the searchResults array to the client
+    resp.send({slots: searchResults});
+
+  });
+
+  // reservation post request (from search) based on reservation_id and tier
+  server.post('/add-reservation', async function(req, resp) {
+    let reservation_id = req.body.reservation_id;
+    let respdata = await manageReservation(reservation_id,resp);
+    renderManage(resp,respdata);
   });
 
   // Reservation Form post request (reserving a slot given variables)
@@ -802,6 +856,11 @@ function add(server, modules){
           console.log('Reservations found');
           console.log(reservations);
           let date = reservations[0].month + '/' + reservations[0].day + '/' + reservations[0].year;
+          // if reserver and reserver_email is null, it means the account is deleted
+          if (!reserver || !reserver_email) {
+            reserver = '**Deleted**';
+            reserver_email = '**Deleted**';
+          }
           respdata = {
             reservation_id: reservation_id,
             reserver: reserver,

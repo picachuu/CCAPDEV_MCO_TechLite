@@ -13,8 +13,10 @@
             <label for="searchOptions">Choose a search option:</label>
             <select id="searchOptions" onchange="showSearchForm(this.value)">
                 <option value="">Select an Option</option>
-                <option value="member">Search Member</option>
-                <option value="seats">Search Available Seats</option>
+                {{#if isManager}}
+                <option value="accounts">Search Accounts</option>
+                {{/if}}
+                <option value="slots">Search Available Slots</option>
             </select>
         </div>
 
@@ -30,7 +32,7 @@
             </form>
         </div>
 
-        <div id="searchSeatsForm" class="search-form" style="display:none;">
+        <div id="searchSlotsForm" class="search-form" style="display:none;">
 
             <!-- TO DO: 
                 Add the following selections to be modified through js:
@@ -42,7 +44,7 @@
             -->
 
             <div class="day-selection">
-                <label for="tierFilter">Choose a Date:</label>
+                <label for="tierFilter">Choose a Tier:</label>
                 <select id="tierFilter" class="day-select">
                     <!-- Options will be populated by JavaScript (search.js) -->
                 </select>
@@ -63,7 +65,7 @@
             </div> --}}
 
             <div class="day-selection">
-                <label for="seatFilter">Choose a starting time:</label>
+                <label for="seatFilter">Choose a seat number:</label>
                 <select id="seatFilter" class="day-select">
                     <!-- Options will be populated by JavaScript (search.js) -->
                 </select>
@@ -82,6 +84,11 @@
         <div id="availableSeats" class="seats-container" style="display:none;">
             <!-- Available seats will be dynamically inserted here -->
         </div>
+
+        <div id="searchResult-container" style="display:none;">
+        <!-- Search results will be dynamically inserted here -->
+        </div>
+
     </div>
 
     <div id="reservationForm" class="reservation-form search-page" style="display:none;">
@@ -99,10 +106,7 @@
         </form>
     </div>
 
-    <div id="searchResult-container" class="search-result" style="display:none;">
-        <!-- Search results will be dynamically inserted here -->
-    </div>
-
+    
 
 </div>
 <!-- Contact Start -->

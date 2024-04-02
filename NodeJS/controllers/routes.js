@@ -69,11 +69,18 @@ function add(server, modules){
 
 
   server.get('/search', function(req, resp){
-      
-      resp.render('search',{
-          layout: 'index',
-          title: 'TechLite - Search',
-      });
+    let isManager;
+    if (req.session && req.session.user) {
+      isManager = req.session.user.is_manager == true;
+    } else {
+      isManager = false;
+    }
+
+    resp.render('search',{
+        layout: 'index',
+        title: 'TechLite - Search',
+        isManager: isManager,
+    });
   });
 
   server.get('/services', function(req, resp){
@@ -83,6 +90,8 @@ function add(server, modules){
           title: 'TechLite - Services',
       });
   });
+
+  
 }
 
 module.exports.add = add;
