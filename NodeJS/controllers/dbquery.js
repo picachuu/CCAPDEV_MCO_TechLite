@@ -799,6 +799,11 @@ function add(server, modules){
           console.log('Reservations found');
           console.log(reservations);
           let date = reservations[0].month + '/' + reservations[0].day + '/' + reservations[0].year;
+          // if reserver and reserver_email is null, it means the account is deleted
+          if (!reserver || !reserver_email) {
+            reserver = '**Deleted**';
+            reserver_email = '**Deleted**';
+          }
           respdata = {
             reservation_id: reservation_id,
             reserver: reserver,
