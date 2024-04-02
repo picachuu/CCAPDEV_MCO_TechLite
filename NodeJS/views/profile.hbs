@@ -124,7 +124,7 @@
                 <button id="PfilterTier3">T3</button>
               </div>
             </div>
-            <div id="inactive-container"> <!-- replace id for past entries-->
+            <div id="inactive-container">
                 <!-- This part should be added by javascript-->
             </div>
             <div id="paginationP" class="pagination">
@@ -155,6 +155,16 @@
       </div>
     </div>
   </div>
+</div>
+
+<div id="changePassPopup" class="login-popup" style="display: none;">
+  <a href="" class="close">&times;</a>
+  <h4>Change Your Password</h4>
+  <form name="changePass" action="" onsubmit="event.preventDefault(); " method="post">
+    <input type="text" name="username" class="username form-control" placeholder="Username" required/>
+    <input type="password" name="password" class="password form-control" placeholder="Password" required/>
+    <input id="confirm-login" class="btn login" type="submit" value="Login" />
+  </form>
 </div>
 
 <div class="container manager-container">

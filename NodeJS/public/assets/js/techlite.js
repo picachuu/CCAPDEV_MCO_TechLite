@@ -1715,15 +1715,15 @@ function saveProfileChanges() {
     .catch(error => console.error('Error:', error));
 }
 
-// Manager Tools
+// Account Tools
 document.addEventListener('DOMContentLoaded', function () {
     let createBtn = document.getElementById('managerCreate');
     let popup = document.getElementById('managerCreatePopup');
     let closeBtn = popup.querySelector('.close');
-  
+    
     if (createBtn) {
       createBtn.addEventListener('click', function() {
-        popup.style.display = 'block';
+        togglePopup(popup);
       });
     }
   
@@ -1732,6 +1732,24 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         popup.style.display = 'none';
       });
+    }
+
+    let changePasswordBtn = document.getElementById('changePassword');
+    let changePassPopup = document.getElementById('changePassPopup');
+    let changePassClose = changePassPopup.querySelector('.close');
+
+
+    if (changePasswordBtn) {
+        changePasswordBtn.addEventListener('click', function() {
+            togglePopup(changePassPopup);
+        });
+    }
+
+    if (changePassClose) {
+        changePassClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePassPopup.style.display = 'none';
+        });
     }
 });
   
