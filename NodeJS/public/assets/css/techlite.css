@@ -1975,59 +1975,88 @@ footer p a:hover {
   margin: 0px 5px;
 }
 
-.profile-reservations {
+.profile-reservations, .walk-in-reservations {
   padding: 30px;
   background-color: #1f2122;
   border-radius: 23px;
   margin-bottom: 35px;
 }
 
-.profile-reservations .item {
+.profile-reservations .item, .walk-in-reservations .item{
   border-bottom: 1px solid #27292a;
   margin-bottom: 20px;
   padding-bottom: 20px;
 }
 
-.profile-reservations .last-item {
+.profile-reservations .last-item, .walk-in-reservations .last-item {
   margin-bottom: 30px;
 }
 
-.profile-reservations .item ul li {
-  margin-top: 15px;
-}
-
-.profile-reservations .item ul li img {
+.profile-reservations .item ul li img, .walk-in-reservations .item ul li img{
   margin-top: -30px;
   border-radius: 10px;
   border: 1px solid white;
 }
 
-.profile-reservations .item ul li {
+.profile-reservations .item ul li{
   display: inline-block;
+  margin-top: 15px;
+  width: 18%;
+}
+.walk-in-reservations .item ul li{
+  display: inline-block;
+  margin-top: 15px;
   width: 17%;
 }
 
-.profile-reservations .item ul li:first-child {
+.walk-in-reservations .item ul li:nth-child(2){
+  width: 11%;
+}
+
+.walk-in-reservations .item ul li:nth-child(3){
+  width: 16%;
+}
+
+.walk-in-reservations .item ul li:nth-child(4){
+  width: 13%;
+}
+
+.walk-in-reservations .item ul li:nth-child(5){
+  width: 19%;
+}
+
+.walk-in-reservations .item ul li:nth-child(6){
+  width: 13%;
+}
+
+.walk-in-reservations .item ul{
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.profile-reservations .item ul li:first-child, .walk-in-reservations .item ul li:first-child{
   width: 110px;
   margin-right: 7px;
 }
 
-.profile-reservations .item ul li:last-child {
+.profile-reservations .item ul li:last-child, .walk-in-reservations .item ul li:last-child{
   width: 15%;
   text-align: right;
 }
 
-.profile-reservations .item ul li h4 {
+.profile-reservations .item ul li h4, .walk-in-reservations .item ul li h4{
   font-size: 15px;
   margin-bottom: 5px;
 }
 
-.profile-reservations .item ul li span {
+.profile-reservations .item ul li span, .walk-in-reservations .item ul li span{
   color: #666;
   font-size: 14px;
 }
 
-.profile-reservations .main-button {
+.profile-reservations .main-button, .walk-in-reservations .main-button{
   text-align: center;
   margin-bottom: -53px;
 }
