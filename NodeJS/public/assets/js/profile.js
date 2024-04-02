@@ -138,11 +138,60 @@ function loadActiveReservations(page) {
 
 function loadWalkInReservations(page) {
     page = Math.max(1, Number(page));
-    
+    let data = {
+        logged: getLogged(),
+        tier_nums: selectedTiersActive 
+    };
 
+    $.ajax({
+        url: 'profile-walkin-reservations',
+        type: 'POST',
+        data: data,
+        async: true,
+        success: function(own, status) {
+            if (status === 'success') {
+                currentPageActive = page; 
+                const reservationsContainer = document.getElementById('walkin-container');
+                reservationsContainer.innerHTML = '';
+                {
+                    let activeCount = 0;
+                    const startIndex = (page - 1) * pageSize;
+                    let paginatedReservations = [];
+                    let combinedReservations = [];
 
+                    own.reservations.forEach(reservation => {
+                        const reservationElement = createWalkinReservationElement(reservation);
+                        if (reservationElement) { // only add if not null
+                            combinedReservations.push(reservation);
+                            activeCount++;
+                        }
+                    });
+                    
+                    if (activeCount === 0) {
+                        const noReservationsMsg = document.createElement('div');
+                        noReservationsMsg.textContent = 'No active walk-in reservations to show';
+                        noReservationsMsg.classList.add('no-reservations');
+                        reservationsContainer.appendChild(noReservationsMsg);
+                    } else {
+                        console.log('active: ' + activeCount);
+                        paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
+                        for (let i = 0; i < paginatedReservations.length; i++) {
+                            const reservationElement = createWalkinReservationElement(paginatedReservations[i]);
+                            reservationsContainer.appendChild(reservationElement);
+                        }
+                        totalPagesActive = Math.ceil(activeCount / pageSize);
+                    }
+                }
 
-    
+                document.getElementById('currentPage').textContent = page;
+                updatePaginationControls(page, totalPagesActive);
+                console.log(`Active: Requesting page ${currentPageActive} out of ${totalPagesActive} with page size ${pageSize} and tiers ${selectedTiersActive}`);
+            }
+        },
+        error: function() {
+            console.error('Failed to load reservations');
+        }
+    });
 }
 
 
@@ -588,7 +637,134 @@ function createInactiveReservationElement(reservation) {
     reservationDiv.appendChild(reservationUl);
 
     return reservationDiv;
-}
+}  // end createInactiveReservationElement
+
+// returns null when all reservations are expired/cancelled
+function createWalkinReservationElement(reservation) {
+
+    let reservationLength = Object.keys(reservation).length - 1; //length -1 due to tier number
+
+    let remainingSlots = expireCancelledRemainSlots(reservation);
+
+    if (remainingSlots == "Cancelled" || remainingSlots == "Expired" || remainingSlots == "Cancelled/Expired") {
+        return null;
+    }
+    
+    var reservationDiv = document.createElement('div');
+    reservationDiv.classList.add('item');
+    var reservationUl = document.createElement("ul");
+
+    // Tier image based on reservation.tier
+    var reservationLi1 = document.createElement("li");
+    var image = document.createElement('img');
+    image.alt = "Tier Image";
+    switch(Number(reservation.tier)) {
+        case 1:
+            image.src = 'assets/images/tier1.png';
+            break;
+        case 2:
+            image.src = 'assets/images/tier2.png';
+            break;
+        case 3:
+            image.src = 'assets/images/tier3.png';
+            break;
+        default:
+            image.alt = 'No image available';
+    }
+    reservationLi1.appendChild(image);
+    reservationUl.appendChild(reservationLi1);
+
+    // Room and Seat
+    const seatNum = reservation[0].seats;
+    var roomAndSeatLi = document.createElement("li");
+    var roomHeader = document.createElement('h4');
+    var roomSpan = document.createElement('span');
+    roomHeader.textContent = 'Room';
+    roomSpan.textContent = 'Tier ' + reservation.tier + ' Seat ' + seatNum;
+    roomAndSeatLi.appendChild(roomHeader);
+    roomAndSeatLi.appendChild(roomSpan);
+    reservationUl.appendChild(roomAndSeatLi);
+
+    // Date Reserved
+    const dateReserved = reservation[0].day + '/' + reservation[0].month + '/' + reservation[0].year;
+    var dateLi = document.createElement("li");
+    var dateHeader = document.createElement('h4');
+    var dateSpan = document.createElement('span');
+    dateHeader.textContent = 'Date Reserved';
+    dateSpan.textContent = dateReserved;
+    dateLi.appendChild(dateHeader);
+    dateLi.appendChild(dateSpan);
+    reservationUl.appendChild(dateLi);
+
+    // Name
+    var statusLi = document.createElement("li");
+    var statusHeader = document.createElement('h4');
+    var statusSpan = document.createElement('span');
+    statusHeader.textContent = 'Name';
+    // alert(JSON.stringify(reservation[0]));
+    if (reservation[0].assigned_to == '') {
+        statusSpan.textContent = '-';
+    } else {
+        statusSpan.textContent = reservation[0].assigned_to;
+    }
+    statusLi.appendChild(statusHeader);
+    statusLi.appendChild(statusSpan);
+    reservationUl.appendChild(statusLi);
+
+    // Time Start
+    
+    var timeLi = document.createElement("li");
+    var timeHeader = document.createElement('h4');
+    timeHeader.textContent = 'Time Start';
+    timeLi.appendChild(timeHeader);
+    var timeSpan = document.createElement('span');
+
+    // earliest time start that is available (i.e. !cancelled_by)
+    // create array of available time starts
+    let timeStarts = [];
+    for (let i = 0; i < reservationLength; i++) {
+        if (reservation[i].cancelled_by == null || reservation[i].cancelled_by == "null") {
+            timeStarts.push(reservation[i].time_start);
+        }
+    }
+
+    let timeStart_ = Math.min(...timeStarts);
+       
+    if (remainingSlots > 1) {
+        timeSpan.textContent = `${Math.floor((timeStart_)/100).toString().padStart(2, '0')}:${((timeStart_)%100).toString().padStart(2, '0')}` + ' (30m + '+ (remainingSlots - 1) +' more) ';
+    } else {
+        timeSpan.textContent = `${Math.floor((timeStart_)/100).toString().padStart(2, '0')}:${((timeStart_)%100).toString().padStart(2, '0')}` + ' (30 minutes)';
+    }
+    
+    timeLi.appendChild(timeSpan);
+    
+    reservationUl.appendChild(timeLi);
+
+    // Reserver Name
+    let reserverLi = document.createElement("li");
+    let reserverHeader = document.createElement('h4');
+    let reserverSpan = document.createElement('span');
+    reserverHeader.textContent = 'Reserver';
+    reserverLi.appendChild(reserverHeader);
+    reserverSpan.textContent = reservation[0].reserver_username;
+    reserverLi.appendChild(reserverSpan);
+    reservationUl.appendChild(reserverLi);
+
+    // Manage Link
+    var manageLi = document.createElement("li");
+    var manageDiv = document.createElement('div');
+    manageDiv.classList.add('main-border-button');
+    
+    addManageBtnForm(manageDiv, reservation[0].reservation_id);
+    
+    
+    manageLi.appendChild(manageDiv);
+    reservationUl.appendChild(manageLi);
+
+    reservationDiv.appendChild(reservationUl);
+
+    return reservationDiv;
+}   // end createWalkinReservationElement
 
 function addManageBtnForm(manageDiv,reservation_id) {
     let manageForm = document.createElement("form");
