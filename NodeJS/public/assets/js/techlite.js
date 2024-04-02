@@ -8,6 +8,16 @@ var dateDay = 9;
 var dateHour = 1;
 var dateMinute = 25;
 
+function getCurrentDateTime() {
+    let currentDate;
+    if (setDate) {
+        currentDate = new Date(dateYear, dateMonth - 1, dateDay, dateHour, dateMinute);
+    } else {
+        currentDate = new Date();
+    }
+    return currentDate;
+}
+
 function getIsRealtime() {
     return isRealtime;
 }
@@ -98,6 +108,7 @@ function isPast(date) { //DO NOT CHANGE
     }
 }
 //alert(isPast(new Date(2024, 4 - 1, 1, 9, 40))); // Example usage of isPast function (month is month - 1)
+
 
 //helper function to compare date if it's within one hour in the future of the present datetime (assume receives date type)
 // so if current date is 10:00: returns true if date parameter is between 9:00 and 10:00
