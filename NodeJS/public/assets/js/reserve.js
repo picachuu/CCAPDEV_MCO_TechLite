@@ -1,6 +1,8 @@
 if (window.location.pathname === '/reserve') {
     document.addEventListener('DOMContentLoaded', function() {
-        //alert(document.getElementById("isPreselect"));
+        populateDays();
+        attachEventListeners();
+        
         if (document.getElementById("isPreselect")) {
             // post request for preselected data
             $.ajax({
@@ -16,27 +18,75 @@ if (window.location.pathname === '/reserve') {
                         //decoding the string into reservation json object
                         // combine YYYY-MM-DD/time_start/Tier/Seat to string so easy to split() with / and -
                         // const reservation = `${year}-${month}-${day}/${time_start}/${tier}/${seats}`;
+                        let yyyymmdd = reservationStr.split('/')[0];
+                        // prepend 0 to month and day if less than 10
+                        let strmonth = yyyymmdd.split('-')[1];
+                        let strday = yyyymmdd.split('-')[2].split('/')[0];
+                        if (strmonth.length == 1) {
+                            strmonth = "0" + strmonth;
+                        }
+                        if (strday.length == 1) {
+                            strday = "0" + strday;
+                        }
+                        yyyymmdd = yyyymmdd.split('-')[0] + "-" + strmonth + "-" + strday;
                         console.log("Reservation (Preselect): "+reservationStr);
                         const reservation = {
                             year: reservationStr.split('-')[0],
                             month: reservationStr.split('-')[1],
                             day: reservationStr.split('-')[2].split('/')[0],
                             time_start: reservationStr.split('-')[2].split('/')[1],
-                            tier: reservationStr.split('-')[3],
-                            seat: reservationStr.split('-')[4]
+                            tier: reservationStr.split('/')[2],
+                            seat: reservationStr.split('/')[3],
+                            yyyymmdd: yyyymmdd
                         };
                         loadPreselected(reservation);
                     }
                 }
             });
-        } else {
-            populateDays();
-            attachEventListeners();
         }
     });
 }
 
 function loadPreselected(reservation) {
+    /* reservation = {
+        year: reservationStr.split('-')[0],
+        month: reservationStr.split('-')[1],
+        day: reservationStr.split('-')[2].split('/')[0],
+        time_start: reservationStr.split('-')[2].split('/')[1],
+        tier: reservationStr.split('-')[3],
+        seat: reservationStr.split('-')[4],
+        yyyymmdd: reservationStr.split('/')[0]
+    }; */
+
+    console.log(reservation);
+
+    const daySelect = document.getElementById('daySelect');
+    daySelect.value = reservation.yyyymmdd;
+    const tierSelect = document.getElementById('tierSelect');
+    tierSelect.value = `tier${reservation.tier}`;
+
+    // after day and tier selection, populate the seats
+    checkSelectionAndPopulateTimeBlocks();
+
+    // select the seat
+    const seat = Array.from(document.querySelectorAll('.seat')).find(el => el.textContent === `Seat ${reservation.seat}`);
+    seat.click();
+
+    // select the time block according to time_start
+
+    // prepending 0 to hour if less than 10
+    let hour = Math.floor(reservation.time_start / 100);
+    if (hour < 10) {
+        hour = `0${hour}`;
+    }
+    let minute = reservation.time_start % 100;
+    if (minute < 10) {
+        minute = `0${minute}`;
+    }
+
+    let time_startStr = `${hour}:${minute}`;
+    const timeBlock = Array.from(document.querySelectorAll('.time-slot')).find(el => el.textContent === time_startStr);
+    timeBlock.click();
     
 }
 
