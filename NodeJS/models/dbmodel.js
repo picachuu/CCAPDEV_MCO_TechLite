@@ -21,7 +21,7 @@ const userInfoCollection = "user_info";
 const userReservationsCollection = "user_reservation";
 //const seatCollection = "seat";
 const db_url = "mongodb+srv://admin:12345@cluster0.fchjyy3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-const mongo_uri = db_url+databaseName;
+const mongo_uri = db_url;
 
 
 //Require a MongoDB connection using mongoose. Include the mongoose library
