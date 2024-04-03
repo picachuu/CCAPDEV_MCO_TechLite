@@ -1776,41 +1776,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-$(document).ready(function() {
-    $('#changePasswordBtn').click(function(e) {
-      e.preventDefault();
-      const currentPassword = $('#currentPassword').val();
-      const newPassword = $('#newPassword').val();
-      const confirmNewPassword = $('#confirmNewPassword').val();
-  
-      if (newPassword !== confirmNewPassword) {
-        alert("New passwords do not match.");
-        return;
-      }
-  
-      $.ajax({
-        url: '/change-password',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-          currentPassword: currentPassword,
-          newPassword: newPassword,
-          confirmNewPassword: confirmNewPassword
-        }),
-        success: function(response) {
-          if (response.valid) {
-            alert("Password changed successfully.");
-            togglePopup(document.getElementById('changePassPopup'));
-          } else {
-            alert("Error: " + response.reason);
-          }
-        },
-        error: function() {
-          alert("An error occurred while attempting to change your password.");
-        }
-      });
-    });
-  });
+
   
   
 // Delete Account Action

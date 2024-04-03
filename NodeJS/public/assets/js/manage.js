@@ -109,7 +109,6 @@ function manageFormUserTimeBlocks(manageForm) {
     });
 
     manageForm.elements['userSelectedTime'].value = time;
-
     return count;
 }
 
@@ -150,6 +149,17 @@ function displayManageablecontent() {
     }).responseJSON;
     let reservations = response.reservations;
 
+    // sort the reservations to where cancelleded reservations are at the start of the array (and is sort by time_start -- not needed since it's already sorted from dbquery)
+    reservations.sort((a, b) => {
+        if (a.cancelled_by && !b.cancelled_by) {
+            return -1;
+        }
+        if (!a.cancelled_by && b.cancelled_by) {
+            return 1;
+        }
+        return 0;
+    });
+    
 
     // Access individual parameters by name
     const seats = reservations[0].seats;
@@ -205,6 +215,8 @@ function addTimeblock(seatNumber, tierNumber, year, month, day, time_start, assi
                 block.classList.add('time-slot');
                 block.textContent = `${Math.floor((reserved.seat.time_start)/100).toString().padStart(2, '0')}:${((reserved.seat.time_start)%100).toString().padStart(2, '0')}`;
                 block.onclick = null;
+
+                //alert("timeblock: "+`${Math.floor((reserved.seat.time_start)/100).toString().padStart(2, '0')}:${((reserved.seat.time_start)%100).toString().padStart(2, '0')}`);
                 
                 if (cancelled_by || (past && isRealtime)) {
                     block.classList.add('unavailable');
