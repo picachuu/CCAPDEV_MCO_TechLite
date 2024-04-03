@@ -347,7 +347,7 @@ function addReserveBtn(reserveDiv, slot) {
     let manageForm = document.createElement("form");
     
     manageForm.method = "POST";
-    manageForm.action = "/add-reservation";
+    manageForm.action = "/reserve";
     manageForm.addEventListener('submit', function(event) {
         event.preventDefault(); // prevent form submission
         return false;

@@ -64,6 +64,7 @@ function add(server, modules){
       resp.render('reserve',{
           layout: 'index',
           title: 'TechLite - Reserve Your Seat',
+          isPreselect: false,
       });
   });
 

@@ -2,7 +2,48 @@ if (window.location.pathname === '/reserve') {
     document.addEventListener('DOMContentLoaded', function() {
         populateDays();
         attachEventListeners();
+        if (document.getElementById(isPreselect) && false) {
+            // post request for preselected data
+            $.ajax({
+                url: 'reserve',
+                type: 'POST',
+                data: {
+                    mode: "preselect"
+                },
+                async: false,  // Make the request synchronous
+                success: function(reservationStr, status) {
+                    if (status === 'success') {
+                        //decoding the string into reservation json object
+                        // combine YYYY-MM-DD/time_start/Tier/Seat to string so easy to split() with / and -
+                        // const reservation = `${year}-${month}-${day}/${time_start}/${tier}/${seats}`;
+                        const reservation = {
+                            year: reservationStr.split('-')[0],
+                            month: reservationStr.split('-')[1],
+                            day: reservationStr.split('-')[2].split('/')[0],
+                            time_start: reservationStr.split('-')[2].split('/')[1],
+                            tier: reservationStr.split('-')[3],
+                            seat: reservationStr.split('-')[4]
+                        };
+                        loadPreselected(reservation);
+                    }
+                }
+            });
+        }
     });
+}
+
+function loadPreselected(reservation) {
+    const tierSelect = document.getElementById('tierSelect');
+    const daySelect = document.getElementById('daySelect');
+    const timeBlocksContainer = document.getElementById('timeBlocksContainer');
+    const reservationForm = document.getElementById('reservationForm');
+
+    tierSelect.value = `Tier ${reservation.tier}`;
+    daySelect.value = `${reservation.year}-${reservation.month}-${reservation.day}`;
+    checkSelectionAndPopulateTimeBlocks();
+    populateTimeBlocksRes(reservation.seat, reservation.tier, reservation.day, reservation.month, reservation.year);
+    reservationForm.style.display = 'block';
+
 }
 
 function populateDays() {

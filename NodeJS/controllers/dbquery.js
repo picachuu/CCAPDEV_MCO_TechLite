@@ -26,12 +26,16 @@ function add(server, modules){
 
   server.post('/reserve', function(req, resp){
     console.log('Reserve post request received');
-
-    let tierModel;
-    switch(Number(req.body.tier_num)){
-        case 1: tierModel = tier1_schedModel; break;
-        case 2: tierModel = tier2_schedModel; break;
-        case 3: tierModel = tier3_schedModel; break;
+    let isPreselect = false;
+    if (req.body.reservation) {
+      isPreselect = true;
+      req.session.reservation = req.body.reservation;
+      resp.render('reserve',{
+        layout: 'index',
+        title: 'TechLite - Reserve Your Seat',
+        isPreselect: true
+      });
+      return;
     }
 
     //change searchQuery based on mode: "all", "taken_false", "taken_true"
@@ -63,6 +67,18 @@ function add(server, modules){
         month: Number(req.body.month_num),
         year: Number(req.body.year_num)
       }; break;
+
+      case "preselect": {
+        resp.send({reservation: req.session.reservation});
+      }
+      return;
+    }
+
+    let tierModel;
+    switch(Number(req.body.tier_num)){
+        case 1: tierModel = tier1_schedModel; break;
+        case 2: tierModel = tier2_schedModel; break;
+        case 3: tierModel = tier3_schedModel; break;
     }
 
     console.log("Searching for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
