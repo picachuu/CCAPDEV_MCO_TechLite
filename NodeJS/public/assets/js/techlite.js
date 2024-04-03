@@ -331,7 +331,7 @@ function isWithinOneHour(date) {
 
         // if create account success, alert and toggle login popup
         let urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('create_account') === 'success') {
+        if (urlParams.get('create_account') === 'success' && window.location.pathname !== '/profile') {
             togglePopup(document.getElementById('loginPopup'));
         }
 

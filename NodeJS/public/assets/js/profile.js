@@ -68,7 +68,7 @@ function loadPastReservations(page) {
 
                 document.getElementById('currentPageP').textContent = page;
                 updatePaginationControls(page, totalPagesPast);
-                console.log(`Active: Requesting page ${currentPagePast} out of ${totalPagesPast} with page size ${pageSize} and tiers ${selectedTiersInactive}`);
+                console.log(`Inactive: Requesting page ${currentPagePast} out of ${totalPagesPast} with page size ${pageSize} and tiers ${selectedTiersInactive}`);
             }
         },
         error: function() {
@@ -140,7 +140,7 @@ function loadWalkInReservations(page) {
     page = Math.max(1, Number(page));
     let data = {
         logged: getLogged(),
-        tier_nums: selectedTiersActive 
+        tier_nums: selectedTiersWalkIn 
     };
 
     $.ajax({
@@ -150,7 +150,7 @@ function loadWalkInReservations(page) {
         async: true,
         success: function(own, status) {
             if (status === 'success') {
-                currentPageActive = page; 
+                currentPageWalkIn = page; 
                 const reservationsContainer = document.getElementById('walkin-container');
                 reservationsContainer.innerHTML = '';
                 {
@@ -173,19 +173,19 @@ function loadWalkInReservations(page) {
                         noReservationsMsg.classList.add('no-reservations');
                         reservationsContainer.appendChild(noReservationsMsg);
                     } else {
-                        console.log('active: ' + activeCount);
+                        console.log('walkin: ' + activeCount);
                         paginatedReservations = combinedReservations.slice(startIndex, startIndex + pageSize);
                         for (let i = 0; i < paginatedReservations.length; i++) {
                             const reservationElement = createWalkinReservationElement(paginatedReservations[i]);
                             reservationsContainer.appendChild(reservationElement);
                         }
-                        totalPagesActive = Math.ceil(activeCount / pageSize);
+                        totalPagesWalkIn = Math.ceil(activeCount / pageSize);
                     }
                 }
 
-                document.getElementById('currentPage').textContent = page;
-                updatePaginationControls(page, totalPagesActive);
-                console.log(`Active: Requesting page ${currentPageActive} out of ${totalPagesActive} with page size ${pageSize} and tiers ${selectedTiersActive}`);
+                document.getElementById('currentPageW').textContent = page;
+                updatePaginationControlsW(page, totalPagesWalkIn);
+                console.log(`Walkin: Requesting page ${currentPageWalkIn} out of ${totalPagesWalkIn} with page size ${pageSize} and tiers ${selectedTiersWalkIn}`);
             }
         },
         error: function() {
