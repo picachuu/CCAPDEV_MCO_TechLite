@@ -19,7 +19,6 @@ const tier2_schedCollection = "tier2_sched";
 const tier3_schedCollection = "tier3_sched";
 const userInfoCollection = "user_info";
 const userReservationsCollection = "user_reservation";
-//const seatCollection = "seat";
 const db_url = "mongodb://127.0.0.1:27017/";
 const mongo_uri = db_url+databaseName;
 
@@ -78,30 +77,15 @@ const tier2_schedModel = mongoose.model(tier2_schedCollection, scheduleSchema);
 const tier3_schedModel = mongoose.model(tier3_schedCollection, scheduleSchema);
 
 
-
-/* // seats collection (contains seat information)
-const seatSchema = new mongoose.Schema({
-    seats: { type: BigInt },
-    tier: { type: BigInt }
-  },{ versionKey: false });
-  
-const seatModel = mongoose.model(seatCollection, seatSchema);
- */
-
-
 //to be used in controller
 module.exports.db_url = db_url; 
 module.exports.databaseName = databaseName; 
 module.exports.errorFn = errorFn; 
 module.exports.successFn = successFn; 
-// module.exports.tier1_schedCollection = tier1_schedCollection; 
-// module.exports.userInfoCollection = userInfoCollection; 
-// module.exports.seatCollection = seatCollection; 
 module.exports.tier1_schedModel = tier1_schedModel; 
 module.exports.tier2_schedModel = tier2_schedModel; 
 module.exports.tier3_schedModel = tier3_schedModel; 
 module.exports.userReservationModel = userReservationModel;
 module.exports.userModel = userModel; 
-// module.exports.seatModel = seatModel; 
 module.exports.mongo_uri = mongo_uri;
 module.exports.mongoose = mongoose;

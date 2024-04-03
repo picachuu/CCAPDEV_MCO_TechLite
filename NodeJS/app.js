@@ -87,3 +87,10 @@ const port = process.env.PORT | 3000;
 server.listen(port, function(){
     console.log('Listening at port '+port);
 });
+
+// export all the dbmodels
+module.exports = dbmodel.tier1_schedModel;
+module.exports = dbmodel.tier2_schedModel;
+module.exports = dbmodel.tier3_schedModel;
+module.exports = dbmodel.userReservationModel;
+module.exports = dbmodel.userModel;
