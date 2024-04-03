@@ -269,7 +269,7 @@ function createSlotElement(slot) {
         slotUl.appendChild(roomAndSeatLi);
 
         // Date Reserved
-        const dateReserved = slot.day + '/' + slot.month + '/' + slot.year;
+        const dateReserved = slot.month + '/' + slot.day + '/' + slot.year;
         var dateLi = document.createElement("li");
         var dateHeader = document.createElement('h4');
         var dateSpan = document.createElement('span');

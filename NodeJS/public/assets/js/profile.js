@@ -475,7 +475,7 @@ function createReservationElement(reservation) {
     reservationUl.appendChild(roomAndSeatLi);
 
     // Date Reserved
-    const dateReserved = reservation[0].day + '/' + reservation[0].month + '/' + reservation[0].year;
+    const dateReserved = reservation[0].month + '/' + reservation[0].day + '/' + reservation[0].year;
     var dateLi = document.createElement("li");
     var dateHeader = document.createElement('h4');
     var dateSpan = document.createElement('span');
@@ -588,7 +588,7 @@ function createInactiveReservationElement(reservation) {
     reservationUl.appendChild(roomAndSeatLi);
 
     // Date Reserved
-    const dateReserved = reservation[0].day + '/' + reservation[0].month + '/' + reservation[0].year;
+    const dateReserved = reservation[0].month + '/' + reservation[0].day + '/' + reservation[0].year;
     var dateLi = document.createElement("li");
     var dateHeader = document.createElement('h4');
     var dateSpan = document.createElement('span');
@@ -689,7 +689,7 @@ function createWalkinReservationElement(reservation) {
     reservationUl.appendChild(roomAndSeatLi);
 
     // Date Reserved
-    const dateReserved = reservation[0].day + '/' + reservation[0].month + '/' + reservation[0].year;
+    const dateReserved = reservation[0].month + '/' + reservation[0].day + '/' + reservation[0].year;
     var dateLi = document.createElement("li");
     var dateHeader = document.createElement('h4');
     var dateSpan = document.createElement('span');
