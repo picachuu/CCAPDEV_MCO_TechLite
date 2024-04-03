@@ -348,10 +348,10 @@ function addReserveBtn(reserveDiv, slot) {
     
     manageForm.method = "POST";
     manageForm.action = "/reserve";
-    manageForm.addEventListener('submit', function(event) {
+    /* manageForm.addEventListener('submit', function(event) {
         event.preventDefault(); // prevent form submission
         return false;
-    });
+    }); */
 
     // get slot information
     const day = slot.day;

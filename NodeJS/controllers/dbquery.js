@@ -27,70 +27,79 @@ function add(server, modules){
   server.post('/reserve', function(req, resp){
     console.log('Reserve post request received');
     let isPreselect = false;
-    if (req.body.reservation) {
+    console.log("Reserve Mode: " + req.body.mode)
+    if (req.body.reservation && req.body.mode != "preselect") {
+      console.log('Preselecting reservation: ' + req.body.reservation);
       isPreselect = true;
       req.session.reservation = req.body.reservation;
       resp.render('reserve',{
         layout: 'index',
         title: 'TechLite - Reserve Your Seat',
-        isPreselect: true
+        isPreselect: isPreselect
       });
-      return;
     }
 
     //change searchQuery based on mode: "all", "taken_false", "taken_true"
     let searchQuery;
-    switch(req.body.mode) {
-      case "all": searchQuery = {
-        cancelled_by: null,
-        seats: Number(req.body.seat_num),
-        day: Number(req.body.day_num),
-        month: Number(req.body.month_num),
-        year: Number(req.body.year_num)
-      }; break;
+    if (!isPreselect) {
+      switch(req.body.mode) {
+        case "all": searchQuery = {
+          cancelled_by: null,
+          seats: Number(req.body.seat_num),
+          day: Number(req.body.day_num),
+          month: Number(req.body.month_num),
+          year: Number(req.body.year_num)
+        }; break;
 
-      case "taken_false": searchQuery = {
-        seats: Number(req.body.seat_num),
-        taken: false,
-        cancelled_by: null,
-        day: Number(req.body.day_num),
-        month: Number(req.body.month_num),
-        year: Number(req.body.year_num)
-      }; break;
+        case "taken_false": searchQuery = {
+          seats: Number(req.body.seat_num),
+          taken: false,
+          cancelled_by: null,
+          day: Number(req.body.day_num),
+          month: Number(req.body.month_num),
+          year: Number(req.body.year_num)
+        }; break;
 
-      //taken_true has not been used yet pero could be useful for finding which are to be editable
-      case "taken_true": searchQuery = {
-        seats: Number(req.body.seat_num),
-        taken: true,
-        cancelled_by: null,
-        day: Number(req.body.day_num),
-        month: Number(req.body.month_num),
-        year: Number(req.body.year_num)
-      }; break;
+        //taken_true has not been used yet pero could be useful for finding which are to be editable
+        case "taken_true": searchQuery = {
+          seats: Number(req.body.seat_num),
+          taken: true,
+          cancelled_by: null,
+          day: Number(req.body.day_num),
+          month: Number(req.body.month_num),
+          year: Number(req.body.year_num)
+        }; break;
 
-      case "preselect": {
-        resp.send({reservation: req.session.reservation});
+        case "preselect": {
+          let reservationStr = req.session.reservation;
+          req.session.reservation = null;
+          console.log('Preselecting reservation (Sending): ' + reservationStr);
+          resp.send({reservation: reservationStr});
+          isPreselect = true;
+        }
       }
+    }
+
+    if (isPreselect) {
       return;
+    } else {
+      let tierModel;
+      switch(Number(req.body.tier_num)){
+          case 1: tierModel = tier1_schedModel; break;
+          case 2: tierModel = tier2_schedModel; break;
+          case 3: tierModel = tier3_schedModel; break;
+      }
+
+      console.log("Searching for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
+
+      tierModel.find(searchQuery).lean().then(function(vals){
+          console.log('List successful');
+          console.log(vals.length);
+          // sorts the array by time_start
+          vals.sort((a, b) => a.time_start - b.time_start);
+          resp.send({seats: vals});
+      }).catch(errorFn);
     }
-
-    let tierModel;
-    switch(Number(req.body.tier_num)){
-        case 1: tierModel = tier1_schedModel; break;
-        case 2: tierModel = tier2_schedModel; break;
-        case 3: tierModel = tier3_schedModel; break;
-    }
-
-    console.log("Searching for Tier"+req.body.tier_num+": "+ JSON.stringify(searchQuery));
-
-    tierModel.find(searchQuery).lean().then(function(vals){
-        console.log('List successful');
-        console.log(vals.length);
-        // sorts the array by time_start
-        vals.sort((a, b) => a.time_start - b.time_start);
-        resp.send({seats: vals});
-    }).catch(errorFn);
-
   }); // end reserve post request
 
   server.post('/tier-slots', function(req, resp) {
