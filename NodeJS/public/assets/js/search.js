@@ -1,3 +1,7 @@
+let currentPageSearch = 1;
+let totalPagesSearch = 0;
+let pageSizeSearch = 5;
+
 if (window.location.pathname === '/search') {
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Search page loaded');
@@ -90,22 +94,51 @@ function loadDateSelection() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    //pagination event listeners
+    document.getElementById('nextButtonS').addEventListener('click', function() {
+        if (currentPageSearch < totalPagesSearch) {
+            currentPageSearch++; 
+            PopulateSlotsResults(currentPageSearch);
+        }
+    });
+    
+    document.getElementById('prevButtonS').addEventListener('click', function() {
+        if (currentPageSearch > 1) {
+            currentPageSearch--; 
+            PopulateSlotsResults(currentPageSearch);
+        }
+    });
+
+    document.getElementById('firstButtonS').addEventListener('click', function() {
+        currentPageSearch = 1; 
+        PopulateSlotsResults(currentPageSearch);
+    });
+
+    document.getElementById('lastButtonS').addEventListener('click', function() {
+        currentPageSearch = totalPagesSearch;
+        PopulateSlotsResults(currentPageSearch);
+    });
+});
+
 function PopulateResultContainer() {
+
+    document.getElementById('searchResultsDiv').style.display = 'block';
 
     document.getElementById('searchResult-container').innerHTML = '';
     var searchOption = document.getElementById('searchOptions').value;
     switch (searchOption) {
         case 'accounts':
-            PopulateMemberResults(); //same for manager and user
+            PopulateMemberResults(1); //same for manager and user
             break;
         case 'slots':
-            PopulateSlotsResults(); //manager: all, user: available
+            PopulateSlotsResults(1); //manager: all, user: available
             break;
     }
 }
 
-function PopulateSlotsResults() {
-    
+function PopulateSlotsResults(page) {
+    page = Math.max(1, Number(page));
     data_send = {
         tier: document.getElementById('tierFilter').value,
         seats: document.getElementById('seatFilter').value,
@@ -113,6 +146,14 @@ function PopulateSlotsResults() {
         time_start: document.getElementById('time_startFilter').value,
         isManager: getIsManager()
     };
+
+    document.getElementById('headingRedSearch').innerHTML = "Slots";
+
+    if (getIsManager()) {
+        document.getElementById('headingWhiteSearch').innerHTML = "Obtained";
+    } else {
+        document.getElementById('headingWhiteSearch').innerHTML = "Available";
+    }
     
     $.ajax({
             url: 'search-slots-request',
@@ -120,13 +161,44 @@ function PopulateSlotsResults() {
             data: data_send,
             async: true,
             success: function(server_resp, status) {
+                currentPageSearch = page; 
+                const searchContainer = document.getElementById('searchResult-container');
+                searchContainer.innerHTML = '';
+                let slotCount = 0;
+                const startIndex = (page - 1) * pageSizeSearch;
+                let paginatedSlots = [];
+                let combinedSlots = [];
 
                 console.log("data received: " + server_resp.slots.length);
                 //iterate through the length of the seats array and create a div (to be added to results container for each seat
                 server_resp.slots.forEach(slot => {
-                    console.log("slot seat number: " + slot.seats);
-                    AddSlotToContainer(slot);
+                    const slotElement = createSlotElement(slot);
+                    if (slotElement) { // only add if not null
+                        combinedSlots.push(slot);
+                        slotCount++;
+                    }
+                    /* console.log("slot seat number: " + slot.seats);
+                    createSlotElement(slot); */
                 });
+
+                if (slotCount === 0) {
+                    const noSlotsMsg = document.createElement('div');
+                    noSlotsMsg.textContent = 'No slots available';
+                    noSlotsMsg.classList.add('no-reservations');
+                    searchContainer.appendChild(noSlotsMsg);
+                } else {
+                    console.log('Slots: ' + slotCount);
+                    paginatedSlots = combinedSlots.slice(startIndex, startIndex + pageSizeSearch);
+                    for (let i = 0; i < paginatedSlots.length; i++) {
+                        const reservationElement = createSlotElement(paginatedSlots[i]);
+                        searchContainer.appendChild(reservationElement);
+                    }
+                    totalPagesSearch = Math.ceil(slotCount / pageSizeSearch);
+                }
+
+                document.getElementById('currentPageS').textContent = page;
+                updatePaginationControlsS(page, totalPagesSearch);
+                console.log(`Slot: Requesting page ${currentPageSearch} out of ${totalPagesSearch} with page size ${pageSizeSearch}`);
             },
             error: function() {
                 console.error('Failed to load reservations');
@@ -134,16 +206,30 @@ function PopulateSlotsResults() {
     });
 }
 
-function AddSlotToContainer(slot) {
-    //if taken (is available, meaning this was used for manager search of slots parameter)
+function updatePaginationControlsS(currentPage, totalPages) {
+    const prevButton = document.getElementById('prevButtonS');
+    const nextButton = document.getElementById('nextButtonS');
+    
+    prevButton.disabled = currentPage <= 1;
+    nextButton.disabled = currentPage >= totalPages;
+}
 
-   
-    if (slot.taken) {
+function expiredSlots(slot) {
+    // check if the reservation is expired (when all available month day year time_start is less than current datetime)
+    let expired = isRealtime;    // change to true to enable CHANGE!! FOR REAL-TIME CHECKING
 
+    if (!isPast(new Date(slot.year, slot.month - 1, slot.day, Math.floor(slot.time_start / 100), slot.time_start % 100))){
+        expired = false;
     }
 
-    else {//if available
-        const resultContainer = document.getElementById('searchResult-container');
+    return expired;
+}
+
+function createSlotElement(slot) {
+    //if taken (is available, meaning this was used for manager search of slots parameter)
+    if (slot.taken && !getIsManager() || expiredSlots(slot)) {
+        return null;
+    } else {//if available or if manager
         var slotDiv = document.createElement('div');
         slotDiv.classList.add('item');
         var slotUl = document.createElement("ul");
@@ -184,7 +270,7 @@ function AddSlotToContainer(slot) {
         var dateLi = document.createElement("li");
         var dateHeader = document.createElement('h4');
         var dateSpan = document.createElement('span');
-        dateHeader.textContent = 'Date Reserved';
+        dateHeader.textContent = 'Date';
         dateSpan.textContent = dateReserved;
         dateLi.appendChild(dateHeader);
         dateLi.appendChild(dateSpan);
@@ -196,7 +282,9 @@ function AddSlotToContainer(slot) {
         var statusSpan = document.createElement('span');
         statusHeader.textContent = 'Status';
         // Assume logic for determining if expired or ongoing is implemented elsewhere
-        statusSpan.textContent = 'Ongoing'; // placeholder
+        const available = !slot.taken;
+        const statusStr = available ? 'Available' : 'Taken';
+        statusSpan.textContent = statusStr; // placeholder
         statusLi.appendChild(statusHeader);
         statusLi.appendChild(statusSpan);
         slotUl.appendChild(statusLi);
@@ -218,44 +306,76 @@ function AddSlotToContainer(slot) {
         var reserveLi = document.createElement("li");
         var reserveDiv = document.createElement('div');
         reserveDiv.classList.add('main-border-button');
-        
-        var reserveButton = document.createElement("button");
-        reserveButton.type = "submit";
-        reserveButton.textContent = "Reserve";
-        reserveButton.classList.add('main-border-button');
+
+
+        // let slotButton;
+        // slotButton = document.createElement("button");
+        // slotButton.type = "submit";
+        // slotButton.classList.add('main-border-button');
+        if (available) {
+            addReserveBtn(reserveDiv,slot);
+            // slotButton.textContent = "Reserve";
+            
+        } else if (getIsManager()){
+            addManageBtnForm(reserveDiv,slot.reservation_id);
+        } // the following two supposedly should not matter since it's already checked
+        // else if (expiredSlots(slot)) {    
+        //     slotButton.textContent = "Expired";
+        //     slotButton.disabled = true;
+        //     slotButton.classList.add('.border-no-active');
+        // } else {
+        //     slotButton.textContent = "Taken";
+        //     slotButton.disabled = true;
+        //     slotButton.classList.add('.border-no-active');
+        // }
 
         //addReserveBtn();
         // use in adding taken slots
         //addManageBtnForm(manageDiv, reservation[0].reservation_id);
         
-        reserveDiv.appendChild(reserveButton);
+        // reserveDiv.appendChild(slotButton);
         reserveLi.appendChild(reserveDiv);
         slotUl.appendChild(reserveLi);
 
         slotDiv.appendChild(slotUl);
 
-        resultContainer.appendChild(slotDiv);
+        return slotDiv;
     }
 }
 
-function addReserveBtn(reserveDiv, slot_tier, slot_id) {
+function addReserveBtn(reserveDiv, slot) {
     let manageForm = document.createElement("form");
     
     manageForm.method = "POST";
     manageForm.action = "/add-reservation";
+    manageForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // prevent form submission
+        return false;
+    });
+
+    // get slot information
+    const day = slot.day;
+    const month = slot.month;
+    const year = slot.year;
+    const time_start = slot.time_start;
+    const tier = slot.tier;
+    const seats = slot.seats;
+    // combine YYYY-MM-DD/time_start/Tier/Seat to string so easy to split() with / and -
+    const reservation = `${year}-${month}-${day}/${time_start}/${tier}/${seats}`;
+
     
     let hiddenField = document.createElement("input");
     hiddenField.type = "hidden";
-    hiddenField.name = "reservation_id";
-    hiddenField.value = reservation_id;
+    hiddenField.name = "reservation";
+    hiddenField.value = reservation;
     manageForm.appendChild(hiddenField);
     
 
     var manageButton = document.createElement("button");
     manageButton.type = "submit";
-    manageButton.textContent = "Manage";
+    manageButton.textContent = "Reserve";
     manageForm.appendChild(manageButton);
     manageButton.classList.add('main-border-button');
-
+    
     reserveDiv.appendChild(manageForm);
 }
