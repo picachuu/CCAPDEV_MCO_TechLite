@@ -89,8 +89,8 @@ server.listen(port, function(){
 });
 
 // export all the dbmodels
-module.exports = dbmodel.tier1_schedModel;
+/* module.exports = dbmodel.tier1_schedModel;
 module.exports = dbmodel.tier2_schedModel;
 module.exports = dbmodel.tier3_schedModel;
 module.exports = dbmodel.userReservationModel;
-module.exports = dbmodel.userModel;
+module.exports = dbmodel.userModel; */
