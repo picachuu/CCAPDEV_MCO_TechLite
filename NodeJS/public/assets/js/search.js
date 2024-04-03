@@ -88,7 +88,7 @@ function loadDateSelection() {
     const option = new Option('None', 'none');
     dayFilterSelect.add(option);
 
-    for (let i = 1; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
         const futureDate = new Date(today);
         // console.log(futureDate.toISOString().split('T')[0]);
         futureDate.setDate(today.getDate() + i);
@@ -382,7 +382,7 @@ function updatePaginationControlsS(currentPage, totalPages) {
 
 function expiredSlots(slot) {
     // check if the reservation is expired (when all available month day year time_start is less than current datetime)
-    let expired = isRealtime;    // change to true to enable CHANGE!! FOR REAL-TIME CHECKING
+    let expired = isRealtime;
 
     if (!isPast(new Date(slot.year, slot.month - 1, slot.day, Math.floor(slot.time_start / 100), slot.time_start % 100))){
         expired = false;
@@ -432,7 +432,7 @@ function createSlotElement(slot) {
         slotUl.appendChild(roomAndSeatLi);
 
         // Date Reserved
-        const dateReserved = slot.day + '/' + slot.month + '/' + slot.year;
+        const dateReserved = slot.month + '/' + slot.day + '/' + slot.year;
         var dateLi = document.createElement("li");
         var dateHeader = document.createElement('h4');
         var dateSpan = document.createElement('span');

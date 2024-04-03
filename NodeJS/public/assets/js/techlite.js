@@ -1,5 +1,5 @@
 var isRealtime = true;// reat-time variable to activate real-time updates for specific functions
-var setDate = true;
+var setDate = false;
 
 // changes current date to a specific date and time of the compare date helper functions
 var dateYear = 2024;
