@@ -77,13 +77,15 @@ function loadSeatSelection() {
 function loadDateSelection() {
     const dayFilterSelect = document.getElementById('dateFilter');
     const today = getCurrentDateTime();
+    //has to add one day to the current date
     const option = new Option('None', 'none');
     dayFilterSelect.add(option);
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 1; i < 4; i++) {
         const futureDate = new Date(today);
+        // console.log(futureDate.toISOString().split('T')[0]);
         futureDate.setDate(today.getDate() + i);
-        const option = new Option(futureDate.toLocaleDateString(), futureDate.toISOString().split('T')[0]);
+        const option = new Option(futureDate.toLocaleDateString('en-US', { timeZone: 'UTC' }), futureDate.toISOString().split('T')[0]);
         dayFilterSelect.add(option);
     }
 }
@@ -96,14 +98,14 @@ function PopulateResultContainer() {
         case 'accounts':
             PopulateMemberResults(); //same for manager and user
             break;
-        case 'seats':
+        case 'slots':
             PopulateSlotsResults(); //manager: all, user: available
             break;
     }
 }
 
 function PopulateSlotsResults() {
-    console.log('Populating slots results');
+    
     data_send = {
         tier: document.getElementById('tierFilter').value,
         seats: document.getElementById('seatFilter').value,
@@ -119,8 +121,10 @@ function PopulateSlotsResults() {
             async: true,
             success: function(server_resp, status) {
 
+                console.log("data received: " + server_resp.slots.length);
                 //iterate through the length of the seats array and create a div (to be added to results container for each seat
                 server_resp.slots.forEach(slot => {
+                    console.log("slot seat number: " + slot.seats);
                     AddSlotToContainer(slot);
                 });
             },
