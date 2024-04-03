@@ -37,8 +37,6 @@ if (window.location.pathname === '/reserve') {
 }
 
 function loadPreselected(reservation) {
-    
-
 }
 
 function populateDays() {

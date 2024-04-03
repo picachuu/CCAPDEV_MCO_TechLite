@@ -20,15 +20,28 @@
             </select>
         </div>
 
-        <div id="searchMemberForm" class="search-form" style="display:none;">
+        <div id="searchAccountForm" class="search-form" style="display:none;">
             <form>
-                <label for="memberName">Name:</label>
-                <input type="text" id="memberName" name="memberName">
+                <label for="AccountName">Name:</label>
+                <input type="text" id="AccountName" name="AccountName">
                 
-                <label for="memberId">ID:</label>
-                <input type="text" id="memberId" name="memberId">
-                
-                <button type="button" onclick="submitMemberSearch()">Search Member</button>
+                <label for="AccountEmail">Email:</label>
+                <input type="text" id="AccountEmail" name="AccountEmail">
+
+                <div class="day-selection">
+                <label for="RoleSelection">Role:</label>
+                <select id="RoleSelection" class="day-select">
+                    <!-- Options will be populated by JavaScript (search.js) -->
+                </select>
+                </div>
+
+                <div class="day-selection">
+                <label for="Sortby_timecreated">Sort by:</label>
+                <select id="Sortby_timecreated" class="day-select">
+                    <!-- Options will be populated by JavaScript (search.js) -->
+                </select>
+            </div>
+                <button type="button" onclick="PopulateResultContainer()">Search Account</button>
             </form>
         </div>
 
@@ -78,7 +91,7 @@
                 </select>
             </div>
 
-            <button type="button" onclick="PopulateResultContainer()">Search</button>
+            <button type="button" onclick="PopulateResultContainer()">Search Slot</button>
         </div>
 
         <div id="availableSeats" class="seats-container" style="display:none;">

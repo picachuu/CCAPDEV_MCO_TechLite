@@ -1,9 +1,5 @@
 const { json } = require("body-parser");
 
-
-
-
-
 function add(server, modules){
   // establish all module constants
   const dbmodel = modules.dbmodel;
