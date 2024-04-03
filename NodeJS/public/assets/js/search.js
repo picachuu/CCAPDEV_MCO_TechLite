@@ -9,9 +9,6 @@ if (window.location.pathname === '/search') {
         //modify the search options based on the user type
         // - user: search seats
         // - manager: search seats, search members
-        
-
-
         //when selecting search Available seats display the following filters:
         // - tier
         // - preferred time_starts (or a window)
@@ -21,9 +18,9 @@ if (window.location.pathname === '/search') {
 
         loadtierSelection();
         loadTimeStartSelection();
-        //loadDurationSelection();
         loadSeatSelection();
         loadDateSelection();
+
     });
 }
 
@@ -31,14 +28,20 @@ function showSearchForm(selection) {
     if (selection === 'accounts') {
         document.getElementById('searchMemberForm').style.display = 'block';
         document.getElementById('searchSlotsForm').style.display = 'none';
+        document.getElementById('searchResult-container').innerHTML = '';
+        document.getElementById('searchResultsDiv').style.display = 'none';
     }
     else if (selection === 'slots') {
         document.getElementById('searchMemberForm').style.display = 'none';
         document.getElementById('searchSlotsForm').style.display = 'block';
+        document.getElementById('searchResult-container').innerHTML = '';
+        document.getElementById('searchResultsDiv').style.display = 'none';
     }
     else {
         document.getElementById('searchMemberForm').style.display = 'none';
         document.getElementById('searchSlotsForm').style.display = 'none';
+        document.getElementById('searchResult-container').innerHTML = '';
+        document.getElementById('searchResultsDiv').style.display = 'none';
     }
 }
 
@@ -348,10 +351,10 @@ function addReserveBtn(reserveDiv, slot) {
     
     manageForm.method = "POST";
     manageForm.action = "/reserve";
-    manageForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // prevent form submission
-        return false;
-    });
+    // manageForm.addEventListener('submit', function(event) {
+    //     event.preventDefault(); // prevent form submission
+    //     return false;
+    // });
 
     // get slot information
     const day = slot.day;

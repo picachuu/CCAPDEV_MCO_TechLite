@@ -43,7 +43,7 @@ function loadPreselected(reservation) {
     checkSelectionAndPopulateTimeBlocks();
     populateTimeBlocksRes(reservation.seat, reservation.tier, reservation.day, reservation.month, reservation.year);
     reservationForm.style.display = 'block';
-
+    
 }
 
 function populateDays() {
