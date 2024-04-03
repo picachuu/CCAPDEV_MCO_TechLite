@@ -51,7 +51,7 @@ const userReservationSchema = new mongoose.Schema({
   walk_in: { type: Boolean },
   slots: { type: BigInt },
   reserved_for: { type: mongoose.Schema.Types.ObjectID, ref: userInfoCollection, default: null }, // if null, then walk_in
-});
+},{ versionKey: false });
 
 const userReservationModel = mongoose.model(userReservationsCollection, userReservationSchema);
 
