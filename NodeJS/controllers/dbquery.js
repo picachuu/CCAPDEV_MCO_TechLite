@@ -380,7 +380,7 @@ function add(server, modules){
 
 
 
-  server.post('/manageable-check', function(req, resp) {// need change to real-time
+  server.post('/manageable-check', function(req, resp) {
     console.log('Manage post request received');
 
     let tierModel;
@@ -414,21 +414,6 @@ function add(server, modules){
       resp.send({seat: vals});
     }).catch(errorFn);
 
-  });
-
-  server.post('/test', function(req, resp) {
-    console.log('Test post request received');
-    tier1_schedModel.create({seats: 1,
-      reservation_id: null, //objectID type
-      cancelled_by: null,
-      time_start: 0,
-      time_end: 30,
-      assigned_to: "",
-      email: "walk-in",
-      taken: true,
-      month: 1,
-      day: 1,
-      year: 2020});
   });
 
   function deleteReservation(req,resp) {
@@ -978,12 +963,17 @@ function add(server, modules){
 
   // Manage reservation post request based on reservation_id
   server.post('/manage-reservation', async function(req, resp) {
+    // check if there is a session
+    if (!req.session.user) {
+      resp.redirect('/');
+      return;
+    }
     let reservation_id = req.body.reservation_id;
     let respdata = await manageReservation(reservation_id,resp);
     renderManage(resp,respdata);
   });
 
-  server.post('/manage-prompt', function(req, resp) {
+  /* server.post('/manage-prompt', function(req, resp) {
     
     console.log('Manage reservation post request received');
     reservation_id = req.body.reservation_id;
@@ -1027,7 +1017,7 @@ function add(server, modules){
     // step 1(2): get user information from the user_info collection (Model: userModel)
     // step 2: find all the reservations given reservation_id in the tier collection (Model: tier1_schedModel, tier2_schedModel, tier3_schedModel)
     
-  });
+  }); */
 
   // ajax post request of obtain-reservations given reservation_id
   server.post('/obtain-reservations', function(req, resp) {
@@ -1343,6 +1333,11 @@ function add(server, modules){
 
   // view server post request of inactive reservations given reservation_id
   server.post('/view-reservation', async function(req, resp) {
+    // check if there is a session
+    if (!req.session.user) {
+      resp.redirect('/');
+      return;
+    }
     let respdata = await manageReservation(req.body.reservation_id,resp);
     respdata.layout = 'index';
     respdata.title = 'TechLite - View Reservation';

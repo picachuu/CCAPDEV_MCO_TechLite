@@ -219,7 +219,7 @@ function updatePaginationControlsS(currentPage, totalPages) {
 
 function expiredSlots(slot) {
     // check if the reservation is expired (when all available month day year time_start is less than current datetime)
-    let expired = isRealtime;    // change to true to enable CHANGE!! FOR REAL-TIME CHECKING
+    let expired = isRealtime;
 
     if (!isPast(new Date(slot.year, slot.month - 1, slot.day, Math.floor(slot.time_start / 100), slot.time_start % 100))){
         expired = false;

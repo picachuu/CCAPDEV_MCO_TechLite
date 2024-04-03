@@ -16,6 +16,19 @@ function add(server,modules){
     const errorFn = dbmodel.errorFn;
     const successFn = dbmodel.successFn;
 
+    const deletePastAvailable = true;
+
+    // Executes as the server starts
+    checkOldDate().catch(console.error);
+    checkDateTime();
+
+    // Call checkDateTime every minute (60000 milliseconds)
+    setInterval(checkDateTime, 1000*60);
+    // Call checkOldDate every 24 hours (86400000 milliseconds)
+    setInterval(() => {
+        if (deletePastAvailable) checkOldDate().catch(console.error);
+    }, 1000*60*60*24);
+
     async function createNewDay (year, month, day) {
         const seatCount = 15;
         const tiers = 3;
@@ -90,9 +103,9 @@ function add(server,modules){
         console.log('Total slots found:', lengthCount, 'for', year, month, day);
 
         if (lengthCount === 0) {
+            console.log('Creating new day timeslots for:', year, month, day);
             createNewDay(year, month, day);
         }
-
     }
 
     // checks the collection per day interval (today, tomorrow, and the day after tomorrow)
@@ -111,39 +124,52 @@ function add(server,modules){
         
             checkDate(year, month, day);
         }
-
-       /*  // get day month year from currentDateTime
-        const currentDay = currentDateTime.getDate();
-        const currentMonth = currentDateTime.getMonth() + 1;
-        const currentYear = currentDateTime.getFullYear();
-        
-        // get the next day from currentDateTime
-        const nextDay = new Date(currentDateTime);
-        nextDay.setDate(currentDay + 1);
-        const nextDayDate = nextDay.getDate();
-        const nextDayMonth = nextDay.getMonth() + 1;
-        const nextDayYear = nextDay.getFullYear();
-
-        // get the day after next day from currentDateTime
-        const dayAfterNext = new Date(currentDateTime);
-        dayAfterNext.setDate(currentDay + 2);
-        const dayAfterNextDate = dayAfterNext.getDate();
-        const dayAfterNextMonth = dayAfterNext.getMonth() + 1;
-        const dayAfterNextYear = dayAfterNext.getFullYear(); */
-    
     }
     
-    // Call checkDateTime every minute (60000 milliseconds)
-    setInterval(checkDateTime, 1000*60);
 
-    // Call checkDatabase every 30 minutes (1800000 milliseconds)
+    /* // Call checkDatabase every 30 minutes (1800000 milliseconds)
     setInterval(checkDatabase, 1000*60*30);
 
     // checks the integrity of the database of the date and time slots, and creates when there are supposed slots missing
+    // prolly not gonna implement this
     function checkDatabase() {
         const currentDateTime = new Date();
         console.log('Checking database at:', currentDateTime);
+    } */
+
+    async function checkOldDate() {
+        // get the current date
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1; // Months are 0-based in JavaScript
+        const currentDay = currentDate.getDate();
+    
+        console.log('Checking old dates at:', currentDate);
+    
+        const tierModels = [tier1_schedModel, tier2_schedModel, tier3_schedModel];
+
+        for (let i = 0; i < tierModels.length; i++) {
+            try {
+                // Delete all documents with a date before the current date and where taken is false
+                const result = await tierModels[i].deleteMany({
+                    taken: false,
+                    $or: [
+                        { year: { $lt: currentYear } },
+                        { year: currentYear, month: { $lt: currentMonth } },
+                        { year: currentYear, month: currentMonth, day: { $lt: currentDay } }
+                    ]
+                });
+        
+                console.log("Tier:", i+1," - ", result.deletedCount, 'documents were deleted');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        
     }
+
+
   
   }
   

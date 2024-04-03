@@ -8,7 +8,7 @@
 <div class="view-page">
 <div class="reservation-management">
     <h2>View Reservation</h2>
-    <form name="manageForm" onsubmit="return submitManageReservation()">
+    <form name="manageForm" action="main" method="get">
         <div class="form-group">
             <label for="userName">Reservation ID</label>
             <input type="text" id="reservationId" name="reservationId" value="{{reservation_id}}" required readonly>

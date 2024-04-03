@@ -92,8 +92,6 @@ function validateSelection() {
 function isSeatUnavailable(seatNumber, tierNumber, daySelected, monthSelected, yearSelected) {
     var isUnavailable = false;
     
-    // this comment should be irrelevant now ---> //if you're worried about 30, 31, and then 1 (of next month), dw. Month doesn't really matter, only the days ;)
-    
     $.ajax({
         url: 'reserve',
         type: 'POST',

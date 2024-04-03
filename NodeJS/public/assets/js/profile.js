@@ -399,7 +399,7 @@ function expireCancelledRemainSlots(reservation) {
     }
 
     // check if the reservation is expired (when all available month day year time_start is less than current datetime)
-    let expired = isRealtime;    // change to true to enable CHANGE!! FOR REAL-TIME CHECKING
+    let expired = isRealtime;
     for (let i = 0; i < reservationLength; i++) {
         if (reservation[i].cancelled_by == null && !isPast(new Date(reservation[i].year, reservation[i].month - 1, reservation[i].day, Math.floor(reservation[i].time_start / 100), reservation[i].time_start % 100))){
             expired = false;
