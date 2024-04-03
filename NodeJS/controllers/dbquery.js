@@ -581,8 +581,10 @@ function add(server, modules){
   });
 
   server.post('/search-slots-request', function(req, resp) {
+
     console.log('--- search post request received ---');
     let searchResults = [];
+    let tierModel;
 
     //if manager, get all slots given parameters
     //if user, get all available (taken: false) slots given parameters
@@ -594,7 +596,7 @@ function add(server, modules){
     
     //if date is != 'none', add date to searchQuery
     if (req.body.date != 'none') {
-      searchQuery.day = Number(req.body.date.split('-')[2]),
+      searchQuery.day = Number(req.body.date.split('-')[2]), //day has to add one since in function it is subtracted by 1
       searchQuery.year = Number(req.body.date.split('-')[0]),
       searchQuery.month = Number(req.body.date.split('-')[1])
     }
@@ -607,8 +609,10 @@ function add(server, modules){
       searchQuery.taken = false;
     }
     
+    console.log(searchQuery);
+
     if (req.body.tier == 'none') {
-      let tierModel;
+      let promises = [];
 
       for(let i = 1; i <= 3; i++) {
         switch(i) {
@@ -618,18 +622,34 @@ function add(server, modules){
         }
 
         //append the results of each tier to the searchResults array
-        tierModel.find(searchQuery).lean().then(function(vals){
-          vals.forEach(slot => {
+        let promise = tierModel.find(searchQuery).lean().then(function(vals){
+          console.log('List successful');
+          console.log(vals.length);
+          vals = vals.map(slot => {
             slot.tier = i;
+            return slot;
           });
-          searchResults = searchResults.concat(vals);
+          //return the promised vals to the promise of specific tier
+          return vals;
         }).catch(errorFn);
+
+        //add the promise to the promises array so eventually promises array would have to wait for all promises to complete.
+        promises.push(promise);
       }
+
+      Promise.all(promises).then(function(allVals) {
+        allVals.forEach(val => {
+          searchResults = searchResults.concat(val);
+        });
+        console.log("Search results:", searchResults[searchResults.length-1]);
+        console.log("Search results length:" + searchResults.length);
+      });
       
     }
-
     else { // if selected tier is specific
-      switch(req.body.tier) {
+      let number_tier = Number(req.body.tier);
+
+      switch(number_tier) {
         case 1: tierModel = tier1_schedModel; break;
         case 2: tierModel = tier2_schedModel; break;
         case 3: tierModel = tier3_schedModel; break;
@@ -637,15 +657,22 @@ function add(server, modules){
 
       //append the results of each tier to the searchResults array
       tierModel.find(searchQuery).lean().then(function(vals){
-        vals.forEach(slot => {
-          slot.tier = req.body.tier;
+        console.log('List successful');
+        console.log(vals.length);
+
+        vals = vals.map(slot => {
+          slot.tier = number_tier;
+          return slot;
         });
+        console.log(vals);
         searchResults = searchResults.concat(vals);
+
+        console.log("Search results:" + searchResults);
+        console.log("Search results length:" + searchResults.length);
+        //send the searchResults array to the client
+        resp.send({slots: searchResults});
       }).catch(errorFn);
     }
-
-    //send the searchResults array to the client
-    resp.send({slots: searchResults});
 
   });
 
