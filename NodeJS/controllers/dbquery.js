@@ -103,7 +103,7 @@ function add(server, modules){
 
   });
 
-  server.post('/oldprofile-reservations', async function(req, resp) {  
+  /* server.post('/oldprofile-reservations', async function(req, resp) {  
     console.log('Profile reservations request received');
 
     const page = Math.max(1, Number(req.body.page));
@@ -144,7 +144,7 @@ function add(server, modules){
 
     console.log(`Page ${page} of ${Math.ceil(totalReservations / pageSize)}`);
     console.log(`Total reservations: ${totalReservations}`);
-  });
+  }); */
 
   // Profile reservations post request based on reservation_id
   server.post('/profile-reservations', async function(req, resp) { 
@@ -173,9 +173,40 @@ function add(server, modules){
         if (!tierFilters.includes(tierIndex + 1)) continue;
 
         let tierModel = tiers[tierIndex];
-        // (1.2) find all the reservations given user_id and tier in the user_reservation collection (Model: userReservationModel)
+        // (1.2) find all the reservations given user_id and tier in the user_reservation collection (Model: userReservationModel) where the user is the reserver
         // the user is the reserver in this case
-        let user_reservation = await userReservationModel.find({ reserver: user_id, tier: tierIndex + 1 }).lean();
+        let reservation_ids = [];
+        let reserver_user_reservation = await userReservationModel.find({ reserver: user_id, tier: tierIndex + 1 }).lean();
+        for (let i = 0; i < reserver_user_reservation.length; i++) {  // pushed all the reservation_ids of the user
+          reservation_ids.push(reserver_user_reservation[i]._id);
+        }
+
+        // (1.3) find all the reservations associated with the user (i.e. as a reserved_for) in the userResevationsModel using the req.session.user._id linked from user
+        // find all user_reservations where the user._id is the reserved_for
+        let reserved_for_user_reservation = await userReservationModel.find({ reserved_for: user_id, tier: tierIndex + 1 }).lean();
+        for (let i = 0; i < reserved_for_user_reservation.length; i++) {  // pushed all the reservation_ids of the user
+          reservation_ids.push(reserved_for_user_reservation[i]._id);
+        }
+
+        // converts all the reservation_ids to string
+        reservation_ids = reservation_ids.map(reservation_id => String(reservation_id));
+
+        // get unique _id of the reservations by comparing by objectID strings (since new ObjectID is a different instance)
+        reservation_ids = [...new Set(reservation_ids)];
+
+        //reservation_ids = [...new Set(reservation_ids)];
+
+        console.log("Reservation IDs:", reservation_ids);
+
+        /* // create an array element to the user_reservation structure being the reservations associated with the user
+        let associated_user_reservations = await tierModel.find({ assigned_to: req.session.user.username }).lean();
+        // get unique _id of the reservations
+        let associated_reservation_ids = [...new Set(associated_user_reservations.map(reservation => reservation.reservation_id))];
+        // combine the reservation_ids and associated_reservation_ids
+        reservation_ids = reservation_ids.concat(associated_reservation_ids);
+        // get unique _id of the overall reservation_ids
+        reservation_ids = [...new Set(reservation_ids)]; */
+
         // (2) create an array of reservations (tierModel) from the user_reservation document using reservation._id
         // (2.1) find all the reservations given reservation_id in the tier collection
         // create an array element to the user_reservation structure being the reservations given reservation_id
@@ -187,8 +218,8 @@ function add(server, modules){
             return tempfind;
         })); */
         let reservations = [];
-        for (let i = 0; i < user_reservation.length; i++) {
-            const reservation_id = user_reservation[i]._id;
+        for (let i = 0; i < reservation_ids.length; i++) {
+            const reservation_id = reservation_ids[i];
             let tempfind = await tierModel.find({ reservation_id: reservation_id }).lean();
             tempfind.sort((a, b) => a.time_start - b.time_start);
             reservations.push(tempfind);
@@ -770,13 +801,20 @@ function add(server, modules){
             } else {
               // step 3: create a user_reservation document (if email is an empty string, then walk_in is TRUE), and get the _id of the user_reservation
               const walk_in = email == '';
+
+              let reserved_for = null
+              if (!walk_in) {
+                const reserved_for_user = await userModel.findOne({ username: name, email: email }).lean();
+                reserved_for = reserved_for_user._id;
+              }
               
               let userReservation = {
                   reserve_time: new Date(),
                   tier: selectedTier,
                   reserver: reserver,
                   walk_in: walk_in,
-                  slots: timeArray.length
+                  slots: timeArray.length,
+                  reserved_for: reserved_for
               };
 
               // step 4: if not walk-in, check if the reservation user exists (name and email)
@@ -1061,6 +1099,7 @@ function add(server, modules){
     console.log("Selected Tier: "+selectedTier);
     console.log("Selected Day: "+selectedDay);
     console.log("Times: "+times);
+    console.log("New Times: "+newTimes);
     console.log("Seat: "+seat);
     console.log("Name: "+name);
     console.log("Email: "+email);
@@ -1069,6 +1108,7 @@ function add(server, modules){
     console.log("Month: "+month);
     console.log("Day: "+day);
     console.log("Time Array: "+timeArray);
+    console.log("New Time Array: "+newTimeArray);
 
     // step 1: check if user (the reserver) exists (name and email) and obtain the _id of the user document
     // step 1: check if the new selected slots are available
@@ -1142,6 +1182,12 @@ function add(server, modules){
                 taken: false,
               }
             };
+
+            // log update queries and values
+            console.log("Update Query New: " + JSON.stringify(updateQueryNew));
+            console.log("Update Values New: " + JSON.stringify(updateValuesNew));
+            console.log("Update Query: " + JSON.stringify(updateQuery));
+            console.log("Update Values: " + JSON.stringify(updateValues));
 
             tierModel.updateMany(updateQueryNew, updateValuesNew).then(function(reservations) {
               console.log('New reservations updated successfully');

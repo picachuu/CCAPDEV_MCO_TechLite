@@ -828,3 +828,47 @@ async function checkDelete() {
         return false;
     }
 }
+
+
+$(document).ready(function() {
+    // change password form
+    $('#changePasswordBtn').click(function(e) {
+      e.preventDefault();
+      const currentPassword = $('#currentPassword').val();
+      const newPassword = $('#newPassword').val();
+      const confirmNewPassword = $('#confirmNewPassword').val();
+  
+      if (newPassword !== confirmNewPassword) {
+        alert("New passwords do not match.");
+        return;
+      }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(newPassword)) {
+            alert("Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 numeric, and 1 special character.");
+            return false;
+        }
+  
+      $.ajax({
+        url: '/change-password',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+          confirmNewPassword: confirmNewPassword
+        }),
+        success: function(response) {
+          if (response.valid) {
+            alert("Password changed successfully.");
+            togglePopup(document.getElementById('changePassPopup'));
+          } else {
+            alert("Error: " + response.reason);
+          }
+        },
+        error: function() {
+          alert("An error occurred while attempting to change your password.");
+        }
+      });
+    });
+  });
