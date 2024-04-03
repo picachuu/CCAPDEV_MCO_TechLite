@@ -57,7 +57,7 @@ function loadTimeStartSelection() {
     
     for (let hour = 0; hour <= 23; hour += 1) {
         for (let minutes = 0; minutes < 60; minutes += 30) {
-            const option = new Option(`${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`, hour+minutes);
+            const option = new Option(`${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`, hour*100    +minutes);
             timeStartSelect.add(option);
         }
     }
@@ -219,11 +219,16 @@ function AddSlotToContainer(slot) {
         var reserveDiv = document.createElement('div');
         reserveDiv.classList.add('main-border-button');
         
+        var reserveButton = document.createElement("button");
+        reserveButton.type = "submit";
+        reserveButton.textContent = "Reserve";
+        reserveButton.classList.add('main-border-button');
+
         //addReserveBtn();
         // use in adding taken slots
         //addManageBtnForm(manageDiv, reservation[0].reservation_id);
         
-        
+        reserveDiv.appendChild(reserveButton);
         reserveLi.appendChild(reserveDiv);
         slotUl.appendChild(reserveLi);
 

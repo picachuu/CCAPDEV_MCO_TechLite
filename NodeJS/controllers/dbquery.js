@@ -641,8 +641,12 @@ function add(server, modules){
         allVals.forEach(val => {
           searchResults = searchResults.concat(val);
         });
-        console.log("Search results:", searchResults[searchResults.length-1]);
+        console.log("Search results:", searchResults[0]);
+        console.log("Search results:", searchResults[1]);
+        console.log("Search results:", searchResults[2]);
         console.log("Search results length:" + searchResults.length);
+
+        resp.send({slots: searchResults});
       });
       
     }
