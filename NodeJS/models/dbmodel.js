@@ -20,7 +20,7 @@ const tier3_schedCollection = "tier3_sched";
 const userInfoCollection = "user_info";
 const userReservationsCollection = "user_reservation";
 //const seatCollection = "seat";
-const db_url = "mongodb://127.0.0.1:27017/";
+const db_url = "mongodb+srv://admin:12345@cluster0.fchjyy3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const mongo_uri = db_url+databaseName;
 
 
