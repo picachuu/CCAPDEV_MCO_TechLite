@@ -102,25 +102,41 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('nextButtonS').addEventListener('click', function() {
         if (currentPageSearch < totalPagesSearch) {
             currentPageSearch++; 
-            PopulateSlotsResults(currentPageSearch);
+            if (document.getElementById('searchOptions').value === 'accounts') {
+                PopulateAccountResults(currentPageSearch);
+            } else if (document.getElementById('searchOptions').value === 'slots') {
+                PopulateSlotsResults(currentPageSearch);
+            }
         }
     });
     
     document.getElementById('prevButtonS').addEventListener('click', function() {
         if (currentPageSearch > 1) {
             currentPageSearch--; 
-            PopulateSlotsResults(currentPageSearch);
+            if (document.getElementById('searchOptions').value === 'accounts') {
+                PopulateAccountResults(currentPageSearch);
+            } else if (document.getElementById('searchOptions').value === 'slots') {
+                PopulateSlotsResults(currentPageSearch);
+            }
         }
     });
 
     document.getElementById('firstButtonS').addEventListener('click', function() {
         currentPageSearch = 1; 
-        PopulateSlotsResults(currentPageSearch);
+        if (document.getElementById('searchOptions').value === 'accounts') {
+            PopulateAccountResults(currentPageSearch);
+        } else if (document.getElementById('searchOptions').value === 'slots') {
+            PopulateSlotsResults(currentPageSearch);
+        }
     });
 
     document.getElementById('lastButtonS').addEventListener('click', function() {
         currentPageSearch = totalPagesSearch;
-        PopulateSlotsResults(currentPageSearch);
+        if (document.getElementById('searchOptions').value === 'accounts') {
+            PopulateAccountResults(currentPageSearch);
+        } else if (document.getElementById('searchOptions').value === 'slots') {
+            PopulateSlotsResults(currentPageSearch);
+        }
     });
 });
 
@@ -132,12 +148,159 @@ function PopulateResultContainer() {
     var searchOption = document.getElementById('searchOptions').value;
     switch (searchOption) {
         case 'accounts':
-            PopulateMemberResults(1); //same for manager and user
+            PopulateAccountResults(1); //same for manager and user
             break;
         case 'slots':
             PopulateSlotsResults(1); //manager: all, user: available
             break;
     }
+}
+
+function PopulateAccountResults(page) {
+    page = Math.max(1, Number(page));
+    data_send = {
+        username_keyword: document.getElementById('AccountName').value,
+        email_keyword: document.getElementById('AccountEmail').value,
+        case_sensitive: document.getElementById('Case_sensitive').value,
+        role_selected: document.getElementById('RoleSelection').value,
+        sort_by: document.getElementById('Sortby_timecreated').value,
+    };
+
+    document.getElementById('headingRedSearch').innerHTML = "Accounts";
+
+    document.getElementById('headingWhiteSearch').innerHTML = "Found";
+    
+    $.ajax({
+            url: 'search-accounts-request',
+            type: 'POST',
+            data: data_send,
+            async: true,
+            success: function(server_resp, status) {
+                currentPageSearch = page; 
+                const searchContainer = document.getElementById('searchResult-container');
+                searchContainer.innerHTML = '';
+                let AccountCount = 0;
+                const startIndex = (page - 1) * pageSizeSearch;
+                let paginatedAccounts = [];
+                let combinedAccounts = [];
+
+                console.log("data received: " + server_resp.accounts.length);
+                //iterate through the length of the seats array and create a div (to be added to results container for each seat
+                if (server_resp.sort_by_latest) {
+                    for (let i = server_resp.accounts.length - 1; i >= 0; i--) {
+                        const accountElement = createAccountElement(server_resp.accounts[i]);
+                        if (accountElement) { // only add if not null
+                            combinedAccounts.push(server_resp.accounts[i]);
+                            AccountCount++;
+                        }
+                    }
+                }
+
+                else {
+                    server_resp.accounts.forEach(account => {
+                        const accountElement = createAccountElement(account);
+                        if (accountElement) { // only add if not null
+                            combinedAccounts.push(account);
+                            AccountCount++;
+                        }
+                        /* console.log("slot seat number: " + slot.seats);
+                        createSlotElement(slot); */
+                    });
+                }
+                
+
+                if (AccountCount === 0) {
+                    const noAccountsMsg = document.createElement('div');
+                    noAccountsMsg.textContent = 'No accounts found';
+                    noAccountsMsg.classList.add('no-reservations');
+                    searchContainer.appendChild(noAccountsMsg);
+                } else {
+                    console.log('Accounts: ' + AccountCount);
+                    paginatedAccounts = combinedAccounts.slice(startIndex, startIndex + pageSizeSearch);
+                    for (let i = 0; i < paginatedAccounts.length; i++) {
+                        const reservationElement = createAccountElement(paginatedAccounts[i]);
+                        searchContainer.appendChild(reservationElement);
+                    }
+                    totalPagesSearch = Math.ceil(AccountCount / pageSizeSearch);
+                }
+
+                document.getElementById('currentPageS').textContent = page;
+                updatePaginationControlsS(page, totalPagesSearch);
+                console.log(`Slot: Requesting page ${currentPageSearch} out of ${totalPagesSearch} with page size ${pageSizeSearch}`);
+            },
+            error: function() {
+                console.error('Failed to load reservations');
+            }
+    });
+}
+
+function createAccountElement(account) {
+    var accountDiv = document.createElement('div');
+    accountDiv.classList.add('item');
+    var accountUl = document.createElement("ul");
+
+    //image
+    var reservationLi1 = document.createElement("li");
+    var image = document.createElement('img');
+    image.alt = "Tier Image";
+    image.src =  (account.img_url == null || account.img_url == '') ? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' : account.img_url;
+    reservationLi1.appendChild(image);
+    accountUl.appendChild(reservationLi1);
+
+    // Username
+    var usernameLi = document.createElement("li");
+    var usernameHeader = document.createElement('h4');
+    usernameHeader.textContent = 'Username';
+    var usernameSpan = document.createElement('span');
+    usernameSpan.textContent = account.username;
+    usernameLi.appendChild(usernameHeader);
+    usernameLi.appendChild(usernameSpan);
+    accountUl.appendChild(usernameLi);
+
+    // Email
+    var emailLi = document.createElement("li");
+    var emailHeader = document.createElement('h4');
+    emailHeader.textContent = 'Email';
+    var emailSpan = document.createElement('span');
+    emailSpan.textContent = account.email;
+    emailLi.appendChild(emailHeader);
+    emailLi.appendChild(emailSpan);
+    accountUl.appendChild(emailLi);
+
+    // is_manager
+    var roleLi = document.createElement("li");
+    var roleHeader = document.createElement('h4');
+    roleHeader.textContent = 'Role';
+    var roleSpan = document.createElement('span');
+    roleSpan.textContent = account.is_manager ? 'Manager' : 'User';
+    roleLi.appendChild(roleHeader);
+    roleLi.appendChild(roleSpan);
+    accountUl.appendChild(roleLi);
+
+    // Delete button
+    // Manage Link
+    var deleteLi = document.createElement("li");
+    var deleteDiv = document.createElement('div');
+    deleteDiv.classList.add('main-border-button');
+
+    //addDeleteBtn(deleteDiv, account);
+    // let slotButton;
+    // slotButton = document.createElement("button");
+    // slotButton.type = "submit";
+    // slotButton.classList.add('main-border-button');
+    
+    // reserveDiv.appendChild(slotButton);
+    deleteLi.appendChild(deleteDiv);
+    accountUl.appendChild(deleteLi);
+
+    accountDiv.appendChild(accountUl);
+
+    return accountDiv;
+
+}
+
+function addDeleteBtn(deleteDiv, account) {
+
 }
 
 function PopulateSlotsResults(page) {
@@ -310,11 +473,6 @@ function createSlotElement(slot) {
         var reserveDiv = document.createElement('div');
         reserveDiv.classList.add('main-border-button');
 
-
-        // let slotButton;
-        // slotButton = document.createElement("button");
-        // slotButton.type = "submit";
-        // slotButton.classList.add('main-border-button');
         if (available) {
             addReserveBtn(reserveDiv,slot);
             // slotButton.textContent = "Reserve";
@@ -322,21 +480,7 @@ function createSlotElement(slot) {
         } else if (getIsManager()){
             addManageBtnForm(reserveDiv,slot.reservation_id);
         } // the following two supposedly should not matter since it's already checked
-        // else if (expiredSlots(slot)) {    
-        //     slotButton.textContent = "Expired";
-        //     slotButton.disabled = true;
-        //     slotButton.classList.add('.border-no-active');
-        // } else {
-        //     slotButton.textContent = "Taken";
-        //     slotButton.disabled = true;
-        //     slotButton.classList.add('.border-no-active');
-        // }
-
-        //addReserveBtn();
-        // use in adding taken slots
-        //addManageBtnForm(manageDiv, reservation[0].reservation_id);
         
-        // reserveDiv.appendChild(slotButton);
         reserveLi.appendChild(reserveDiv);
         slotUl.appendChild(reserveLi);
 
@@ -351,10 +495,6 @@ function addReserveBtn(reserveDiv, slot) {
     
     manageForm.method = "POST";
     manageForm.action = "/reserve";
-    // manageForm.addEventListener('submit', function(event) {
-    //     event.preventDefault(); // prevent form submission
-    //     return false;
-    // });
 
     // get slot information
     const day = slot.day;

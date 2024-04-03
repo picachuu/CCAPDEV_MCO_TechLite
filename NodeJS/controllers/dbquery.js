@@ -717,6 +717,55 @@ function add(server, modules){
 
   });
 
+  function StringToBoolean(string) {
+    if (string == 'true') return true;
+    else return false;
+  }
+
+  server.post('/search-accounts-request', function(req, resp) {
+    console.log('--- search accounts post request received ---');
+
+    // username_keyword: document.getElementById('AccountName').value,
+    // email_keyword: document.getElementById('AccountEmail').value,
+    // case_sensitive: document.getElementById('Case_sensitive').value,
+    // role_selected: document.getElementById('RoleSelection').value,
+    // sort_by: document.getElementById('Sortby_timecreated').value,
+
+    let searchResults = [];
+
+    let searchQuery = {};
+
+    if (req.body.role_selected != 'none') searchQuery.is_manager = StringToBoolean(req.body.role_selected);
+
+    let Case_sensitive_search = StringToBoolean(req.body.case_sensitive);
+
+    if (Case_sensitive_search) { // yourField: { $regex: new RegExp(keyword) }
+      if (req.body.username_keyword != 'none') searchQuery.username = { $regex: new RegExp(req.body.username_keyword) };
+      if (req.body.email_keyword != 'none') searchQuery.email = { $regex: new RegExp(req.body.email_keyword) };
+    }
+    else {
+      if (req.body.username_keyword != 'none') searchQuery.username = { $regex: new RegExp(req.body.username_keyword, 'i') };
+      if (req.body.email_keyword != 'none') searchQuery.email = { $regex: new RegExp(req.body.email_keyword, 'i') };
+    }
+
+
+    console.log(searchQuery);
+
+    let is_latest_sort = req.body.sort_by == 'latestFirst' ? true : false;
+
+    userModel.find(searchQuery).lean().then(function(vals){
+      console.log('List successful');
+      console.log(vals.length);
+
+      searchResults = vals;
+
+      console.log("Search results:" + searchResults);
+      console.log("Search results length:" + searchResults.length);
+      resp.send({accounts: searchResults, sort_by_latest: is_latest_sort});
+    }).catch(errorFn);
+
+  });
+
   // reservation post request (from search) based on reservation_id and tier
   server.post('/add-reservation', async function(req, resp) {
     let reservation_id = req.body.reservation_id;
