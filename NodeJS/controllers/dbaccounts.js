@@ -386,7 +386,6 @@ function add(server,modules){
     return null;  // reason
   }
 
-
   //delete-account from profile
   server.post('/delete-account', async function(req, resp){
     let valid = false;
@@ -421,6 +420,63 @@ function add(server,modules){
         });
       }
     } 
+    
+    if (!valid){
+      resp.render('account_delete',{
+        layout: 'index',
+        title: 'TechLite - Delete Account',
+        prompt: 'Failed',
+        message: 'Invalid credentials'
+      });
+    }
+    
+  });
+
+  async function findusername(user_username) { //async function for asynchronous operations
+    userModel.findOne({
+      $or: [
+        { email: user_username },
+        { username: user_username }
+      ]
+    }).lean().then(function(user_data){
+
+      if (user_data != null){
+        console.log('Obtained Username: ' + user_data.username);
+      } else {
+        console.log('No User Found');
+      }
+      return user_data;
+    });
+  }
+
+  server.post('/delete-account-search', async function(req, resp){
+    let valid = false;
+    
+    //Creating a new instance can be made this way.
+    let username = req.body.username;
+    let user = null;  // user object for user information is default to null
+  
+    user = await findusername(username); // wait for the function to finish before proceeding
+    
+    if (user) {
+      valid = true;
+    }
+
+    //at this point user should be an object from the db
+
+    if (valid){  // if not null, delete the account
+      req.session.destroy(function(err) {
+        deleteAccountDB(user);
+        deleteActiveReservations(user);
+        resp.render('account_delete',{
+          layout: 'index',
+          title: 'TechLite - Delete Account',
+          prompt: 'Successful',
+          message: 'Thanks for having us!'
+        });
+      });
+    }
+    
     
     if (!valid){
       resp.render('account_delete',{

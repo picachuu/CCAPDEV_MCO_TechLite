@@ -283,12 +283,14 @@ function createAccountElement(account) {
     var deleteDiv = document.createElement('div');
     deleteDiv.classList.add('main-border-button');
 
-    //addDeleteBtn(deleteDiv, account);
-    // let slotButton;
-    // slotButton = document.createElement("button");
-    // slotButton.type = "submit";
-    // slotButton.classList.add('main-border-button');
-    
+    var deleteButton = document.createElement("button");
+    deleteButton.id = 'deleteAccount';
+
+    deleteDiv.appendChild(deleteButton);
+    deleteButton.addEventListener('click', function() {
+        togglePopup(deleteAccountPopup);
+    });
+
     // reserveDiv.appendChild(slotButton);
     deleteLi.appendChild(deleteDiv);
     accountUl.appendChild(deleteLi);
@@ -299,9 +301,6 @@ function createAccountElement(account) {
 
 }
 
-function addDeleteBtn(deleteDiv, account) {
-
-}
 
 function PopulateSlotsResults(page) {
     page = Math.max(1, Number(page));
