@@ -44,11 +44,12 @@ function loadPreselected(reservation) {
 function populateDays() {
     const daySelect = document.getElementById('daySelect');
     daySelect.innerHTML = '<option value = "0">Select a Day</option>'; // Reset
-    const today = new Date('2024-03-09');
+    
+    const today = getCurrentDateTime();
     for (let i = 0; i < 3; i++) {
         const futureDate = new Date(today);
         futureDate.setDate(today.getDate() + i);
-        const option = new Option(futureDate.toLocaleDateString(), futureDate.toISOString().split('T')[0]);
+        const option = new Option(futureDate.toLocaleDateString('en-US', { timeZone: 'UTC' }), futureDate.toISOString().split('T')[0]);
         daySelect.add(option);
     }
 }

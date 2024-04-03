@@ -85,7 +85,7 @@ function loadDateSelection() {
     const option = new Option('None', 'none');
     dayFilterSelect.add(option);
 
-    for (let i = 1; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
         const futureDate = new Date(today);
         // console.log(futureDate.toISOString().split('T')[0]);
         futureDate.setDate(today.getDate() + i);
