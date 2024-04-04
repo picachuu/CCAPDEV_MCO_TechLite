@@ -188,7 +188,7 @@ function PopulateAccountResults(page) {
                 //iterate through the length of the seats array and create a div (to be added to results container for each seat
                 if (server_resp.sort_by_latest) {
                     for (let i = server_resp.accounts.length - 1; i >= 0; i--) {
-                        const accountElement = createAccountElement(server_resp.accounts[i]);
+                        const accountElement = createAccountElement(server_resp.accounts[i],false);
                         if (accountElement) { // only add if not null
                             combinedAccounts.push(server_resp.accounts[i]);
                             AccountCount++;
@@ -198,7 +198,7 @@ function PopulateAccountResults(page) {
 
                 else {
                     server_resp.accounts.forEach(account => {
-                        const accountElement = createAccountElement(account);
+                        const accountElement = createAccountElement(account,false);
                         if (accountElement) { // only add if not null
                             combinedAccounts.push(account);
                             AccountCount++;
@@ -218,7 +218,7 @@ function PopulateAccountResults(page) {
                     console.log('Accounts: ' + AccountCount);
                     paginatedAccounts = combinedAccounts.slice(startIndex, startIndex + pageSizeSearch);
                     for (let i = 0; i < paginatedAccounts.length; i++) {
-                        const reservationElement = createAccountElement(paginatedAccounts[i]);
+                        const reservationElement = createAccountElement(paginatedAccounts[i],true);
                         searchContainer.appendChild(reservationElement);
                     }
                     totalPagesSearch = Math.ceil(AccountCount / pageSizeSearch);
@@ -234,7 +234,7 @@ function PopulateAccountResults(page) {
     });
 }
 
-function createAccountElement(account) {
+function createAccountElement(account, creation) {
     var accountDiv = document.createElement('div');
     accountDiv.classList.add('item');
     var accountUl = document.createElement("ul");
@@ -317,12 +317,58 @@ function createAccountElement(account) {
     modifyAccountBtn.textContent = "Modify";
 
     let modifyAccountForm = document.getElementById('modifyAccountForm');
+
     
     if (modifyAccountBtn) {
         modifyAccountBtn.addEventListener('click', function() {
             let toggleRoleButton = document.getElementById('toggle-account-btn');
             let deleteButton = document.getElementById('delete-account-btn');
             let editReservationButton = document.getElementById('edit-reserve-btn');
+
+            // look for reservationSelection.name = 'reservation_id'; in the form, if it exists, remove it
+            let reservationSelection = modifyAccountForm.elements['reservation_id'];
+            if (reservationSelection) {
+                reservationSelection.remove();
+            }
+            // look for reservationLabel.htmlFor = 'reservation_id'; in the form, if it exists, remove it
+            let reservationLabel = modifyAccountForm.querySelector('label[for="reservation_id"]');
+            if (reservationLabel) {
+                reservationLabel.remove();
+            }
+
+            // if there are reservations, add an selection field for each reservation to the modifyAccountForm
+            if (reservations > 0 && creation) {
+                editReservationButton.style.display = 'inline-block';
+                // add label for reservationSelection
+                let reservationLabel = document.createElement('label');
+                reservationLabel.textContent = 'Select Reservation: ';
+                reservationLabel.htmlFor = 'reservation_id';
+
+                let reservationSelection = document.createElement('select');
+                reservationSelection.name = 'reservation_id';
+                
+                // reservationSelection.required = false;
+                for (let i = 0; i < reservations; i++) {
+                    let option = document.createElement('option');
+                    
+                    option.value = user_reservations_strArray[i].split(': ')[1];
+                    option.textContent = user_reservations_strArray[i];
+                    reservationSelection.appendChild(option);
+                }
+                // append after the first child of the form
+                if (modifyAccountForm.children[0]) {
+                    modifyAccountForm.insertBefore(reservationSelection, modifyAccountForm.children[0].nextSibling);
+                    modifyAccountForm.insertBefore(reservationLabel, modifyAccountForm.children[0].nextSibling);
+                    
+                } else {
+                    modifyAccountForm.appendChild(reservationLabel);
+                    modifyAccountForm.appendChild(reservationSelection);
+                }
+            } else {
+                // hide the reservation button -> <button id="edit-reserve-btn" class="btn login editacc-btn">Edit Reservation</button>
+                editReservationButton.style.display = 'none';
+            }
+
             // chaning the header to the form <h4 id="modifyAccountHeader">Modifying User</h4>
             // change the id of each button to the '' + account.username
             // toggleRoleButton.id = 'toggle-account-btn'+account.username;
@@ -330,6 +376,8 @@ function createAccountElement(account) {
             // editReservationButton.id = 'edit-reserve-btn'+account.username;
             document.getElementById('modifyAccountHeader').textContent = 'Modifying User: ' + account.username;
             let modifyAccountPopup = document.getElementById('modifyAccountPopup');
+
+
             togglePopup(modifyAccountPopup);
             addEventListenerToggleRole(account,modifyAccountForm);
             addEventListenerDeleteAccount(account, modifyAccountForm);
@@ -412,7 +460,7 @@ function addEventListenerManageReservation(account, modifyAccountForm) {
         editReservationButton.addEventListener('click', function() {
             event.preventDefault();
             //modify the action to 'toggle-role' and onsubmit to 'toggleRoleFormSubmitFunction(modifyAccountForm)'
-            modifyAccountFormSubmitFunction('manage-reservation',modifyAccountForm,account,'Reservation modified');
+            modifyAccountFormSubmitFunction('manage-reservation',modifyAccountForm,account,'');
         });
     }
 }
@@ -425,8 +473,10 @@ function modifyAccountFormSubmitFunction(action,modifyAccountForm,account, confi
 
     //
     if (modifyFormCheckAccount(account, modifyAccountForm) || (action == 'manage-reservation')) {
-        alert(confirmMessage);
         modifyAccountSubmit(modifyAccountForm)
+        //don't alert if string is empty
+        if (confirmMessage != '')
+            alert(confirmMessage);
     }
     else alert('Username or email does not match the account');
     console.log('Submitting form');

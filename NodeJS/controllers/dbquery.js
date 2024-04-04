@@ -1428,7 +1428,7 @@ function add(server, modules){
 
         let reservations = await tierModel.find({ reservation_id: reservation_id }).lean();
         let date = reservations[0].month + '/' + reservations[0].day + '/' + reservations[0].year;
-        let seat = reservations.seats;
+        let seat = reservations[0].seats;
 
         // combine to format Tier# - MM/DD/YYYY - Seat# - Reservation ID: #
         user_reservations_strArray.push("Tier" + tier + " - " + date + " - Seat" + seat + " - Reservation ID: " + reservation_id);
