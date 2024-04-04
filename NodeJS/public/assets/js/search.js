@@ -277,19 +277,63 @@ function createAccountElement(account) {
     roleLi.appendChild(roleSpan);
     accountUl.appendChild(roleLi);
 
+    // reservations
+    // look for number of reservations
+    let reservations = 0;
+    let user_reservations_strArray = [];
+
+    //synchronous post request to get number of reservations (in user_reservations) given the username
+    $.ajax({
+        url: 'get-user-reservation-str',
+        type: 'POST',
+        data: {username: account.username},
+        async: false,
+        success: function(server_resp, status) {
+            user_reservations_strArray = server_resp.user_reservations_strArray;
+        }
+    });
+
+    reservations = user_reservations_strArray.length;
+    console.log('Username: ' + account.username);
+    console.log('reservations: ' + reservations);
+
+    let reservationsLi = document.createElement("li");
+    let reservationsHeader = document.createElement('h4');
+    reservationsHeader.textContent = 'Reservations';
+    let reservationSpan = document.createElement('span');
+    reservationSpan.textContent = reservations;
+    reservationsLi.appendChild(reservationsHeader);
+    reservationsLi.appendChild(reservationSpan);
+    accountUl.appendChild(reservationsLi);
+
     // Delete button
     // Manage Link
     var deleteLi = document.createElement("li");
     var deleteDiv = document.createElement('div');
     deleteDiv.classList.add('main-border-button');
 
-    var deleteButton = document.createElement("button");
-    deleteButton.id = 'deleteAccount';
+    var modifyAccountBtn = document.createElement("button");
+    modifyAccountBtn.id = 'modifyAccount';
+    modifyAccountBtn.textContent = "Modify";
 
-    deleteDiv.appendChild(deleteButton);
-    deleteButton.addEventListener('click', function() {
-        togglePopup(deleteAccountPopup);
-    });
+    if (modifyAccountBtn) {
+        modifyAccountBtn.addEventListener('click', function() {
+            // chaning the header to the form <h4 id="modifyAccountHeader">Modifying User</h4>
+            document.getElementById('modifyAccountHeader').textContent = 'Modifying User: ' + account.username;
+            let modifyAccountPopup = document.getElementById('modifyAccountPopup');
+            togglePopup(modifyAccountPopup);
+        });
+    }
+
+    deleteDiv.appendChild(modifyAccountBtn);
+    // deleteButton.addEventListener('click', function() {
+    //     // chaning the header to the form <h4 id="modifyAccountHeader">Modifying User</h4>
+    //     document.getElementById('modifyAccountHeader').textContent = 'Modifying User: ' + account.username;
+    //     togglePopup(deleteAccountPopup);
+    // });
+    
+
+    
 
     // reserveDiv.appendChild(slotButton);
     deleteLi.appendChild(deleteDiv);

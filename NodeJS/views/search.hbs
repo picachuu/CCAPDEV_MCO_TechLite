@@ -7,11 +7,11 @@
 {{> header}}
   <!-- Header End -->
 
-<div id="deleteAccountPopup" class="login-popup" style="display: none;">
+<div id="modifyAccountPopup" class="login-popup" style="display: none;">
   <a href="#" class="close">&times;</a>
-  <h4>Account Deletion</h4>
-  <form id="deleteAccountForm" name="deleteAccount" action="delete-account-search" onsubmit="event.preventDefault(); checkDelete().then(valid => { if (valid) this.submit(); })" method="post">
-    <input type="text" name="username" class="form-control" placeholder="Your username/email" required/>
+  <h4 id="modifyAccountHeader">Modifying User</h4>
+  <form id="modifyAccountForm" name="modifyAccount" action="modify-account-search" onsubmit="event.preventDefault(); checkDelete().then(valid => { if (valid) this.submit(); })" method="post">
+    <input type="text" name="username" class="form-control" placeholder="Retype Username or Email" required/>
     <input id="delete-account-btn" class="btn login" type="submit" value="Delete" />
   </form>
 </div>

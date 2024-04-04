@@ -72,7 +72,7 @@ function add(server, modules){
           console.log('Preselecting reservation (Sending): ' + reservationStr);
           resp.send({reservation: reservationStr});
           isPreselect = true;
-        }
+        }; break;
       }
     }
 
@@ -1392,6 +1392,53 @@ function add(server, modules){
     respdata.title = 'TechLite - View Reservation';
     console.log("respdata: " + respdata);
     resp.render('view_reservation',respdata);
+  });
+
+  // get the user_reservation post request information and send it as a string
+  server.post('/get-user-reservation-str' , async function(req, resp) {
+    // elements passed: username
+    const username = req.body.username;
+
+    const user_id = await userModel.findOne({ username: username }).lean().then(function(user) {
+      return user._id;
+    }).catch(errorFn);
+
+    // find reserver or reserved_for
+    let searchQuery = {
+      $or: [
+        { reserver: user_id },
+        { reserved_for: user_id }
+      ]
+    };
+    userReservationModel.find(searchQuery).lean().then(async function(user_reservations) {
+      // get the date of the user_reservation object by looking for _id in the tiermodels collections
+      let user_reservations_strArray = [];
+
+      for (let i = 0; i < user_reservations.length; i++) {
+        let user_reservation = user_reservations[i];
+        let tier = user_reservation.tier;
+        let reservation_id = user_reservation._id;
+
+        let tierModel;
+        switch(tier) {
+          case 1: tierModel = tier1_schedModel; break;
+          case 2: tierModel = tier2_schedModel; break;
+          case 3: tierModel = tier3_schedModel; break;
+        }
+
+        let reservations = await tierModel.find({ reservation_id: reservation_id }).lean();
+        let date = reservations[0].month + '/' + reservations[0].day + '/' + reservations[0].year;
+        let seat = reservations.seats;
+
+        // combine to format Tier# - MM/DD/YYYY - Seat# - Reservation ID: #
+        user_reservations_strArray.push("Tier" + tier + " - " + date + " - Seat" + seat + " - Reservation ID: " + reservation_id);
+      }
+
+      console.log(user_reservations_strArray);
+
+      resp.send({ user_reservations_strArray: user_reservations_strArray });
+
+    }).catch(errorFn);
   });
 }
 

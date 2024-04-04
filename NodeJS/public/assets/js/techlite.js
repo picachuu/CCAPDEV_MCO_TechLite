@@ -1774,6 +1774,17 @@ document.addEventListener('DOMContentLoaded', function () {
             deleteAccountPopup.style.display = 'none';
         });
     }
+
+    
+    let modifyAccountPopup = document.getElementById('modifyAccountPopup');
+    let modifyAccountClose = modifyAccountPopup.querySelector('.close');
+
+    if (modifyAccountClose) {
+        modifyAccountClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            modifyAccountPopup.style.display = 'none';
+        });
+    }
 });
 
 
