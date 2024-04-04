@@ -415,7 +415,7 @@ function add(server,modules){
             layout: 'index',
             title: 'TechLite - Delete Account',
             prompt: 'Successful',
-            message: 'Thanks for having us!'
+            message: 'Your account with TechLite has been successfully deleted. Thanks for having us!'
           });
         });
       }
@@ -471,7 +471,7 @@ function add(server,modules){
               layout: 'index',
               title: 'TechLite - Delete Account',
               prompt: 'Successful',
-              message: 'Thanks for having us!'
+              message: 'Your account with TechLite has been successfully deleted. Thanks for having us!'
             });
           });
         }
