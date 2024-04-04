@@ -524,7 +524,7 @@ function isWithinOneHour(date) {
             });
         }
 
-        alert("document ready - remove when done");
+
 
 	}); // $(document).ready end
 

@@ -316,14 +316,27 @@ function createAccountElement(account) {
     modifyAccountBtn.id = 'modifyAccount';
     modifyAccountBtn.textContent = "Modify";
 
+    let modifyAccountForm = document.getElementById('modifyAccountForm');
+    
     if (modifyAccountBtn) {
         modifyAccountBtn.addEventListener('click', function() {
+            let toggleRoleButton = document.getElementById('toggle-account-btn');
+            let deleteButton = document.getElementById('delete-account-btn');
+            let editReservationButton = document.getElementById('edit-reserve-btn');
             // chaning the header to the form <h4 id="modifyAccountHeader">Modifying User</h4>
+            // change the id of each button to the '' + account.username
+            // toggleRoleButton.id = 'toggle-account-btn'+account.username;
+            // deleteButton.id = 'delete-account-btn'+account.username;
+            // editReservationButton.id = 'edit-reserve-btn'+account.username;
             document.getElementById('modifyAccountHeader').textContent = 'Modifying User: ' + account.username;
             let modifyAccountPopup = document.getElementById('modifyAccountPopup');
             togglePopup(modifyAccountPopup);
+            addEventListenerToggleRole(account,modifyAccountForm);
+            addEventListenerDeleteAccount(account, modifyAccountForm);
+            addEventListenerManageReservation(account, modifyAccountForm);
         });
     }
+
 
     deleteDiv.appendChild(modifyAccountBtn);
     // deleteButton.addEventListener('click', function() {
@@ -332,7 +345,7 @@ function createAccountElement(account) {
     //     togglePopup(deleteAccountPopup);
     // });
     
-
+    
     
 
     // reserveDiv.appendChild(slotButton);
@@ -345,6 +358,77 @@ function createAccountElement(account) {
 
 }
 
+function modifyFormCheckAccount(account, modifyAccountForm) {
+    // check the field under modifyAccountForm that is named username
+    let usernameField = modifyAccountForm.elements['username'];
+
+    // return true if it is either equal username or email of account
+    return usernameField.value === account.username || usernameField.value === account.email;
+}
+
+function returnElementRemovedListeners(element) {
+    let new_element = element.cloneNode(true);
+    element.parentNode.replaceChild(new_element, element);
+    return new_element;
+}
+
+function addEventListenerToggleRole(account, modifyAccountForm) {
+    // get toggle role button by finding the class .togacc-btn
+    let toggleRoleButton = document.getElementById('toggle-account-btn');
+
+    //modify the action and onsubmit contents of the form in modifyAccountForm upon clicking the toggleRoleButton
+    if (toggleRoleButton) {
+        // replace (clone) button to remove listeners
+        // let clone = toggleRoleButton.cloneNode(true);
+        // toggleRoleButton.parentNode.replaceChild(clone, toggleRoleButton);
+
+        toggleRoleButton = returnElementRemovedListeners(toggleRoleButton);
+        toggleRoleButton.addEventListener('click', function() {
+            event.preventDefault();
+            //modify the action to 'toggle-role' and onsubmit to 'toggleRoleFormSubmitFunction(modifyAccountForm)'
+            
+            modifyAccountFormSubmitFunction('toggle-role',modifyAccountForm,account,'Role toggled');
+        });
+    }
+}
+
+function addEventListenerDeleteAccount(account, modifyAccountForm) {
+    //get id of delete button
+    let deleteButton = document.getElementById('delete-account-btn');
+
+}
+
+function addEventListenerManageReservation(account, modifyAccountForm) {
+    let editReservationButton = document.getElementById('edit-reserve-btn');
+    if (editReservationButton) {
+        editReservationButton = returnElementRemovedListeners(editReservationButton);
+        editReservationButton.addEventListener('click', function() {
+            event.preventDefault();
+            //modify the action to 'toggle-role' and onsubmit to 'toggleRoleFormSubmitFunction(modifyAccountForm)'
+            modifyAccountFormSubmitFunction('manage-reservation',modifyAccountForm,account,'Reservation modified');
+        });
+    }
+}
+
+function modifyAccountFormSubmitFunction(action,modifyAccountForm,account,confirmMessage) {
+    modifyAccountForm.action = action;
+    modifyAccountForm.onsubmit = '';
+
+    // const submitBool = ;
+
+    if (modifyFormCheckAccount(account, modifyAccountForm) || (action == 'manage-reservation')) {
+        alert(confirmMessage);
+        modifyAccountSubmit(modifyAccountForm)
+    }
+    else alert('Username or email does not match the account');
+    console.log('Submitting form');
+    
+}
+
+function modifyAccountSubmit(modifyAccountForm) {
+    modifyAccountForm.method = 'POST';
+    modifyAccountForm.submit();
+}
 
 function PopulateSlotsResults(page) {
     page = Math.max(1, Number(page));
