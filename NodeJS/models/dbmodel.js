@@ -13,7 +13,7 @@ function successFn(res){
 //Note on the database URL. There are times that localhost is not
 //recogized by the system. In that case, use 127.0.0.1 instead.
 
-const databaseName = "Techlite";
+const databaseName = "test";
 const tier1_schedCollection = "tier1_sched";
 const tier2_schedCollection = "tier2_sched";
 const tier3_schedCollection = "tier3_sched";
