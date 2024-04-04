@@ -395,9 +395,6 @@ function addEventListenerToggleRole(account, modifyAccountForm) {
                 alert('Role toggled');
             }
             else alert('Username or email does not match the account');
-
-            // remove listener for toggleRoleButton
-            toggleRoleButton.removeEventListener('click', function() {});
         });
     }
 }
