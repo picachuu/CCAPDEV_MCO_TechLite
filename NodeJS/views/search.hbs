@@ -10,9 +10,11 @@
 <div id="modifyAccountPopup" class="login-popup" style="display: none;">
   <a href="#" class="close">&times;</a>
   <h4 id="modifyAccountHeader">Modifying User</h4>
-  <form id="modifyAccountForm" name="modifyAccount" action="modify-account-search" onsubmit="event.preventDefault(); checkDelete().then(valid => { if (valid) this.submit(); })" method="post">
+  <form id="modifyAccountForm" name="modifyAccount" action="modify-account-search" onsubmit="event.preventDefault();" method="post">
     <input type="text" name="username" class="form-control" placeholder="Retype Username or Email" required/>
-    <input id="delete-account-btn" class="btn login" type="submit" value="Delete" />
+    <button id="delete-account-btn" class="btn login delacc-btn">Delete</button>
+    <button id="toggle-account-btn" class="btn login togacc-btn">Toggle Role</button>
+    <button id="edit-reserve-btn" class="btn login editacc-btn">Edit Reservation</button>
   </form>
 </div>
 

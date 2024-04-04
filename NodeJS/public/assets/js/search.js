@@ -316,14 +316,27 @@ function createAccountElement(account) {
     modifyAccountBtn.id = 'modifyAccount';
     modifyAccountBtn.textContent = "Modify";
 
+    let modifyAccountForm = document.getElementById('modifyAccountForm');
+    
     if (modifyAccountBtn) {
         modifyAccountBtn.addEventListener('click', function() {
+            let toggleRoleButton = document.getElementById('toggle-account-btn');
+            let deleteButton = document.getElementById('delete-account-btn');
+            let editReservationButton = document.getElementById('edit-reserve-btn');
             // chaning the header to the form <h4 id="modifyAccountHeader">Modifying User</h4>
+            // change the id of each button to the '' + account.username
+            // toggleRoleButton.id = 'toggle-account-btn'+account.username;
+            // deleteButton.id = 'delete-account-btn'+account.username;
+            // editReservationButton.id = 'edit-reserve-btn'+account.username;
             document.getElementById('modifyAccountHeader').textContent = 'Modifying User: ' + account.username;
             let modifyAccountPopup = document.getElementById('modifyAccountPopup');
             togglePopup(modifyAccountPopup);
+            addEventListenerToggleRole(account,modifyAccountForm);
+            addEventListenerDeleteAccount(account, modifyAccountForm);
+            addEventListenerManageReservation(account, modifyAccountForm);
         });
     }
+
 
     deleteDiv.appendChild(modifyAccountBtn);
     // deleteButton.addEventListener('click', function() {
@@ -332,7 +345,7 @@ function createAccountElement(account) {
     //     togglePopup(deleteAccountPopup);
     // });
     
-
+    
     
 
     // reserveDiv.appendChild(slotButton);
@@ -345,6 +358,65 @@ function createAccountElement(account) {
 
 }
 
+function modifyFormCheckAccount(account, modifyAccountForm) {
+    // check the field under modifyAccountForm that is named username
+    let usernameField = modifyAccountForm.elements['username'];
+
+    // return true if it is either equal username or email of account
+    return usernameField.value === account.username || usernameField.value === account.email;
+}
+
+function returnElementRemovedListeners(element) {
+    let new_element = element.cloneNode(true);
+    element.parentNode.replaceChild(new_element, element);
+    return new_element;
+}
+
+function addEventListenerToggleRole(account, modifyAccountForm) {
+    // get toggle role button by finding the class .togacc-btn
+    let toggleRoleButton = document.getElementById('toggle-account-btn');
+
+    //modify the action and onsubmit contents of the form in modifyAccountForm upon clicking the toggleRoleButton
+    if (toggleRoleButton) {
+        // replace (clone) button to remove listeners
+        // let clone = toggleRoleButton.cloneNode(true);
+        // toggleRoleButton.parentNode.replaceChild(clone, toggleRoleButton);
+
+        toggleRoleButton = returnElementRemovedListeners(toggleRoleButton);
+        toggleRoleButton.addEventListener('click', function() {
+            event.preventDefault();
+            //modify the action to 'toggle-role' and onsubmit to 'toggleRoleFormSubmitFunction(modifyAccountForm)'
+            
+            modifyAccountForm.action = 'toggle-role';
+            modifyAccountForm.onsubmit = '';
+            const yesSubmit = modifyFormCheckAccount(account, modifyAccountForm);
+            if (yesSubmit) {
+                modifyAccountFormSubmitFunction(modifyAccountForm);
+                alert('Role toggled');
+            }
+            else alert('Username or email does not match the account');
+
+            // remove listener for toggleRoleButton
+            toggleRoleButton.removeEventListener('click', function() {});
+        });
+    }
+}
+
+function addEventListenerDeleteAccount(account, modifyAccountForm) {
+    //get id of delete button
+    var deleteButton = document.getElementById('delete-account-btn');
+
+}
+
+function addEventListenerManageReservation(account, modifyAccountForm) {
+    var editReservationButton = document.getElementById('edit-reserve-btn');
+}
+
+function modifyAccountFormSubmitFunction(modifyAccountForm) {
+    console.log('Submitting form');
+    modifyAccountForm.method = 'POST';
+    modifyAccountForm.submit();
+}
 
 function PopulateSlotsResults(page) {
     page = Math.max(1, Number(page));

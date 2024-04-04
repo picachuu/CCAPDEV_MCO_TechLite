@@ -34,8 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
         }, false);
-        
-        
 
         // button onclicks
         if (updateBtn) {
@@ -69,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
-
     }
 });
 
