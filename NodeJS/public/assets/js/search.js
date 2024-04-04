@@ -387,30 +387,45 @@ function addEventListenerToggleRole(account, modifyAccountForm) {
             event.preventDefault();
             //modify the action to 'toggle-role' and onsubmit to 'toggleRoleFormSubmitFunction(modifyAccountForm)'
             
-            modifyAccountForm.action = 'toggle-role';
-            modifyAccountForm.onsubmit = '';
-            const yesSubmit = modifyFormCheckAccount(account, modifyAccountForm);
-            if (yesSubmit) {
-                modifyAccountFormSubmitFunction(modifyAccountForm);
-                alert('Role toggled');
-            }
-            else alert('Username or email does not match the account');
+            modifyAccountFormSubmitFunction('toggle-role',modifyAccountForm,account,'Role toggled');
         });
     }
 }
 
 function addEventListenerDeleteAccount(account, modifyAccountForm) {
     //get id of delete button
-    var deleteButton = document.getElementById('delete-account-btn');
+    let deleteButton = document.getElementById('delete-account-btn');
 
 }
 
 function addEventListenerManageReservation(account, modifyAccountForm) {
-    var editReservationButton = document.getElementById('edit-reserve-btn');
+    let editReservationButton = document.getElementById('edit-reserve-btn');
+    if (editReservationButton) {
+        editReservationButton = returnElementRemovedListeners(editReservationButton);
+        editReservationButton.addEventListener('click', function() {
+            event.preventDefault();
+            //modify the action to 'toggle-role' and onsubmit to 'toggleRoleFormSubmitFunction(modifyAccountForm)'
+            modifyAccountFormSubmitFunction('manage-reservation',modifyAccountForm,account,'Reservation modified');
+        });
+    }
 }
 
-function modifyAccountFormSubmitFunction(modifyAccountForm) {
+function modifyAccountFormSubmitFunction(action,modifyAccountForm,account,confirmMessage) {
+    modifyAccountForm.action = action;
+    modifyAccountForm.onsubmit = '';
+
+    // const submitBool = ;
+
+    if (modifyFormCheckAccount(account, modifyAccountForm) || (action == 'manage-reservation')) {
+        alert(confirmMessage);
+        modifyAccountSubmit(modifyAccountForm)
+    }
+    else alert('Username or email does not match the account');
     console.log('Submitting form');
+    
+}
+
+function modifyAccountSubmit(modifyAccountForm) {
     modifyAccountForm.method = 'POST';
     modifyAccountForm.submit();
 }
