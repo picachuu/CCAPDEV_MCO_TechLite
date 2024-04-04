@@ -7,6 +7,7 @@ function add(server,modules){
     const errorFn = dbmodel.errorFn;
 
     const deletePastAvailable = true;
+    const enableCheckDatabase = false;
 
     // Executes as the server starts
     checkOldDate().catch(console.error);
@@ -125,6 +126,7 @@ function add(server,modules){
     // checks the integrity of the database of the date and time slots, and creates when there are supposed slots missing
     // prolly not gonna implement this
     function checkDatabase() {
+        if (!enableCheckDatabase) return;
         const currentDateTime = new Date();
         console.log('Checking database at:', currentDateTime);
 
