@@ -371,9 +371,6 @@ function createAccountElement(account, creation) {
 
             // chaning the header to the form <h4 id="modifyAccountHeader">Modifying User</h4>
             // change the id of each button to the '' + account.username
-            // toggleRoleButton.id = 'toggle-account-btn'+account.username;
-            // deleteButton.id = 'delete-account-btn'+account.username;
-            // editReservationButton.id = 'edit-reserve-btn'+account.username;
             document.getElementById('modifyAccountHeader').textContent = 'Modifying User: ' + account.username;
             let modifyAccountPopup = document.getElementById('modifyAccountPopup');
 
@@ -387,11 +384,6 @@ function createAccountElement(account, creation) {
 
 
     deleteDiv.appendChild(modifyAccountBtn);
-    // deleteButton.addEventListener('click', function() {
-    //     // chaning the header to the form <h4 id="modifyAccountHeader">Modifying User</h4>
-    //     document.getElementById('modifyAccountHeader').textContent = 'Modifying User: ' + account.username;
-    //     togglePopup(deleteAccountPopup);
-    // });
 
     // reserveDiv.appendChild(slotButton);
     deleteLi.appendChild(deleteDiv);
@@ -423,9 +415,6 @@ function addEventListenerToggleRole(account, modifyAccountForm) {
 
     //modify the action and onsubmit contents of the form in modifyAccountForm upon clicking the toggleRoleButton
     if (toggleRoleButton) {
-        // replace (clone) button to remove listeners
-        // let clone = toggleRoleButton.cloneNode(true);
-        // toggleRoleButton.parentNode.replaceChild(clone, toggleRoleButton);
 
         toggleRoleButton = returnElementRemovedListeners(toggleRoleButton);
         toggleRoleButton.addEventListener('click', function() {
