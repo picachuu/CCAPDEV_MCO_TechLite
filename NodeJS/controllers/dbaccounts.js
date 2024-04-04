@@ -104,6 +104,12 @@ function add(server,modules){
 
     if (user) {
       user = await refreshCredentials(user.username, user.email);
+      // if user is not found, destroy the session
+      if (!user) {
+        req.session.destroy(function(err) {
+          console.log('Session Destroyed');
+        });
+      }
     }
 
     console.log("Obtaining credentials...");
