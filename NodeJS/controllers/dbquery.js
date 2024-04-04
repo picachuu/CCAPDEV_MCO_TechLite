@@ -850,7 +850,7 @@ function add(server, modules){
             time_start: { $in: timeArray }
           }).lean().then(async function(reservations) {
             if (reservations.length != timeArray.length) {
-              let message = 'Selected slots are not available';
+              let message = 'We\'re sorry, the slots you\'ve selected are not available. Please select alternative dates or times. For immediate assistance or to explore more options, feel free to contact us. Thank you for your understanding.';
               console.log("In server.post('/reserve-form') - " + message);
               reserve_failed(resp,"Reservation Failed",message);
             } else {
@@ -918,7 +918,7 @@ function add(server, modules){
 
                   tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
                     console.log('Reservation successful');
-                    reserve_success(resp,"Reservation Successful","Your reservation ID is: " + String(reservation_id));
+                    reserve_success(resp,"Reservation Successful","Your Reservation ID is: " + String(reservation_id) +". Please keep this ID for your records and future communications with us. Thank you for choosing us!");
                   }).catch(errorFn);
 
                 }).catch(errorFn);

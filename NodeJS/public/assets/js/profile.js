@@ -10,13 +10,15 @@ let currentPagePast = 1;
 let totalPagesPast = 0;
 let currentPageActive = 1;
 let totalPagesActive = 0;
-let selectedTiersActive = [1, 2, 3]; 
-let selectedTiersInactive = [1, 2, 3]; 
+let selectedTiersActive = []; 
+let selectedTiersInactive = []; 
 let currentPageWalkIn = 1;
 let totalPagesWalkIn = 0;
-let selectedTiersWalkIn = [1, 2, 3];
+let selectedTiersWalkIn = [];
 
 let pageSize = 3;
+
+
 
 function loadPastReservations(page) {
     page = Math.max(1, Number(page));
@@ -247,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     //walkin reservations
+    if(getIsManager()) {
     document.getElementById('nextButtonW').addEventListener('click', function() {
         if (currentPageWalkIn < totalPagesWalkIn) {
             currentPageWalkIn++; 
@@ -270,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPageWalkIn = totalPagesWalkIn;
         loadWalkInReservations(currentPageWalkIn);
     });
+}
     
 });
 
@@ -298,6 +302,7 @@ function updatePaginationControlsW(currentPage, totalPages) {
 }
 
 function toggleTierSelection(tier) {
+    console.log('toggleTierSelection');
     const index = selectedTiersActive.indexOf(tier);
     if (index > -1) {
         selectedTiersActive.splice(index, 1);
@@ -331,6 +336,7 @@ function toggleTierSelectionW(tier) {
 }
 
 function updateTierButtons() {
+    console.log('updateTierButtons');
     for (let tier = 1; tier <= 3; tier++) {
         const button = document.getElementById(`filterTier${tier}`);
         if (selectedTiersActive.includes(tier)) {
@@ -368,8 +374,11 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTierButtonsP();
     loadActiveReservations(1);
     loadPastReservations(1);
-    updateTierButtonsW();
-    loadWalkInReservations(1);
+
+    if(getIsManager()){
+        updateTierButtonsW();
+        loadWalkInReservations(1);
+    }
 
     for (let tier = 1; tier <= 3; tier++) {
         document.getElementById(`filterTier${tier}`).addEventListener('click', function() {
@@ -380,9 +389,11 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleTierSelectionP(tier);
         });
 
+        if(getIsManager()) {
         document.getElementById(`WfilterTier${tier}`).addEventListener('click', function() {
             toggleTierSelectionW(tier);
         });
+    }
     }
 });
 

@@ -6,12 +6,14 @@
 {{> header}}
 <!-- Header End -->
 
-<div class="reservation-management">
-    <h2>{{success}}</h2>
-    <p>{{message}}</p>
-    <button onclick="window.location.href='/reserve'">Back to Reserve</button>
+<div class ="reservation-bg">
+    <div class="reservation-management">
+        <div class="reserve-icon"><li class="fa fa-calendar"></li></div>
+        <h2>{{success}}</h2>
+        <p>{{message}}</p>
+        <button onclick="window.location.href='/reserve'">Back to Reserve</button>
+    </div>
 </div>
-
 
 <!-- Contact Start -->
 {{> contact}}
