@@ -98,7 +98,14 @@ function populateDays() {
     for (let i = 0; i < 3; i++) {
         const futureDate = new Date(today);
         futureDate.setDate(today.getDate() + i);
-        const option = new Option(futureDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore' }), futureDate.toISOString().split('T')[0]);
+
+        const datedate = futureDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore' });
+        const day = datedate.split('/')[1];
+        const month = datedate.split('/')[0];
+        const year = datedate.split('/')[2];
+
+        const yyyymmdd = `${year}-${month}-${day}`;
+        const option = new Option(datedate, yyyymmdd);
         daySelect.add(option);
     }
 }
