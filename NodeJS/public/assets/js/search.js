@@ -344,9 +344,6 @@ function createAccountElement(account) {
     //     document.getElementById('modifyAccountHeader').textContent = 'Modifying User: ' + account.username;
     //     togglePopup(deleteAccountPopup);
     // });
-    
-    
-    
 
     // reserveDiv.appendChild(slotButton);
     deleteLi.appendChild(deleteDiv);
@@ -396,6 +393,16 @@ function addEventListenerDeleteAccount(account, modifyAccountForm) {
     //get id of delete button
     let deleteButton = document.getElementById('delete-account-btn');
 
+    //modify the action and onsubmit contents of the form in modifyAccountForm upon clicking the toggleRoleButton
+    if (deleteButton) {
+
+        deleteButton = returnElementRemovedListeners(deleteButton);
+        deleteButton.addEventListener('click', function() {
+            event.preventDefault();
+            
+            modifyAccountFormSubmitFunction('delete-account-search', modifyAccountForm,account,'Account deleted');
+        });
+    }
 }
 
 function addEventListenerManageReservation(account, modifyAccountForm) {
@@ -410,12 +417,13 @@ function addEventListenerManageReservation(account, modifyAccountForm) {
     }
 }
 
-function modifyAccountFormSubmitFunction(action,modifyAccountForm,account,confirmMessage) {
+function modifyAccountFormSubmitFunction(action,modifyAccountForm,account, confirmMessage) {
     modifyAccountForm.action = action;
     modifyAccountForm.onsubmit = '';
 
     // const submitBool = ;
 
+    //
     if (modifyFormCheckAccount(account, modifyAccountForm) || (action == 'manage-reservation')) {
         alert(confirmMessage);
         modifyAccountSubmit(modifyAccountForm)

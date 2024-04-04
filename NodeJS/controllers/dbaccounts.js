@@ -450,43 +450,41 @@ function add(server,modules){
   }
 
   server.post('/delete-account-search', async function(req, resp){
-    let valid = false;
-    
-    //Creating a new instance can be made this way.
-    let username = req.body.username;
-    let user = null;  // user object for user information is default to null
   
-    user = await findusername(username); // wait for the function to finish before proceeding
-    
-    if (user) {
-      valid = true;
-    }
+    let searchQuery = { $or: [
+      { username: req.body.username },
+      { email: req.body.username }
+    ]};
 
-    //at this point user should be an object from the db
+    userModel.findOne(searchQuery).lean().then(function(user) {
+      if (user == null) {
+        resp.redirect('/search');
+        return;
+      }
+      
+        //if account in session is the same as the account to be deleted, destroy the session
+        if (req.session.user.username == user.username) {
+          req.session.destroy(function(err) {
+            deleteAccountDB(user);
+            deleteActiveReservations(user);
+            resp.render('account_delete',{
+              layout: 'index',
+              title: 'TechLite - Delete Account',
+              prompt: 'Successful',
+              message: 'Thanks for having us!'
+            });
+          });
+        }
 
-    if (valid){  // if not null, delete the account
-      req.session.destroy(function(err) {
-        deleteAccountDB(user);
-        deleteActiveReservations(user);
-        resp.render('account_delete',{
-          layout: 'index',
-          title: 'TechLite - Delete Account',
-          prompt: 'Successful',
-          message: 'Thanks for having us!'
-        });
-      });
-    }
-    
-    
-    if (!valid){
-      resp.render('account_delete',{
-        layout: 'index',
-        title: 'TechLite - Delete Account',
-        prompt: 'Failed',
-        message: 'Invalid credentials'
-      });
-    }
-    
+        //if account in session is not the same as the account to be deleted, delete the account without destroying the session
+        else {
+          deleteAccountDB(user);
+          deleteActiveReservations(user);
+          resp.redirect('/search');
+        }
+ 
+    }).catch(errorFn);
+   
   });
 
   function deleteAccountDB(user) {
@@ -684,6 +682,29 @@ function add(server,modules){
       console.error("Error in changing password:", error);
       resp.send({ valid: false, reason: "An error occurred while changing the password." });
     }
+  });
+
+  // post request for toggle-role
+  server.post('/toggle-role', function(req, resp) {
+    // elements passed: username
+    let searchQuery = { $or: [
+      { username: req.body.username },
+      { email: req.body.username }
+    ]};
+
+    userModel.findOne(searchQuery).lean().then(function(user) {
+      if (user == null) {
+        resp.redirect('/search');
+        return;
+      }
+      let useris_manager = user.is_manager;
+      userModel.updateOne( searchQuery, { is_manager: !useris_manager }).then(function() {
+        console.log('Role toggled');
+        // redirect to search
+        resp.redirect('/search');
+      }).catch(errorFn);
+    }).catch(errorFn);
+
   });
 
 }

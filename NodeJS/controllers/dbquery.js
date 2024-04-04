@@ -1441,28 +1441,7 @@ function add(server, modules){
     }).catch(errorFn);
   });
 
-  // post request for toggle-role
-  server.post('/toggle-role', function(req, resp) {
-    // elements passed: username
-    let searchQuery = { $or: [
-      { username: req.body.username },
-      { email: req.body.username }
-    ]};
-
-    userModel.findOne(searchQuery).lean().then(function(user) {
-      if (user == null) {
-        resp.redirect('/search');
-        return;
-      }
-      let useris_manager = user.is_manager;
-      userModel.updateOne( searchQuery, { is_manager: !useris_manager }).then(function() {
-        console.log('Role toggled');
-        // redirect to search
-        resp.redirect('/search');
-      }).catch(errorFn);
-    }).catch(errorFn);
-
-  });
+  
 }
 
 
