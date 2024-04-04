@@ -432,7 +432,6 @@ function addEventListenerDeleteAccount(account, modifyAccountForm) {
 
     //modify the action and onsubmit contents of the form in modifyAccountForm upon clicking the toggleRoleButton
     if (deleteButton) {
-
         deleteButton = returnElementRemovedListeners(deleteButton);
         deleteButton.addEventListener('click', function() {
             event.preventDefault();

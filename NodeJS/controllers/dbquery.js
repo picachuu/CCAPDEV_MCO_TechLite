@@ -480,7 +480,7 @@ function add(server, modules){
           time_start: { $in: timeArray }
         }).lean().then(function(reservations) {
           if (reservations.length != timeArray.length) {
-            let message = 'Selected slots are not unavailable';
+            let message = 'We’re unable to delete your reservation as the selected slots are currently unavailable for this action. Please try again later or contact our support team for assistance.';
             console.log("In deleteReservation - " + message + " - " + reservations.length + " != " + timeArray.length);
             reserve_failed(resp,"Deletion Failed",message);
           } else {
@@ -1182,7 +1182,7 @@ function add(server, modules){
       time_start: { $in: newTimeArray }
     }).lean().then(function(reservations) {
       if (reservations.length != newTimeArray.length) {
-        let message = 'New selected slots are not available';
+        let message = 'We’re sorry, but the new slots you’ve selected are not available. Please choose alternative dates or times and try updating again.';
         console.log("In update-reservation - " + message);
         manageResponse(resp,"Update Failed",message);
       } else {
@@ -1200,7 +1200,7 @@ function add(server, modules){
           time_start: { $in: timeArray }
         }).lean().then(function(reservations) {
           if (reservations.length != timeArray.length) {
-            let message = 'Selected slots are not unavailable';
+            let message = 'We’re unable to update your reservation as the selected slots are currently unavailable for this action. Please try again later or contact our support team for assistance.';
             console.log("In update-reservation - " + message);
             manageResponse(resp,"Update Failed",message);
           } else {
@@ -1253,7 +1253,7 @@ function add(server, modules){
               console.log('New reservations updated successfully');
               tierModel.updateMany(updateQuery, updateValues).then(function(reservations) {
                 console.log('Old reservations updated successfully');
-                manageResponse(resp,"Update Successful","");
+                manageResponse(resp,"Update Successful","Your reservation has been successfully updated. Thank you for choosing Techlite!");
               }).catch(errorFn);
             }).catch(errorFn);
           }
@@ -1327,7 +1327,7 @@ function add(server, modules){
           time_start: { $in: timeArray }
         }).lean().then(function(reservations) {
           if (reservations.length != timeArray.length) {
-            let message = 'Selected slots are not unavailable';
+            let message = 'We’re unable to delete your reservation as the selected slots are currently unavailable for this action. Please try again later or contact our support team for assistance.';
             console.log("In deleteReservation - " + message + " - " + reservations.length + " != " + timeArray.length);
             manageResponse(resp,"Deletion Failed",message);
           } else {
@@ -1370,7 +1370,7 @@ function add(server, modules){
               
               tierModel.insertMany(newReserveInstances).then(() => {
                   console.log('New reservations created successfully');
-                  manageResponse(resp,"Deletion Successful","");
+                  manageResponse(resp,"Deletion Successful","Your reservation at TechLite has been successfully deleted. If you have any questions or need further assistance, please don't hesitate to contact us. Thank you.");
               }).catch(errorFn);
               
             }).catch(errorFn);

@@ -1247,9 +1247,8 @@ section {
 
 .reservation-response {
   max-width: 800px;
-  height: 440px;
   margin: 40px auto;
-  padding: 40px 60px;
+  padding: 60px;
   background-color: #2c2c2c;
   border-radius: 10px;
   margin-top: 10%;
@@ -1295,7 +1294,7 @@ section {
   justify-content: center;
   align-items: center;
   margin-bottom: 40px;
-  margin-top: -140px;
+  margin-top: -110px;
 }
 
 .reserve-icon li{
