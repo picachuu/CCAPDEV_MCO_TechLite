@@ -92,7 +92,7 @@ function loadDateSelection() {
         const futureDate = new Date(today);
         // console.log(futureDate.toISOString().split('T')[0]);
         futureDate.setDate(today.getDate() + i);
-        const option = new Option(futureDate.toLocaleDateString('en-US', { timeZone: 'UTC' }), futureDate.toISOString().split('T')[0]);
+        const option = new Option(futureDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore' }), futureDate.toISOString().split('T')[0]);
         dayFilterSelect.add(option);
     }
 }

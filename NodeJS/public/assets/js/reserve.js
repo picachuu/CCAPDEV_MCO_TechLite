@@ -98,7 +98,7 @@ function populateDays() {
     for (let i = 0; i < 3; i++) {
         const futureDate = new Date(today);
         futureDate.setDate(today.getDate() + i);
-        const option = new Option(futureDate.toLocaleDateString('en-US', { timeZone: 'UTC' }), futureDate.toISOString().split('T')[0]);
+        const option = new Option(futureDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore' }), futureDate.toISOString().split('T')[0]);
         daySelect.add(option);
     }
 }
