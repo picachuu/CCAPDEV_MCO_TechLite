@@ -23,17 +23,17 @@ if (window.location.pathname === '/reserve') {
                         let strmonth = yyyymmdd.split('-')[1];
                         let strday = yyyymmdd.split('-')[2].split('/')[0];
                         if (strmonth.length == 1) {
-                            strmonth = "0" + strmonth;
+                            strmonth = strmonth;
                         }
                         if (strday.length == 1) {
-                            strday = "0" + strday;
+                            strday = strday;
                         }
                         yyyymmdd = yyyymmdd.split('-')[0] + "-" + strmonth + "-" + strday;
                         console.log("Reservation (Preselect): "+reservationStr);
                         const reservation = {
-                            year: reservationStr.split('-')[0],
-                            month: reservationStr.split('-')[1],
-                            day: reservationStr.split('-')[2].split('/')[0],
+                            year: Number(reservationStr.split('-')[0]),
+                            month: Number(reservationStr.split('-')[1]),
+                            day: Number(reservationStr.split('-')[2].split('/')[0]),
                             time_start: reservationStr.split('-')[2].split('/')[1],
                             tier: reservationStr.split('/')[2],
                             seat: reservationStr.split('/')[3],

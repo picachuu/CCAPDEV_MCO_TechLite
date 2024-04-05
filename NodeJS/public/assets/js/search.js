@@ -572,7 +572,7 @@ function expiredSlots(slot) {
 
 function createSlotElement(slot) {
     //if taken (is available, meaning this was used for manager search of slots parameter)
-    if (slot.taken && !getIsManager() || expiredSlots(slot)) {
+    if (slot.taken || expiredSlots(slot) || (isWithinOneHour(new Date(slot.year, slot.month-1, slot.day, Math.floor(slot.time_start / 100), slot.time_start % 100)) && !getIsManager())) {
         return null;
     } else {//if available or if manager
         var slotDiv = document.createElement('div');

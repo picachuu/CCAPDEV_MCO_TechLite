@@ -682,6 +682,16 @@ function add(server, modules){
         console.log("Search results:", searchResults[1]);
         console.log("Search results:", searchResults[2]);
         console.log("Search results length:" + searchResults.length);
+        // sorts the date of the slots by day, month, year
+        searchResults.sort((a, b) => {
+          if (a.year != b.year) {
+            return a.year - b.year;
+          } else if (a.month != b.month) {
+            return a.month - b.month;
+          } else {
+            return a.day - b.day;
+          }
+        });
 
         resp.send({slots: searchResults});
       });
