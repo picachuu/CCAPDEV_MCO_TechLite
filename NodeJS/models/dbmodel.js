@@ -13,14 +13,14 @@ function successFn(res){
 //Note on the database URL. There are times that localhost is not
 //recogized by the system. In that case, use 127.0.0.1 instead.
 
-const databaseName = "Techlite";
+const databaseName = "test";
 const tier1_schedCollection = "tier1_sched";
 const tier2_schedCollection = "tier2_sched";
 const tier3_schedCollection = "tier3_sched";
 const userInfoCollection = "user_info";
 const userReservationsCollection = "user_reservation";
 //const seatCollection = "seat";
-const db_url = "mongodb://127.0.0.1:27017/";
+const db_url = "mongodb+srv://jannicaallisonlim:12345@cluster0.pl7w3de.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const mongo_uri = db_url+databaseName;
 
 
