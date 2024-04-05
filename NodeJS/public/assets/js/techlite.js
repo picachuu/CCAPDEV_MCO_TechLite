@@ -321,6 +321,11 @@ function isWithinOneHour(date) {
 
         if (img_url !== ""){
             document.getElementById('navbarProfileImage').src = img_url;
+            var navProfile = document.getElementById('navbarProfileImage');
+            navProfile.src = img_url;
+            navProfile.onerror = function() {
+                this.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+            };
         }
 
         //call test post
@@ -432,6 +437,8 @@ function isWithinOneHour(date) {
 
         // To execute this code only when user is on the /profile page
         if (window.location.pathname === '/profile') {
+        
+
             if (!getLogged()) {
                 window.location.href = '/';
                 return;
@@ -439,11 +446,17 @@ function isWithinOneHour(date) {
 
             document.getElementById('navbarProfile').classList.add('active');
 
-            if (getBannerUrl() !== ""){
+            if (banner_url !== "") {
                 document.getElementById('coverBannerContainer').style.backgroundImage = 'url(' + banner_url + ')';
             }
-            if (getImgUrl() !== ""){
-                document.getElementById('profileImage').src = img_url;
+
+            if (img_url !== "") {
+                var profileImage = document.getElementById('profileImage');
+                profileImage.src = img_url;
+            
+                profileImage.onerror = function() {
+                    this.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+                };
             }
 
             const usernameContainer = document.querySelector('.username-container');
@@ -549,6 +562,7 @@ function isWithinOneHour(date) {
         return isAvailable;
         //return isUnavailable;
     }
+    
 
 	function onScroll(event){
 	    var scrollPos = $(document).scrollTop();
