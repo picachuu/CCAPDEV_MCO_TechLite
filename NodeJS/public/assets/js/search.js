@@ -90,9 +90,15 @@ function loadDateSelection() {
 
     for (let i = 0; i < 3; i++) {
         const futureDate = new Date(today);
-        // console.log(futureDate.toISOString().split('T')[0]);
         futureDate.setDate(today.getDate() + i);
-        const option = new Option(futureDate.toLocaleDateString('en-US', { timeZone: 'UTC' }), futureDate.toISOString().split('T')[0]);
+
+        const datedate = futureDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore' });
+        const day = datedate.split('/')[1];
+        const month = datedate.split('/')[0];
+        const year = datedate.split('/')[2];
+
+        const yyyymmdd = `${year}-${month}-${day}`;
+        const option = new Option(datedate, yyyymmdd);
         dayFilterSelect.add(option);
     }
 }
@@ -566,7 +572,7 @@ function expiredSlots(slot) {
 
 function createSlotElement(slot) {
     //if taken (is available, meaning this was used for manager search of slots parameter)
-    if (slot.taken && !getIsManager() || expiredSlots(slot)) {
+    if (slot.taken || expiredSlots(slot) || (isWithinOneHour(new Date(slot.year, slot.month-1, slot.day, Math.floor(slot.time_start / 100), slot.time_start % 100)) && !getIsManager())) {
         return null;
     } else {//if available or if manager
         var slotDiv = document.createElement('div');
