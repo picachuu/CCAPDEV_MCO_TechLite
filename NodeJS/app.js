@@ -56,7 +56,7 @@ server.use(session({
   store: new mongoStore({ 
     uri: mongo_uri,
     collection: 'mySession',
-    expires: 1000*60*60 // 60 minutes
+    expires: 1000*60*60*2 // 2 hours
   })
 }));
 
