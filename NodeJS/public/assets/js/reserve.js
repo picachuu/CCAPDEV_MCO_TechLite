@@ -356,12 +356,18 @@ function populateTimeBlocksRes(seat_number, tier_number, day_number, month_numbe
 
                             let usernameInput = document.getElementById('reservationName');
                             let emailInput = document.getElementById('reservationEmail');
-                            if (emailInput) {
+                            if (emailInput && !getIsManager()) {
                                 emailInput.type = 'email';
-                                emailInput.readOnly = false;
+                                emailInput.readOnly = true;
                             }
-                            if (usernameInput) {
+                            if (usernameInput && !getIsManager()) {
+                                usernameInput.readOnly = true;
+                            }
+                            if (usernameInput && getIsManager()) {
                                 usernameInput.readOnly = false;
+                            }
+                            if (emailInput && getIsManager()) {
+                                emailInput.readOnly = false;
                             }
 
                             // manually changing instead of toggle to esnure robustness

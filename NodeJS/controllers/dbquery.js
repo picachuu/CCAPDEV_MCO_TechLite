@@ -867,6 +867,21 @@ function add(server, modules){
               // step 3: create a user_reservation document (if email is an empty string, then walk_in is TRUE), and get the _id of the user_reservation
               const walk_in = email == '';
 
+            
+              // step 4: if not walk-in, check if the reservation user exists (name and email)
+              let user_data;
+              if (!walk_in) {
+                user_data = await userModel.findOne({ username: name, email: email }).lean();
+                if (user_data == null) {
+                    let message = 'Reservation user not found';
+                    console.log("In server.post('/reserve-form') - " + message);
+                    reserve_failed(resp,"Reservation Failed",message);
+                } else {
+                    console.log('Reservation user found');
+                    console.log(user_data);
+                }
+              }
+
               let reserved_for = null
               if (!walk_in) {
                 const reserved_for_user = await userModel.findOne({ username: name, email: email }).lean();
@@ -881,20 +896,6 @@ function add(server, modules){
                   slots: timeArray.length,
                   reserved_for: reserved_for
               };
-
-              // step 4: if not walk-in, check if the reservation user exists (name and email)
-              let user_data;
-              if (!walk_in) {
-                user_data = await userModel.findOne({ username: name, email: email }).lean();
-                if (user_data == null) {
-                    let message = 'Reservation user not found';
-                    console.log("In server.post('/reserve-form') - " + message);
-                    reserve_failed(resp,"Reservation Failed",message);
-                } else {
-                    console.log('Reservation user found');
-                    console.log(user_data);
-                }
-              }
 
               if ((user_data == null && walk_in) || (user_data != null && !walk_in)) {
                 userReservationModel.create(userReservation).then(function(user_reservation) {
