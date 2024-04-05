@@ -47,7 +47,13 @@ function add(server,modules){
 
     // below is a placeholder
     if (valid){
+      // check if Remember Me is checked
+      console.log('Remember Me: ' + req.body.remember);
+      if (req.body.remember) {
+        req.session.cookie.expires = 1000 * 60 * 60 * 24 * 14; // 2 weeks
+      }
       req.session.user = user; // session checkpoint, session start
+      
       resp.redirect('/?login=success'); //redirect to home page with success message
     } else {
       resp.redirect('/?login=failed'); //redirect to home page with failure message
