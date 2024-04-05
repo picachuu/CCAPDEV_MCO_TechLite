@@ -29,7 +29,7 @@ cd NodeJS
 node app.js
 ```
 - Launch node app.js (to create database) and Ctrl + C to end the session
-- Import all collections given in the csv files corresponding to the collections in MongoDB Compass
+- Import all collections given in the json files within the samples zip corresponding to the collections in MongoDB Database/Compass
 
 Run the application:
 
